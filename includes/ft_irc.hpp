@@ -1,6 +1,7 @@
 #ifndef FT_IRC_H
 #define FT_IRC_H
 
+#include <list>
 #include <iomanip>
 #include <iostream>
 #include <sys/socket.h>
