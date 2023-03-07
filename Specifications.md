@@ -5,6 +5,12 @@ This server will use:
 * TCP/IP v4
 * Irssi client
 
+I/O operations :
+
+* non blocking
+* only one poll() (or equivalent)
+* all read/recv - write/send must be used with poll
+
 ## Usage
 
 The server should be launched with:

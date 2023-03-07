@@ -1,0 +1,2 @@
+- sockets as a separate class ?
+- parser class
