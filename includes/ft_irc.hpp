@@ -2,6 +2,7 @@
 #define FT_IRC_H
 
 #include <list>
+#include <map>
 #include <iomanip>
 #include <iostream>
 #include <sys/socket.h>

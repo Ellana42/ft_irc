@@ -2,7 +2,7 @@
 #define USER_H
 
 #include "Context.hpp"
-#include <iostream>
+#include "ft_irc.hpp"
 
 class User
 {
@@ -10,14 +10,24 @@ class User
 		std::string nickname;
 		std::string username;
 		std::string hostname;
-		Context *context;
+		Context & context;
 		int	socket;
 
+		/* User(); */
+
 	public:
-		User();
-		User( const User & src );
-		User & operator=( const User & rhs );
-		virtual ~User();
+		User( Context & context, int socket );
+		~User();
+
+		std::string const & get_nickname( void ) const;
+		std::string const & get_username( void ) const;
+		std::string const & get_hostname( void ) const;
+		void set_nickname( std::string nickname );
+		void set_username( std::string username );
+		void set_hostname( std::string hostname );
+
+		void send_reply( std::string reply );
+
 };
 
 #endif /* USER_H */

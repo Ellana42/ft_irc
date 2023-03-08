@@ -1,7 +1,7 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
-#include <map>
+#include "ft_irc.hpp"
 
 class User;
 class Channel;
