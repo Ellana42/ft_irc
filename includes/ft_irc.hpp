@@ -2,6 +2,7 @@
 #define FT_IRC_H
 
 #include <list>
+#include <map>
 #include <iomanip>
 #include <iostream>
 #include <sys/socket.h>
@@ -13,7 +14,5 @@
 #include <signal.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
-#include "error_reply.hpp"
 
 #endif /* FT_IRC_H */
