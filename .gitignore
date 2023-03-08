@@ -1,3 +1,5 @@
+# Program binary
+ircserv
 # Prerequisites
 *.d
 
@@ -30,3 +32,7 @@
 *.exe
 *.out
 *.app
+
+# Misc
+.cache
+compile_commands.json
