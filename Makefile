@@ -1,7 +1,7 @@
 .PHONY: all re clean fclean
 
 # Program name
-NAME	= ft_irc
+NAME	= ircserv
 
 # Compiler
 CC		= c++
