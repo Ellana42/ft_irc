@@ -1,8 +1,22 @@
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+
+# define RPL_WELCOME "001"
+
+std::string const welcome( void )
+{
+	std::string reply = "127.0.0.1 ";
+	reply += RPL_WELCOME " ";
+	reply += "alice";
+	reply += " :Welcome to the Internet Relay Network ";
+	reply += "alice!alice@alicehost";
+	reply += "\r\n";
+	return ( reply );
+}
 
 int	main( void )
 {
@@ -68,9 +82,9 @@ int	main( void )
 		std::cout << "Received: " << std::string( buf, 0, bytesRecv );
 
 		// return message
-		std::string response =
-		    "001    RPL_WELCOME Welcome to the Internet Relay Network <nick>!<user>@<host>";
-		response = "CAP";
+		std::string response = welcome();
+		/* "001    RPL_WELCOME Welcome to the Internet Relay Network <nick>!<user>@<host>"; */
+		/* response = "CAP"; */
 		send( clientSocket, response.c_str(), response.length() + 1, 0 );
 	}
 	// close socket
