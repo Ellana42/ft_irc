@@ -13,6 +13,8 @@
 #include <signal.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <stdexcept>
+#include <map>
 
 #include "error_reply.hpp"
 
