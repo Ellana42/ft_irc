@@ -25,6 +25,7 @@ class User
 		std::string const & get_username( void ) const;
 		std::string const & get_hostname( void ) const;
 		std::string const & get_identifier( void ) const;
+
 		void set_nickname( std::string nickname );
 		void set_username( std::string username );
 		void set_hostname( std::string hostname );
