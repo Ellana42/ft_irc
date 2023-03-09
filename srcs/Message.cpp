@@ -3,18 +3,31 @@
 Message::Message( std::string raw_message )
 {
 	content = raw_message;
-	accepted_commands["NICK"] = &Message::parse_nick;
-	accepted_commands["USER"] = &Message::parse_user;
-	accepted_commands["PRIVMSG"] = &Message::parse_privmsg;
+	/* accepted_commands["NICK"] = &Message::parse_nick; */
+	/* accepted_commands["USER"] = &Message::parse_user; */
+	/* accepted_commands["PRIVMSG"] = &Message::parse_privmsg; */
 	parse();
 }
+
+Message::~Message( void ) {};
 
 void Message::parse( void )
 {
 	char *parsing = ( char * )content.c_str();
 
 	set_command( std::strtok( parsing, " " ) );
-	*accepted_commands[command]( parsing );
+	if ( command == "NICK" )
+	{
+		parse_nick( parsing );
+	}
+	else if ( command == "USER" )
+	{
+		parse_user( parsing );
+	}
+	else if ( command == "PRIVMSG" )
+	{
+		parse_privmsg( parsing );
+	}
 }
 
 void Message::set_command( std::string value )
