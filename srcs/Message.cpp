@@ -42,16 +42,18 @@ void Message::set_nickname( std::string value )
 
 void Message::parse_nick( char *parsing )
 {
-	set_nickname( std::strtok( parsing, "\r" ) );
+	( void ) parsing;
+	set_nickname( std::strtok( NULL, "\r" ) );
 }
 
 void Message::parse_user( char *parsing )
 {
-	set_user( std::strtok( parsing, " " ) );
-	set_mode( std::strtok( parsing, " " ) );
-	set_unused( std::strtok( parsing, " " ) );
-	parsing++;
-	set_realname( std::strtok( parsing, "\r" ) );
+	( void ) parsing;
+	set_user( std::strtok( NULL, " " ) );
+	set_mode( std::strtok( NULL, " " ) );
+	set_unused( std::strtok( NULL, " " ) );
+	set_realname( std::strtok( NULL, "\r" ) );
+	realname.erase( 0, 1 );
 }
 
 void Message::set_user( std::string value )
@@ -76,9 +78,10 @@ void Message::set_realname( std::string value )
 
 void Message::parse_privmsg( char *parsing )
 {
-	set_msgtarget( std::strtok( parsing, " " ) );
-	parsing++;
-	set_message( std::strtok( parsing, "\r" ) );
+	( void ) parsing;
+	set_msgtarget( std::strtok( NULL, " " ) );
+	set_message( std::strtok( NULL, "\r" ) );
+	message.erase( 0, 1 );
 }
 
 void Message::set_message( std::string value )
@@ -129,4 +132,9 @@ std::string Message::get_content( void )
 std::string Message::get_user( void )
 {
 	return ( user );
+}
+
+std::string Message::get_command( void )
+{
+	return ( command );
 }

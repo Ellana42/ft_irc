@@ -54,5 +54,6 @@ class Message
 		std::string get_unused( void );
 		std::string get_content( void );
 		std::string get_user( void );
+		std::string get_command( void );
 };
 #endif /* MESSAGE_H */
