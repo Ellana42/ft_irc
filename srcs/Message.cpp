@@ -3,12 +3,18 @@
 Message::Message( std::string raw_message )
 {
 	content = raw_message;
+	accepted_commands["NICK"] = &Message::parse_nick;
+	accepted_commands["USER"] = &Message::parse_user;
+	accepted_commands["PRIVMSG"] = &Message::parse_privmsg;
 	parse();
 }
 
 void Message::parse( void )
 {
+	char *parsing = ( char * )content.c_str();
 
+	set_command( std::strtok( parsing, " " ) );
+	*accepted_commands[command]( parsing );
 }
 
 void Message::set_command( std::string value )
@@ -21,14 +27,18 @@ void Message::set_nickname( std::string value )
 	nickname = value;
 }
 
-void Message::parse_nick( unsigned int i )
+void Message::parse_nick( char *parsing )
 {
-
+	set_nickname( std::strtok( parsing, "\r" ) );
 }
 
-void Message::parse_user( unsigned int i )
+void Message::parse_user( char *parsing )
 {
-
+	set_user( std::strtok( parsing, " " ) );
+	set_mode( std::strtok( parsing, " " ) );
+	set_unused( std::strtok( parsing, " " ) );
+	parsing++;
+	set_realname( std::strtok( parsing, "\r" ) );
 }
 
 void Message::set_user( std::string value )
@@ -51,9 +61,11 @@ void Message::set_realname( std::string value )
 	realname = value;
 }
 
-void Message::parse_privmsg( unsigned int i )
+void Message::parse_privmsg( char *parsing )
 {
-
+	set_msgtarget( std::strtok( parsing, " " ) );
+	parsing++;
+	set_message( std::strtok( parsing, "\r" ) );
 }
 
 void Message::set_message( std::string value )

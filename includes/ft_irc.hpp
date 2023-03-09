@@ -15,6 +15,8 @@
 #include <fcntl.h>
 #include <stdexcept>
 #include <map>
+#include <cstring>
+
 
 #include "error_reply.hpp"
 

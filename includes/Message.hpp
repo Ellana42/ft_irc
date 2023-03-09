@@ -5,7 +5,7 @@
 
 class Message;
 
-typedef void ( Message::*parse_method )( unsigned int );
+typedef void ( Message::*parse_method )( char * );
 
 class Message
 {
@@ -37,13 +37,13 @@ class Message
 		void parse( void );
 		void set_command( std::string command );
 		void set_nickname( std::string value );
-		void parse_nick( unsigned int i );
-		void parse_user( unsigned int i );
+		void parse_nick( char * str );
+		void parse_user( char * str );
 		void set_user( std::string value );
 		void set_mode( std::string value );
 		void set_unused( std::string value );
 		void set_realname( std::string value );
-		void parse_privmsg( unsigned int i );
+		void parse_privmsg( char * str );
 		void set_message( std::string value );
 		void set_msgtarget( std::string value );
 		std::string get_nickname( void );
