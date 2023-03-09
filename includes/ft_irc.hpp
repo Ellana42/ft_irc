@@ -15,6 +15,4 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "error_reply.hpp"
-
 #endif /* FT_IRC_H */
