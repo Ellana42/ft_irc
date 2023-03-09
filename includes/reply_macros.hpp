@@ -15,6 +15,8 @@
 /* response to commands.  Each numeric is given with its */
 /* number, name and reply string. */
 
+
+
 /* Command responses */
 
 /* Numerics in the range from 001 to 099 are used for client-server */
@@ -22,19 +24,11 @@
 /* generated in the response to commands are found in the range from 200 */
 /* to 399. */
 
-# define SERVER_PREFIX "127.0.0.1"
-# define SERVER_NAME "ircserv"
-# define SERVER_CREATION "7/03/2023"
-# define SERVER_VERSION "0.01"
-
 # define RPL_WELCOME "001"
-# define RPL_WELCOME_MSG "Welcome to the Internet Relay Network <nick>!<user>@<host>"
 # define RPL_YOURHOST "002"
-# define RPL_YOURHOST_MSG "Your host is ft_irc, running version 0.01"
 # define RPL_CREATED "003"
-# define RPL_CREATED_MSG "This server was created 7/03/2023"
 # define RPL_MYINFO "004"
-# define RPL_MYINFO_MSG "<servername> <version> <available user modes> <available channel modes>"
+
 # define RPL_BOUNCE "005"
 # define RPL_BOUNCE_MSG "Try server <server name>, port <port number>"
 

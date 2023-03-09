@@ -7,6 +7,9 @@
 namespace rpl
 {
 std::string const welcome( User & User );
+std::string const yourhost( void );
+std::string const created( void );
+std::string const myinfo( void );
 std::string const fwd_privmsg( User sender, Message message );
 
 std::string const err_nosuchnick( std::string name_or_channel );
