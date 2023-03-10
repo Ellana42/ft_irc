@@ -14,5 +14,9 @@
 #include <signal.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <stdexcept>
+#include <map>
+#include <cstring>
+
 
 #endif /* FT_IRC_H */
