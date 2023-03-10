@@ -29,6 +29,7 @@ class Tokenizer
 		virtual ~Tokenizer();
 		void tokenize( void );
 		void change_state( State new_state );
+		std::list<std::string> get_tokens( void );
 };
 
 #endif /* TOKENIZER_H */

@@ -5,7 +5,7 @@ Tokenizer::Tokenizer( std::string raw_content ) : content( raw_content ),
 
 void Tokenizer::tokenize( void )
 {
-	while ( current_char() != '\0' )
+	while ( current_position <= content.size() )
 	{
 		if ( state == Param )
 		{
@@ -39,6 +39,7 @@ void Tokenizer::tokenize_param( void )
 			{
 				push_token();
 			}
+			move();
 			break;
 		default:
 			accumulate();
@@ -53,6 +54,7 @@ void Tokenizer::tokenize_space( void )
 			move();
 			break;
 		case '\0':
+			move();
 			break;
 		case ':':
 			change_state( LongParam );
@@ -69,6 +71,7 @@ void Tokenizer::tokenize_long_param( void )
 	{
 		case '\0':
 			push_token();
+			move();
 			break;
 		default:
 			accumulate();
@@ -86,7 +89,7 @@ char Tokenizer::current_char( void ) const
 
 void Tokenizer::accumulate( void )
 {
-	content.push_back( current_char() );
+	buffer.push_back( current_char() );
 	move();
 }
 
@@ -104,6 +107,11 @@ void Tokenizer::push_token( void )
 {
 	tokens.push_back( buffer );
 	buffer.clear();
+}
+
+std::list<std::string> Tokenizer::get_tokens( void )
+{
+	return ( tokens );
 }
 
 Tokenizer::~Tokenizer() {}
