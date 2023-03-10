@@ -49,6 +49,7 @@ std::string const err_summondisabled( void );
 std::string const err_usersdisabled( void );
 std::string const err_notregistered( void );
 std::string const err_needmoreparams( std::string command );
+std::string const err_toomanyparams( std::string command );
 std::string const err_alreadyregistred( void );
 std::string const err_nopermforhost( void );
 std::string const err_passwdmismatch( void );

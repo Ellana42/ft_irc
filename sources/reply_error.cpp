@@ -369,6 +369,15 @@ std::string const rpl::err_needmoreparams( std::string command )
 	return ( reply );
 }
 
+std::string const rpl::err_toomanyparams( std::string command )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += ERR_NEEDMOREPARAMS " ";
+	reply += command;
+	reply += " :Too many parameters\r\n";
+	return ( reply );
+}
+
 /* Returned by the server to any link which tries to */
 /* change part of the registered details (such as */
 /* password or user details from second USER message). */
