@@ -7,7 +7,11 @@
 namespace rpl
 {
 std::string const welcome( User & User );
-std::string const fwd_privmsg( User sender, Message message );
+std::string const yourhost( void );
+std::string const created( void );
+std::string const myinfo( void );
+
+std::string const forward( User sender, Message message );
 
 std::string const err_nosuchnick( std::string name_or_channel );
 std::string const err_nosuchnick( std::string name_or_channel );
@@ -32,6 +36,7 @@ std::string const err_fileerror( std::string file_operation,
                                  std::string filename );
 std::string const err_nonicknamegiven( void );
 std::string const err_erroneusnickname( std::string nickname );
+std::string const err_nicknametoolong( std::string nickname );
 std::string const err_nicknameinuse( std::string nickname );
 std::string const err_unavailresource( std::string nickname_or_channel );
 std::string const err_usernotinchannel( std::string nickname,
@@ -44,6 +49,7 @@ std::string const err_summondisabled( void );
 std::string const err_usersdisabled( void );
 std::string const err_notregistered( void );
 std::string const err_needmoreparams( std::string command );
+std::string const err_toomanyparams( std::string command );
 std::string const err_alreadyregistred( void );
 std::string const err_nopermforhost( void );
 std::string const err_passwdmismatch( void );
