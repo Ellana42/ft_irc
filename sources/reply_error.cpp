@@ -239,6 +239,15 @@ std::string const rpl::err_erroneusnickname( std::string nickname )
 	return ( reply );
 }
 
+std::string const rpl::err_nicknametoolong( std::string nickname )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += ERR_ERRONEUSNICKNAME " ";
+	reply += nickname;
+	reply += " :Nickname too long, max. 9 characters\r\n";
+	return ( reply );
+}
+
 /* Returned when a NICK message is processed that results */
 /* in an attempt to change to a currently existing */
 /* nickname. */

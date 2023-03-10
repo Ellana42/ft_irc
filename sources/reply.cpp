@@ -48,7 +48,7 @@ std::string const rpl::myinfo( void )
 	return ( reply );
 }
 
-std::string const rpl::fwd_privmsg( User sender, Message message )
+std::string const rpl::forward( User sender, Message message )
 {
 	std::string reply = ":";
 	reply += sender.get_identifier();
