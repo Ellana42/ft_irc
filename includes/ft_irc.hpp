@@ -18,6 +18,8 @@
 #include <map>
 #include <utility>
 #include <cstring>
+#include <exception>
+#include <new>
 #include <stdexcept>
 
 # define SERVER_PREFIX ":ircserv.42.fr"

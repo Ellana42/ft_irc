@@ -55,7 +55,7 @@ void Context::create_unregistered_user( int socket )
 	User * new_user = new User( *this, socket );
 	if ( new_user == NULL )
 	{
-		/* TODO: Throw fatal malloc error */
+		throw std::runtime_error( "User creation: Could not allocate memory." );
 	}
 	unregistered_users.insert( std::pair<int, User *>( socket, new_user ) );
 }
