@@ -1,8 +1,9 @@
 #ifndef USER_H
 #define USER_H
 
-#include "Context.hpp"
 #include "ft_irc.hpp"
+
+class Context;
 
 class User
 {
@@ -25,6 +26,7 @@ class User
 		std::string const & get_username( void ) const;
 		std::string const & get_hostname( void ) const;
 		std::string const & get_identifier( void ) const;
+		int const & get_socket( void ) const;
 
 		void set_nickname( std::string nickname );
 		void set_username( std::string username );
