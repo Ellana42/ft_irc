@@ -32,6 +32,7 @@ class User
 		void set_username( std::string username );
 		void set_hostname( std::string hostname );
 
+		void read_from_socket( void );
 		void send_reply( std::string reply );
 };
 

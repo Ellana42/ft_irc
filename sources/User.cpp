@@ -1,4 +1,5 @@
 #include "User.hpp"
+#include "Context.hpp"
 
 /* User::User() {} */
 
@@ -56,6 +57,14 @@ void User::set_hostname( std::string hostname )
 void User::update_identifier( void )
 {
 	this->identifier = this->nickname + "!" + this->username + "@" + this->hostname;
+}
+
+void User::read_from_socket( void )
+{
+	std::string raw_message;
+	/* TODO: read from socket and store received string in raw_message */
+	/* Context will create and handle the message */
+	context.handle_message( *this, raw_message );
 }
 
 void User::send_reply( std::string reply )

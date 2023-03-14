@@ -1,6 +1,4 @@
 #include "Context.hpp"
-#include "User.hpp"
-#include <exception>
 
 template <typename T, typename U>
 void delete_map( std::map<T, U> & map )
@@ -53,6 +51,19 @@ User & Context::get_user_by_nick( std::string nickname )
 	throw std::out_of_range( "Could not find user by nickname" );
 }
 
+bool Context::is_user_nickname_in_use( std::string nickname )
+{
+	try
+	{
+		get_user_by_nick( nickname );
+		return ( true );
+	}
+	catch ( std::exception & e )
+	{
+		return ( false );
+	}
+}
+
 void Context::create_unregistered_user( int socket )
 {
 	User * new_user = new User( *this, socket );
@@ -71,8 +82,11 @@ void Context::move_user_to_registered( User & user )
 	unregistered_users.erase( user.get_socket() );
 }
 
-void Context::handle_message( Message message )
+void Context::handle_message( User & sender, std::string raw_message )
 {
+	Message message = Message( raw_message );
+	( void )sender;
+	/* Message message = Message( sender, raw_message ); */
 	handler function = handle[message.get_command()];
 	( *this.*function )( message );
 }
@@ -98,21 +112,18 @@ void Context::handle_nick( Message message )
 {
 	User & sender = message.get_sender();
 	std::string nickname = message.get( "nickname" );
+	if ( is_user_nickname_in_use( nickname ) == true )
+	{
+		sender.send_reply( rpl::err_nicknameinuse( nickname ) );
+		return ;
+	}
 	try
 	{
-		get_user_by_nick( nickname );
-		sender.send_reply( rpl::err_nicknameinuse( "nickname" ) );
+		sender.set_nickname( nickname );
 	}
-	catch ( std::exception )
+	catch ( std::exception & e )
 	{
-		try
-		{
-			sender.set_nickname( nickname );
-		}
-		catch ( std::exception )
-		{
-			sender.send_reply( rpl::err_erroneusnickname( nickname ) );
-		}
+		sender.send_reply( rpl::err_erroneusnickname( nickname ) );
 	}
 }
 /* void Context::handle_oper( Message message ) {} */

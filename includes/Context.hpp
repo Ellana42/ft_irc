@@ -3,7 +3,6 @@
 
 #include "ft_irc.hpp"
 #include "Message.hpp"
-#include "User.hpp"
 #include "reply.hpp"
 
 class User;
@@ -40,6 +39,7 @@ class Context
 		/* void handle_version( Message message ); */
 		/* void handle_who( Message message ); */
 
+		bool is_user_nickname_in_use( std::string nickname );
 
 		Context( const Context & src );
 		Context & operator=( const Context & rhs );
@@ -51,7 +51,7 @@ class Context
 		void create_unregistered_user( int socket );
 		void move_user_to_registered( User & user );
 		/* void add_new_channel( Channel & channel); */
-		void handle_message( Message message );
+		void handle_message( User & sender, std::string raw_message );
 
 		User & get_user_by_socket( int socket );
 		User & get_user_by_nick( std::string nickname );
