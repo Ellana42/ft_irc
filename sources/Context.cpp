@@ -1,7 +1,6 @@
 #include "Context.hpp"
 #include "User.hpp"
 #include <exception>
-#include <stdexcept>
 
 template <typename T, typename U>
 void delete_map( std::map<T, U> & map )
@@ -14,7 +13,11 @@ void delete_map( std::map<T, U> & map )
 	map.clear();
 }
 
-Context::Context() {}
+Context::Context()
+{
+	initialize_message_handlers();
+}
+
 Context::~Context()
 {
 	delete_map( unregistered_users );
@@ -67,8 +70,60 @@ void Context::move_user_to_registered( User & user )
 	                           &user ) );
 	unregistered_users.erase( user.get_socket() );
 }
-/* void Context::execute_message( User & sender, Message message ) {} */
-/* void Context::transmit_message( void ) {} */
+
+void Context::handle_message( Message message )
+{
+	handler function = handle[message.get_command()];
+	( *this.*function )( message );
+}
+
+void Context::initialize_message_handlers( void )
+{
+	handle.insert( std::pair<std::string, handler>( "NICK",
+	               &Context::handle_nick ) );
+	/* handle.insert( std::pair<std::string, handler>( "PRIVMSG", */
+	/*                &Context::handle_privmsg ) ); */
+	/* handle.insert( std::pair<std::string, handler>( "USER", */
+	/*                &Context::handle_nick ) ); */
+}
+
+/* void Context::handle_admin( Message message ) {} */
+/* void Context::handle_info( Message message ) {} */
+/* void Context::handle_join( Message message ) {} */
+/* void Context::handle_kick( Message message ) {} */
+/* void Context::handle_list( Message message ) {} */
+/* void Context::handle_mode( Message message ) {} */
+/* void Context::handle_names( Message message ) {} */
+void Context::handle_nick( Message message )
+{
+	User & sender = message.get_sender();
+	std::string nickname = message.get( "nickname" );
+	try
+	{
+		get_user_by_nick( nickname );
+		sender.send_reply( rpl::err_nicknameinuse( "nickname" ) );
+	}
+	catch ( std::exception )
+	{
+		try
+		{
+			sender.set_nickname( nickname );
+		}
+		catch ( std::exception )
+		{
+			sender.send_reply( rpl::err_erroneusnickname( nickname ) );
+		}
+	}
+}
+/* void Context::handle_oper( Message message ) {} */
+/* void Context::handle_part( Message message ) {} */
+/* void Context::handle_privmsg( Message message ) {} */
+/* void Context::handle_quit( Message message ) {} */
+/* void Context::handle_summon( Message message ) {} */
+/* void Context::handle_user( Message message ) {} */
+/* void Context::handle_users( Message message ) {} */
+/* void Context::handle_version( Message message ) {} */
+/* void Context::handle_who( Message message ) {} */
 
 void Context::debug_print_unregistered_users( void ) const
 {
@@ -93,3 +148,4 @@ void Context::debug_print_registered_users( void ) const
 		          << it->second->get_identifier() << std::endl;
 	}
 }
+
