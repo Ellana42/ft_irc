@@ -11,7 +11,7 @@ std::string const yourhost( void );
 std::string const created( void );
 std::string const myinfo( void );
 
-std::string const forward( User sender, Message message );
+std::string const forward( User & sender, Message message );
 
 std::string const err_nosuchnick( std::string name_or_channel );
 std::string const err_nosuchnick( std::string name_or_channel );
