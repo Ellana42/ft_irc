@@ -130,7 +130,7 @@ std::string const rpl::err_nosuchservice( User & user,
 std::string const rpl::err_noorigin( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_NOORIGIN;
+	reply += ERR_NOORIGIN " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :No origin specified\r\n";
@@ -142,7 +142,7 @@ std::string const rpl::err_noorigin( User & user )
 std::string const rpl::err_norecipient( User & user, std::string command )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_NORECIPIENT;
+	reply += ERR_NORECIPIENT " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :No recipient given (";
@@ -156,7 +156,7 @@ std::string const rpl::err_norecipient( User & user, std::string command )
 std::string const rpl::err_notexttosend( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_NOTEXTTOSEND;
+	reply += ERR_NOTEXTTOSEND " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :No text to send\r\n";
@@ -221,7 +221,7 @@ std::string const rpl::err_unknowncommand( User & user, std::string command )
 std::string const rpl::err_nomotd( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_NOMOTD;
+	reply += ERR_NOMOTD " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :MOTD File is missing\r\n";
@@ -264,7 +264,7 @@ std::string const rpl::err_fileerror( User & user, std::string file_operation,
 std::string const rpl::err_nonicknamegiven( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_NONICKNAMEGIVEN;
+	reply += ERR_NONICKNAMEGIVEN " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :No nickname given\r\n";
@@ -464,7 +464,7 @@ std::string const rpl::err_alreadyregistred( User & user )
 std::string const rpl::err_nopermforhost( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_NOPERMFORHOST;
+	reply += ERR_NOPERMFORHOST " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :Your host isn't among the privileged\r\n";
@@ -477,7 +477,7 @@ std::string const rpl::err_nopermforhost( User & user )
 std::string const rpl::err_passwdmismatch( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_PASSWDMISMATCH;
+	reply += ERR_PASSWDMISMATCH " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :Password incorrect\r\n";
@@ -490,7 +490,7 @@ std::string const rpl::err_passwdmismatch( User & user )
 std::string const rpl::err_yourebannedcreep( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_YOUREBANNEDCREEP;
+	reply += ERR_YOUREBANNEDCREEP " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :You are banned from this server\r\n";
@@ -502,7 +502,7 @@ std::string const rpl::err_yourebannedcreep( User & user )
 std::string const rpl::err_youwillbebanned( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_YOUWILLBEBANNED;
+	reply += ERR_YOUWILLBEBANNED " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += "\r\n";
@@ -620,7 +620,7 @@ std::string const rpl::err_banlistfull( User & user, std::string channel,
 std::string const rpl::err_noprivileges( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_NOPRIVILEGES;
+	reply += ERR_NOPRIVILEGES " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :Permission Denied- You're not an IRC operator\r\n";
@@ -648,7 +648,7 @@ std::string const rpl::err_chanoprivsneeded( User & user, std::string channel )
 std::string const rpl::err_cantkillserver( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_CANTKILLSERVER;
+	reply += ERR_CANTKILLSERVER " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :You can't kill a server!\r\n";
@@ -660,7 +660,7 @@ std::string const rpl::err_cantkillserver( User & user )
 std::string const rpl::err_restricted( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_RESTRICTED;
+	reply += ERR_RESTRICTED " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :Your connection is restricted!\r\n";
@@ -673,7 +673,7 @@ std::string const rpl::err_restricted( User & user )
 std::string const rpl::err_uniqopprivsneeded( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_UNIQOPPRIVSNEEDED;
+	reply += ERR_UNIQOPPRIVSNEEDED " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :You're not the original channel operator\r\n";
@@ -687,7 +687,7 @@ std::string const rpl::err_uniqopprivsneeded( User & user )
 std::string const rpl::err_nooperhost( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_NOOPERHOST;
+	reply += ERR_NOOPERHOST " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :No O-lines for your host\r\n";
@@ -700,7 +700,7 @@ std::string const rpl::err_nooperhost( User & user )
 std::string const rpl::err_umodeunknownflag( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_UMODEUNKNOWNFLAG;
+	reply += ERR_UMODEUNKNOWNFLAG " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :Unknown MODE flag\r\n";
@@ -712,7 +712,7 @@ std::string const rpl::err_umodeunknownflag( User & user )
 std::string const rpl::err_usersdontmatch( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += ERR_USERSDONTMATCH;
+	reply += ERR_USERSDONTMATCH " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += " :Cannot change mode for other users\r\n";
