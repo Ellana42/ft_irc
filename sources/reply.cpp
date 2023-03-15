@@ -48,6 +48,16 @@ std::string const rpl::myinfo( void )
 	return ( reply );
 }
 
+std::string const rpl::server_version( User & user )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_VERSION " ";
+	reply += user.get_nickname();
+	reply += " " SERVER_VERSION " " SERVER_NAME;
+	reply += " :N/A\r\n";
+	return ( reply );
+}
+
 std::string const rpl::forward( User & sender, Message message )
 {
 	std::string reply = ":";
