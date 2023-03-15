@@ -87,14 +87,57 @@ std::string const rpl::adminloc1( User & user )
 	reply += ADMIN_INFO_1 "\r\n";
 	return ( reply );
 }
-# define RPL_ADMINME "256"
-# define RPL_ADMINME_MSG "<server> :Administrative info"
-# define RPL_ADMINLOC1 "257"
-# define RPL_ADMINLOC1_MSG ":<admin info>"
-# define RPL_ADMINLOC2 "258"
-# define RPL_ADMINLOC3_MSG ":<admin info>"
-# define RPL_ADMINEMAIL "259"
-# define RPL_ADMINEMAIL_MSG ":<admin info>"
+
+std::string const rpl::adminloc2( User & user )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_ADMINLOC2 " ";
+	reply += user.get_nickname();
+	reply += " :";
+	reply += ADMIN_INFO_2 "\r\n";
+	return ( reply );
+}
+
+std::string const rpl::adminemail( User & user )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_ADMINEMAIL " ";
+	reply += user.get_nickname();
+	reply += " :";
+	reply += ADMIN_EMAIL "\r\n";
+	return ( reply );
+}
+
+/* A server responding to an INFO message is required to */
+/* send all its 'info' in a series of RPL_INFO messages */
+/* with a RPL_ENDOFINFO reply to indicate the end of the */
+/* replies. */
+std::string const rpl::info( User & user, int line )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_INFO " ";
+	reply += user.get_nickname();
+	reply += " :";
+	switch ( line )
+	{
+		case 0:
+			reply += "Server name: " SERVER_NAME "\r\n";
+		case 1:
+			reply += "Version: " SERVER_VERSION "\r\n";
+		case 2:
+			reply += "Created on: " SERVER_CREATION "\r\n";
+	}
+	return ( reply );
+}
+
+std::string const rpl::info_end( User & user )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_ENDOFINFO " ";
+	reply += user.get_nickname();
+	reply += " :End of INFO list\r\n";
+	return ( reply );
+}
 
 std::string const rpl::forward( User & sender, Message message )
 {

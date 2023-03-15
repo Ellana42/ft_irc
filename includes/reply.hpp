@@ -15,6 +15,8 @@ std::string const adminme( User & user );
 std::string const adminloc1( User & user );
 std::string const adminloc2( User & user );
 std::string const adminemail( User & user );
+std::string const info( User & user, int line );
+std::string const info_end( User & user );
 
 std::string const forward( User & sender, Message message );
 

@@ -137,8 +137,11 @@ void Context::handle_admin( Message message )
 
 void Context::handle_info( Message message )
 {
-	/* TODO: implement function */
-	( void )message;
+	User & sender = message.get_sender();
+	sender.send_reply( rpl::info( sender, 0 ) );
+	sender.send_reply( rpl::info( sender, 1 ) );
+	sender.send_reply( rpl::info( sender, 2 ) );
+	sender.send_reply( rpl::info_end( sender ) );
 }
 
 void Context::handle_join( Message message )
