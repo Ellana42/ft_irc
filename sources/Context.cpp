@@ -98,7 +98,7 @@ void Context::handle_message( User & sender, std::string raw_message )
 bool Context::should_handle_message( User & sender, Message message )
 {
 	if ( sender.is_fully_registered() == false && ( message.get_command() != "USER"
-	        || message.get_command() != "NICK" ) )
+	        || message.get_command() != "NICK" || message.get_command() != "QUIT" ) )
 	{
 		return ( false );
 	}
