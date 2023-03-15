@@ -1,10 +1,12 @@
 #include "User.hpp"
 #include "Context.hpp"
+#include <stdexcept>
 
 /* User::User() {} */
 
 User::User( Context & context, int socket ) : nickname( "*" ), username( "*" ),
-	hostname( "*" ), context( context ), socket( socket )
+	hostname( "*" ), realname( "*" ), fully_registered( false ), context( context ),
+	socket( socket )
 {
 	update_identifier();
 }
@@ -19,6 +21,11 @@ std::string const & User::get_nickname( void ) const
 std::string const & User::get_username( void ) const
 {
 	return ( this->username );
+}
+
+std::string const & User::get_realname( void ) const
+{
+	return ( this->realname );
 }
 
 std::string const & User::get_hostname( void ) const
@@ -48,15 +55,34 @@ void User::set_username( std::string username )
 	this->update_identifier();
 }
 
+void User::set_realname( std::string realname )
+{
+	this->realname = realname;
+}
+
 void User::set_hostname( std::string hostname )
 {
 	this->hostname = hostname;
 	this->update_identifier();
 }
 
+void User::set_registered( void )
+{
+	if ( this->fully_registered == true )
+	{
+		throw std::runtime_error( "Attempting to reset already set user registered flag !" );
+	}
+	this->fully_registered = true;
+}
+
 void User::update_identifier( void )
 {
 	this->identifier = this->nickname + "!" + this->username + "@" + this->hostname;
+}
+
+bool User::is_fully_registered( void ) const
+{
+	return ( this->fully_registered );
 }
 
 void User::read_from_socket( void )
@@ -70,4 +96,23 @@ void User::read_from_socket( void )
 void User::send_reply( std::string reply )
 {
 	send( socket, reply.c_str(), reply.length(), 0 );
+}
+
+bool User::has_nickname( void )
+{
+	if ( this->nickname != "*" )
+	{
+		return ( true );
+	}
+	return ( false );
+}
+
+bool User::has_user_info( void )
+{
+	if ( this->username != "*" && this->hostname != "*"
+	        && this->realname != "*" )
+	{
+		return ( true );
+	}
+	return ( false );
 }

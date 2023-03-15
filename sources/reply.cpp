@@ -58,6 +58,44 @@ std::string const rpl::server_version( User & user )
 	return ( reply );
 }
 
+/* When replying to an ADMIN message, a server */
+/* is expected to use replies RPL_ADMINME */
+/* through to RPL_ADMINEMAIL and provide a text */
+/* message with each.  For RPL_ADMINLOC1 a */
+/* description of what city, state and country */
+/* the server is in is expected, followed by */
+/* details of the institution (RPL_ADMINLOC2) */
+/* and finally the administrative contact for the */
+/* server (an email address here is REQUIRED) */
+/* in RPL_ADMINEMAIL. */
+std::string const rpl::adminme( User & user )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_ADMINME " ";
+	reply += user.get_nickname();
+	reply += " " SERVER_NAME;
+	reply += " :Administrative info\r\n";
+	return ( reply );
+}
+
+std::string const rpl::adminloc1( User & user )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_ADMINLOC1 " ";
+	reply += user.get_nickname();
+	reply += " :";
+	reply += ADMIN_INFO_1 "\r\n";
+	return ( reply );
+}
+# define RPL_ADMINME "256"
+# define RPL_ADMINME_MSG "<server> :Administrative info"
+# define RPL_ADMINLOC1 "257"
+# define RPL_ADMINLOC1_MSG ":<admin info>"
+# define RPL_ADMINLOC2 "258"
+# define RPL_ADMINLOC3_MSG ":<admin info>"
+# define RPL_ADMINEMAIL "259"
+# define RPL_ADMINEMAIL_MSG ":<admin info>"
+
 std::string const rpl::forward( User & sender, Message message )
 {
 	std::string reply = ":";

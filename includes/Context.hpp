@@ -44,6 +44,7 @@ class Context
 		void handle_who( Message message );
 
 		bool is_user_nickname_in_use( std::string nickname );
+		bool should_handle_message( User & sender, Message message );
 
 		Context( const Context & src );
 		Context & operator=( const Context & rhs );
@@ -53,7 +54,7 @@ class Context
 		~Context();
 
 		void create_unregistered_user( int socket );
-		void move_user_to_registered( User & user );
+		void register_user( User & user );
 		/* void add_new_channel( Channel & channel); */
 		void handle_message( User & sender, std::string raw_message );
 
@@ -63,7 +64,5 @@ class Context
 		void debug_print_unregistered_users( void ) const;
 		void debug_print_registered_users( void ) const;
 };
-
-std::ostream & operator<<( std::ostream & os, Context const & obj );
 
 #endif /* CONTEXT_H */

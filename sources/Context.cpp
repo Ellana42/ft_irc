@@ -74,8 +74,9 @@ void Context::create_unregistered_user( int socket )
 	unregistered_users.insert( pair_int_user ( socket, new_user ) );
 }
 
-void Context::move_user_to_registered( User & user )
+void Context::register_user( User & user )
 {
+	user.set_registered();
 	registered_users.insert( pair_string_user( user.get_nickname(), &user ) );
 	unregistered_users.erase( user.get_socket() );
 }
@@ -83,10 +84,27 @@ void Context::move_user_to_registered( User & user )
 void Context::handle_message( User & sender, std::string raw_message )
 {
 	Message message = Message( sender, raw_message );
-	handler function = handle[message.get_command()];
-	( *this.*function )( message );
+	if ( should_handle_message( sender, message ) )
+	{
+		handler function = handle[message.get_command()];
+		( *this.*function )( message );
+	}
+	else
+	{
+		sender.send_reply( rpl::err_notregistered( sender ) );
+	}
 }
 
+bool Context::should_handle_message( User & sender, Message message )
+{
+	if ( sender.is_fully_registered() == false && ( message.get_command() != "USER"
+	        || message.get_command() != "NICK" ) )
+	{
+		return ( false );
+	}
+	return ( true );
+
+}
 void Context::initialize_message_handlers( void )
 {
 	handle.insert( pair_handler( "ADMIN", &Context::handle_admin ) );
@@ -110,8 +128,11 @@ void Context::initialize_message_handlers( void )
 
 void Context::handle_admin( Message message )
 {
-	/* TODO: implement function */
-	( void )message;
+	User & sender = message.get_sender();
+	sender.send_reply( rpl::adminme( sender ) );
+	sender.send_reply( rpl::adminloc1( sender ) );
+	sender.send_reply( rpl::adminloc2( sender ) );
+	sender.send_reply( rpl::adminemail( sender ) );
 }
 
 void Context::handle_info( Message message )
@@ -156,16 +177,21 @@ void Context::handle_nick( Message message )
 	std::string nickname = message.get( "nickname" );
 	if ( is_user_nickname_in_use( nickname ) == true )
 	{
-		sender.send_reply( rpl::err_nicknameinuse( nickname ) );
+		sender.send_reply( rpl::err_nicknameinuse( sender, nickname ) );
 		return ;
 	}
 	try
 	{
+		bool user_had_nickname = sender.has_nickname();
 		sender.set_nickname( nickname );
+		if ( !user_had_nickname && sender.has_user_info() && sender.has_nickname() )
+		{
+			register_user( sender );
+		}
 	}
 	catch ( std::exception & e )
 	{
-		sender.send_reply( rpl::err_erroneusnickname( nickname ) );
+		sender.send_reply( rpl::err_erroneusnickname( sender, nickname ) );
 	}
 }
 
@@ -197,25 +223,52 @@ void Context::handle_quit( Message message )
 
 void Context::handle_summon( Message message )
 {
-	message.get_sender().send_reply( rpl::err_summondisabled() );
+	User & sender = message.get_sender();
+	sender.send_reply( rpl::err_summondisabled( sender ) );
 }
 
 void Context::handle_user( Message message )
 {
-	/* TODO: implement function */
-	( void )message;
+	/* TODO: add user mode support */
+	User & sender = message.get_sender();
+	if ( sender.is_fully_registered() )
+	{
+		sender.send_reply( rpl::err_alreadyregistred( sender ) );
+		return ;
+	}
+	else if ( sender.has_user_info() )
+	{
+		sender.send_reply( rpl::err_notregistered( sender ) );
+		return;
+	}
+	try
+	{
+		sender.set_username( message.get( "username" ) );
+		/* sender.set_mode( message.get( "mode" ) ); */
+		sender.set_hostname( message.get( "hostname" ) );
+		sender.set_realname( message.get( "realname" ) );
+		if ( sender.has_nickname() && sender.has_user_info() )
+		{
+			register_user( sender );
+		}
+	}
+	catch ( std::exception & e )
+	{
+		sender.send_reply( rpl::err_needmoreparams( sender, message.get_command() ) );
+	}
 }
 
 void Context::handle_users( Message message )
 {
 	/* TODO: decide if we are implementing function */
-	message.get_sender().send_reply( rpl::err_usersdisabled() );
+	User & sender = message.get_sender();
+	sender.send_reply( rpl::err_usersdisabled( sender ) );
 }
 
 void Context::handle_version( Message message )
 {
-	/* TODO: implement function */
-	( void )message;
+	User & sender = message.get_sender();
+	sender.send_reply( rpl::server_version( sender ) );
 }
 
 void Context::handle_who( Message message )
