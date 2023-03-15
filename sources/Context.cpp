@@ -129,6 +129,12 @@ void Context::initialize_message_handlers( void )
 void Context::handle_admin( Message message )
 {
 	User & sender = message.get_sender();
+	std::string target = message.get( "target" );
+	if ( !target.empty() )
+	{
+		sender.send_reply( rpl::err_nosuchserver( sender, target ) );
+		return ;
+	}
 	sender.send_reply( rpl::adminme( sender ) );
 	sender.send_reply( rpl::adminloc1( sender ) );
 	sender.send_reply( rpl::adminloc2( sender ) );
@@ -138,6 +144,12 @@ void Context::handle_admin( Message message )
 void Context::handle_info( Message message )
 {
 	User & sender = message.get_sender();
+	std::string target = message.get( "target" );
+	if ( !target.empty() )
+	{
+		sender.send_reply( rpl::err_nosuchserver( sender, target ) );
+		return ;
+	}
 	sender.send_reply( rpl::info( sender, 0 ) );
 	sender.send_reply( rpl::info( sender, 1 ) );
 	sender.send_reply( rpl::info( sender, 2 ) );
