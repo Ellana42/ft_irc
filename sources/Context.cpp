@@ -226,8 +226,9 @@ void Context::handle_privmsg( Message message )
 {
 	/* TODO: check if sending to channel or user */
 	User & from_user = message.get_sender();
-	User & to_user = registered_users[message.get( "nickname" )];
-	to_user.send_reply( rpl::forward( from_user, message ) );
+	User & to_user = registered_users[message.get( "msgtarget" )];
+	to_user.send_reply( rpl::forward( from_user,
+	                                  message.get( "text_to_be_sent" ) ) );
 }
 
 void Context::handle_quit( Message message )
