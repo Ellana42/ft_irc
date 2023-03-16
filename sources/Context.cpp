@@ -1,4 +1,6 @@
 #include "Context.hpp"
+#include <exception>
+#include <stdexcept>
 
 template <typename T, typename U>
 void delete_map( std::map<T, U> & map )
@@ -83,8 +85,9 @@ void Context::register_user( User & user )
 
 void Context::handle_message( User & sender, std::string raw_message )
 {
-	Message message = Message( sender, raw_message );
-	if ( should_handle_message( sender, message ) )
+	Message & message = create_message( sender, raw_message );
+	User & sender = message.get_sender();
+	if ( should_handle_message( sender, &message ) )
 	{
 		handler function = handle[message.get_command()];
 		( *this.*function )( message );
@@ -93,9 +96,27 @@ void Context::handle_message( User & sender, std::string raw_message )
 	{
 		sender.send_reply( rpl::err_notregistered( sender ) );
 	}
+	delete ( &message );
 }
 
-bool Context::should_handle_message( User & sender, Message message )
+Message & Context::create_message( User & sender, std::string raw_message )
+{
+	try
+	{
+		Message * message = new Message( sender, raw_message );
+		if ( message == NULL )
+		{
+			throw std::runtime_error( "Could not malloc message !" );
+		}
+		return ( *message );
+	}
+	catch ( std::exception & e )
+	{
+		/* TODO: Catch multiple message parsing exceptions and reply accordingly */
+	}
+}
+
+bool Context::should_handle_message( User & sender, Message & message )
 {
 	if ( sender.is_fully_registered() == false && ( message.get_command() != "USER"
 	        || message.get_command() != "NICK" || message.get_command() != "QUIT" ) )
@@ -126,7 +147,7 @@ void Context::initialize_message_handlers( void )
 	handle.insert( pair_handler( "WHO", &Context::handle_who ) );
 }
 
-void Context::handle_admin( Message message )
+void Context::handle_admin( Message & message )
 {
 	User & sender = message.get_sender();
 	std::string target = message.get( "target" );
@@ -141,7 +162,7 @@ void Context::handle_admin( Message message )
 	sender.send_reply( rpl::adminemail( sender ) );
 }
 
-void Context::handle_info( Message message )
+void Context::handle_info( Message & message )
 {
 	User & sender = message.get_sender();
 	std::string target = message.get( "target" );
@@ -156,37 +177,37 @@ void Context::handle_info( Message message )
 	sender.send_reply( rpl::info_end( sender ) );
 }
 
-void Context::handle_join( Message message )
+void Context::handle_join( Message & message )
 {
 	/* TODO: implement function */
 	( void )message;
 }
 
-void Context::handle_kick( Message message )
+void Context::handle_kick( Message & message )
 {
 	/* TODO: implement function */
 	( void )message;
 }
 
-void Context::handle_list( Message message )
+void Context::handle_list( Message & message )
 {
 	/* TODO: implement function */
 	( void )message;
 }
 
-void Context::handle_mode( Message message )
+void Context::handle_mode( Message & message )
 {
 	/* TODO: implement function */
 	( void )message;
 }
 
-void Context::handle_names( Message message )
+void Context::handle_names( Message & message )
 {
 	/* TODO: implement function */
 	( void )message;
 }
 
-void Context::handle_nick( Message message )
+void Context::handle_nick( Message & message )
 {
 	User & sender = message.get_sender();
 	std::string nickname = message.get( "nickname" );
@@ -210,19 +231,19 @@ void Context::handle_nick( Message message )
 	}
 }
 
-void Context::handle_oper( Message message )
+void Context::handle_oper( Message & message )
 {
 	/* TODO: implement function */
 	( void )message;
 }
 
-void Context::handle_part( Message message )
+void Context::handle_part( Message & message )
 {
 	/* TODO: implement function */
 	( void )message;
 }
 
-void Context::handle_privmsg( Message message )
+void Context::handle_privmsg( Message & message )
 {
 	/* TODO: check if sending to channel or user */
 	User & from_user = message.get_sender();
@@ -231,19 +252,19 @@ void Context::handle_privmsg( Message message )
 	                                  message.get( "text_to_be_sent" ) ) );
 }
 
-void Context::handle_quit( Message message )
+void Context::handle_quit( Message & message )
 {
 	/* TODO: implement function */
 	( void )message;
 }
 
-void Context::handle_summon( Message message )
+void Context::handle_summon( Message & message )
 {
 	User & sender = message.get_sender();
 	sender.send_reply( rpl::err_summondisabled( sender ) );
 }
 
-void Context::handle_user( Message message )
+void Context::handle_user( Message & message )
 {
 	/* TODO: add user mode support */
 	User & sender = message.get_sender();
@@ -274,20 +295,20 @@ void Context::handle_user( Message message )
 	}
 }
 
-void Context::handle_users( Message message )
+void Context::handle_users( Message & message )
 {
 	/* TODO: decide if we are implementing function */
 	User & sender = message.get_sender();
 	sender.send_reply( rpl::err_usersdisabled( sender ) );
 }
 
-void Context::handle_version( Message message )
+void Context::handle_version( Message & message )
 {
 	User & sender = message.get_sender();
 	sender.send_reply( rpl::server_version( sender ) );
 }
 
-void Context::handle_who( Message message )
+void Context::handle_who( Message & message )
 {
 	/* TODO: implement function */
 	( void )message;
