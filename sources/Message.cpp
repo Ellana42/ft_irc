@@ -1,7 +1,8 @@
 #include "../includes/Message.hpp"
 #include <stdexcept>
+#include "Parsing.hpp"
 
-Message::Message( std::string raw_message )
+Message::Message( std::string raw_message ) : parser( NULL )
 {
 	if ( raw_message.size() > MAX_SIZE )
 	{
@@ -18,13 +19,20 @@ Message::Message( std::string raw_message )
 	}
 	raw_message.resize( raw_message.size() - 2 );
 
-	Parsing parser( raw_message );
-	parser.parse();
-	command = parser.get_command();
-	args = parser.args;
+	parser = new Parsing( raw_message );
 }
 
-Message::~Message( void ) {};
+void Message::parse( void )
+{
+	parser->parse();
+	command = parser->get_command();
+	args = parser->args;
+}
+
+Message::~Message( void )
+{
+	delete parser;
+};
 
 std::string Message::get( std::string arg_name )
 {
