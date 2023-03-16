@@ -214,13 +214,7 @@
 /* RPL_ENDOFBANLIST MUST be sent. */
 
 # define RPL_INFO "371"
-# define RPL_INFO_MSG ":<string>"
 # define RPL_ENDOFINFO "374"
-# define RPL_ENDOFINFO_MSG ":End of INFO list"
-/* A server responding to an INFO message is required to */
-/* send all its 'info' in a series of RPL_INFO messages */
-/* with a RPL_ENDOFINFO reply to indicate the end of the */
-/* replies. */
 
 # define RPL_MOTDSTART "375"
 # define RPL_MOTDSTART_MSG ":- <server> Message of the day - "
@@ -385,23 +379,9 @@
 /* is found for them. */
 
 # define RPL_ADMINME "256"
-# define RPL_ADMINME_MSG "<server> :Administrative info"
 # define RPL_ADMINLOC1 "257"
-# define RPL_ADMINLOC1_MSG ":<admin info>"
 # define RPL_ADMINLOC2 "258"
-# define RPL_ADMINLOC3_MSG ":<admin info>"
 # define RPL_ADMINEMAIL "259"
-# define RPL_ADMINEMAIL_MSG ":<admin info>"
-/* When replying to an ADMIN message, a server */
-/* is expected to use replies RPL_ADMINME */
-/* through to RPL_ADMINEMAIL and provide a text */
-/* message with each.  For RPL_ADMINLOC1 a */
-/* description of what city, state and country */
-/* the server is in is expected, followed by */
-/* details of the institution (RPL_ADMINLOC2) */
-/* and finally the administrative contact for the */
-/* server (an email address here is REQUIRED) */
-/* in RPL_ADMINEMAIL. */
 
 # define RPL_TRYAGAIN "263"
 # define RPL_TRYAGAIN_MSG "<command> :Please wait a while and try again."

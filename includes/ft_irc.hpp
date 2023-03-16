@@ -27,8 +27,8 @@
 # define SERVER_CREATION "7/03/2023"
 # define SERVER_VERSION "0.01"
 
-# define ADMIN_INFO_1 "The Chatty 42 Internet Relay Chat"
-# define ADMIN_INFO_2 "iazimzha mcombeau mkaploun"
+# define ADMIN_INFO_1 "Paris, France"
+# define ADMIN_INFO_2 "The best 42 Paris IRC server !"
 # define ADMIN_EMAIL "iazimzha@student.42.fr mcombeau@student.42.fr mkaploun@student.42.fr"
 
 #endif /* FT_IRC_H */
