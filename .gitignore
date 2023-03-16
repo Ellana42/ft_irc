@@ -37,3 +37,5 @@ sircc
 # Misc
 .cache
 compile_commands.json
+compile_flags.txt
+main.cpp

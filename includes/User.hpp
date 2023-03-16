@@ -13,6 +13,7 @@ class User
 		std::string hostname;
 		std::string realname;
 		std::string identifier;
+
 		bool fully_registered;
 		Context & context;
 		int	socket;

@@ -3,6 +3,7 @@
 
 #include <list>
 #include <map>
+#include <vector>
 #include <iomanip>
 #include <iostream>
 #include <sys/socket.h>
