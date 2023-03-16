@@ -1,4 +1,5 @@
 #include "Context.hpp"
+#include "Parsing.hpp"
 #include <exception>
 #include <stdexcept>
 
@@ -85,21 +86,47 @@ void Context::register_user( User & user )
 
 void Context::handle_message( User & sender, std::string raw_message )
 {
-	Message & message = create_message( sender, raw_message );
-	User & sender = message.get_sender();
-	if ( should_handle_message( sender, &message ) )
+	/* TODO: There is a better way to do this... refactof the hell out of it pleaaaase. */
+	Message * message;
+
+	try
 	{
-		handler function = handle[message.get_command()];
-		( *this.*function )( message );
+		message = create_message( sender, raw_message );
+	}
+	catch ( std::exception & e )
+	{
+		return ;
+	}
+	try
+	{
+		message->parse();
+	}
+	catch ( Parsing::TooManyParamsException & e )
+	{
+		sender.send_reply( rpl::err_toomanyparams( sender, message->get_command() ) );
+	}
+	catch ( Parsing::NeedMoreParamsException & e )
+	{
+		sender.send_reply( rpl::err_needmoreparams( sender, message->get_command() ) );
+	}
+	catch ( Parsing::UnknownCommandException & e )
+	{
+		sender.send_reply( rpl::err_unknowncommand( sender, message->get_command() ) );
+	}
+
+	if ( should_handle_message( sender, *message ) )
+	{
+		handler function = handle[message->get_command()];
+		( *this.*function )( *message );
 	}
 	else
 	{
 		sender.send_reply( rpl::err_notregistered( sender ) );
 	}
-	delete ( &message );
+	delete ( message );
 }
 
-Message & Context::create_message( User & sender, std::string raw_message )
+Message * Context::create_message( User & sender, std::string raw_message )
 {
 	try
 	{
@@ -108,12 +135,14 @@ Message & Context::create_message( User & sender, std::string raw_message )
 		{
 			throw std::runtime_error( "Could not malloc message !" );
 		}
-		return ( *message );
+		return ( message );
 	}
-	catch ( std::exception & e )
+	catch ( Parsing::UnknownCommandException & e )
 	{
-		/* TODO: Catch multiple message parsing exceptions and reply accordingly */
+		sender.send_reply( rpl::err_unknowncommand( sender, e.what() ) );
+		throw std::runtime_error( "OOPS : TODO: refactor this crap" );
 	}
+	return ( NULL );
 }
 
 bool Context::should_handle_message( User & sender, Message & message )
@@ -247,9 +276,8 @@ void Context::handle_privmsg( Message & message )
 {
 	/* TODO: check if sending to channel or user */
 	User & from_user = message.get_sender();
-	User & to_user = registered_users[message.get( "msgtarget" )];
-	to_user.send_reply( rpl::forward( from_user,
-	                                  message.get( "text_to_be_sent" ) ) );
+	User * to_user = registered_users[message.get( "msgtarget" )];
+	to_user->send_reply( rpl::forward( from_user, message ) );
 }
 
 void Context::handle_quit( Message & message )
@@ -282,7 +310,7 @@ void Context::handle_user( Message & message )
 	{
 		sender.set_username( message.get( "username" ) );
 		/* sender.set_mode( message.get( "mode" ) ); */
-		sender.set_hostname( message.get( "hostname" ) );
+		sender.set_hostname( message.get( "unused" ) );
 		sender.set_realname( message.get( "realname" ) );
 		if ( sender.has_nickname() && sender.has_user_info() )
 		{

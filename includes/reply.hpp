@@ -18,7 +18,7 @@ std::string const adminemail( User & user );
 std::string const info( User & user, int line );
 std::string const info_end( User & user );
 
-std::string const forward( User & sender, Message message );
+std::string const forward( User & sender, Message & message );
 
 std::string const err_nosuchnick( User & user, std::string name_or_channel );
 std::string const err_nosuchnick( User & user, std::string name_or_channel );
