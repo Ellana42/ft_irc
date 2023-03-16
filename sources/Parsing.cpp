@@ -9,12 +9,15 @@ Parsing::Parsing( std::string raw_content ) : tokenizer( Tokenizer(
 {
 	tokenizer.tokenize();
 	tokens = tokenizer.get_tokens();
+	if ( tokens.size() == 0 )
+	{
+		throw
+	}
 	/* commands["ADMIN"].push_back( "target" ); */
 	/* modes["ADMIN"].push_back( Optional ); */
 
 	/* commands["INFO"].push_back( "target" ); */
 	/* modes["INFO"].push_back( Optional ); */
-
 	/* commands["JOIN"].push_back( "channel" ); */
 	/* modes["JOIN"].push_back( List ); */
 	/* commands["JOIN"].push_back( "key" ); */
@@ -41,6 +44,16 @@ Parsing::Parsing( std::string raw_content ) : tokenizer( Tokenizer(
 }
 
 void Parsing::parse( void )
+{
+
+}
+
+void Parsing::parse_no_arg( void )
+{
+	return ;
+}
+
+void Parsing::parse_simple( void )
 {
 
 }
