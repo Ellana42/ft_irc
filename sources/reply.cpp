@@ -139,12 +139,16 @@ std::string const rpl::info_end( User & user )
 	return ( reply );
 }
 
-std::string const rpl::forward( User & sender, Message message )
+std::string const rpl::forward( User & sender, Message & message )
 {
 	std::string reply = ":";
 	reply += sender.get_identifier();
-	/* reply += " " + message.get_content(); */
+	reply += " ";
+	reply += message.get_command();
+	reply += " ";
+	reply += message.get( "msgtarget" );
+	reply += " :";
+	reply += message.get( "text to send" );
 	reply += "\r\n";
-	( void )message;
 	return ( reply );
 }
