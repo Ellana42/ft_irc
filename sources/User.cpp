@@ -30,6 +30,11 @@ std::string const & User::get_identifier( void ) const
 	return ( this->identifier );
 }
 
+int const & User::get_socket( void ) const
+{
+	return ( this->socket );
+}
+
 void User::set_nickname( std::string nickname )
 {
 	this->nickname = nickname;
