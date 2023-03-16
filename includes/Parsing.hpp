@@ -13,7 +13,6 @@ class Parsing
 	private:
 
 		std::string command;
-		std::map<std::string, std::list<std::string> > args;
 
 		Tokenizer tokenizer;
 
@@ -23,6 +22,8 @@ class Parsing
 		unsigned int	current;
 
 	public:
+		std::map<std::string, std::string> args;
+
 		Parsing( std::string raw_content );
 		virtual ~Parsing();
 		std::string get_current_token();
