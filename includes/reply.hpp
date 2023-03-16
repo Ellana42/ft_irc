@@ -6,70 +6,81 @@
 
 namespace rpl
 {
-std::string const welcome( User & User );
+std::string const welcome( User & user );
 std::string const yourhost( void );
 std::string const created( void );
 std::string const myinfo( void );
+std::string const server_version( User & user );
+std::string const adminme( User & user );
+std::string const adminloc1( User & user );
+std::string const adminloc2( User & user );
+std::string const adminemail( User & user );
+std::string const info( User & user, int line );
+std::string const info_end( User & user );
 
-std::string const forward( User sender, Message message );
+std::string const forward( User & sender, Message message );
 
-std::string const err_nosuchnick( std::string name_or_channel );
-std::string const err_nosuchnick( std::string name_or_channel );
-std::string const err_nosuchserver( std::string server_name );
-std::string const err_nosuchchannel( std::string channel_name );
-std::string const err_cannotsendtochan( std::string channel_name );
-std::string const err_toomanychannels( std::string channel_name );
-std::string const err_wasnosuchnick( std::string nickname );
-std::string const err_toomanytargets( std::string target, int error_code,
+std::string const err_nosuchnick( User & user, std::string name_or_channel );
+std::string const err_nosuchnick( User & user, std::string name_or_channel );
+std::string const err_nosuchserver( User & user, std::string server_name );
+std::string const err_nosuchchannel( User & user, std::string channel_name );
+std::string const err_cannotsendtochan( User & user, std::string channel_name );
+std::string const err_toomanychannels( User & user, std::string channel_name );
+std::string const err_wasnosuchnick( User & user, std::string nickname );
+std::string const err_toomanytargets( User & user, std::string target,
+                                      int error_code,
                                       std::string abort_message );
-std::string const err_nosuchservice( std::string service_name );
-std::string const err_noorigin( void );
-std::string const err_norecipient( std::string command );
-std::string const err_notexttosend( void );
-std::string const err_notoplevel( std::string mask );
-std::string const err_wildtoplevel( std::string mask );
-std::string const err_badmask( std::string mask );
-std::string const err_unknowncommand( std::string command );
-std::string const err_nomotd( void );
-std::string const err_noadmininfo( std::string server );
-std::string const err_fileerror( std::string file_operation,
+std::string const err_nosuchservice( User & user, std::string service_name );
+std::string const err_noorigin( User & user );
+std::string const err_norecipient( User & user, std::string command );
+std::string const err_notexttosend( User & user );
+std::string const err_notoplevel( User & user, std::string mask );
+std::string const err_wildtoplevel( User & user, std::string mask );
+std::string const err_badmask( User & user, std::string mask );
+std::string const err_unknowncommand( User & user, std::string command );
+std::string const err_nomotd( User & user );
+std::string const err_noadmininfo( User & user, std::string server );
+std::string const err_fileerror( User & user, std::string file_operation,
                                  std::string filename );
-std::string const err_nonicknamegiven( void );
-std::string const err_erroneusnickname( std::string nickname );
-std::string const err_nicknametoolong( std::string nickname );
-std::string const err_nicknameinuse( std::string nickname );
-std::string const err_unavailresource( std::string nickname_or_channel );
-std::string const err_usernotinchannel( std::string nickname,
+std::string const err_nonicknamegiven( User & user );
+std::string const err_erroneusnickname( User & user, std::string nickname );
+std::string const err_nicknametoolong( User & user, std::string nickname );
+std::string const err_nicknameinuse( User & user, std::string nickname );
+std::string const err_unavailresource( User & user,
+                                       std::string nickname_or_channel );
+std::string const err_usernotinchannel( User & user, std::string nickname,
                                         std::string channel );
-std::string const err_notonchannel( std::string channel );
-std::string const err_useronchannel( std::string user,
+std::string const err_notonchannel( User & user, std::string channel );
+std::string const err_useronchannel( User & user, std::string username,
                                      std::string channel );
-std::string const err_nologin( std::string user );
-std::string const err_summondisabled( void );
-std::string const err_usersdisabled( void );
-std::string const err_notregistered( void );
-std::string const err_needmoreparams( std::string command );
-std::string const err_toomanyparams( std::string command );
-std::string const err_alreadyregistred( void );
-std::string const err_nopermforhost( void );
-std::string const err_passwdmismatch( void );
-std::string const err_yourebannedcreep( void );
-std::string const err_youwillbebanned( void );
-std::string const err_keyset( std::string channel );
-std::string const err_channelisfull( std::string channel );
-std::string const err_unknownmode( std::string channel, std::string modechar );
-std::string const err_inviteonlychan( std::string channel );
-std::string const err_bannedfromchan( std::string channel );
-std::string const err_badchannelkey( std::string channel );
-std::string const err_badchanmask( std::string channel );
-std::string const err_nochanmodes( std::string channel );
-std::string const err_banlistfull( std::string channel, std::string modechar );
-std::string const err_noprivileges( void );
-std::string const err_chanoprivsneeded( std::string channel );
-std::string const err_cantkillserver( void );
-std::string const err_restricted( void );
-std::string const err_uniqopprivsneeded( void );
-std::string const err_nooperhost( void );
-std::string const err_umodeunknownflag( void );
-std::string const err_usersdontmatch( void );
+std::string const err_nologin( User & user );
+std::string const err_summondisabled( User & user );
+std::string const err_usersdisabled( User & user );
+std::string const err_notregistered( User & user );
+std::string const err_needmoreparams( User & user, std::string command );
+std::string const err_toomanyparams( User & user, std::string command );
+std::string const err_alreadyregistred( User & user );
+std::string const err_nopermforhost( User & user );
+std::string const err_passwdmismatch( User & user );
+std::string const err_yourebannedcreep( User & user );
+std::string const err_youwillbebanned( User & user );
+std::string const err_keyset( User & user, std::string channel );
+std::string const err_channelisfull( User & user, std::string channel );
+std::string const err_unknownmode( User & user, std::string channel,
+                                   std::string modechar );
+std::string const err_inviteonlychan( User & user, std::string channel );
+std::string const err_bannedfromchan( User & user, std::string channel );
+std::string const err_badchannelkey( User & user, std::string channel );
+std::string const err_badchanmask( User & user, std::string channel );
+std::string const err_nochanmodes( User & user, std::string channel );
+std::string const err_banlistfull( User & user, std::string channel,
+                                   std::string modechar );
+std::string const err_noprivileges( User & user );
+std::string const err_chanoprivsneeded( User & user, std::string channel );
+std::string const err_cantkillserver( User & user );
+std::string const err_restricted( User & user );
+std::string const err_uniqopprivsneeded( User & user );
+std::string const err_nooperhost( User & user );
+std::string const err_umodeunknownflag( User & user );
+std::string const err_usersdontmatch( User & user );
 }
