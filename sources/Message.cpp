@@ -11,25 +11,30 @@ Message::Message( std::string raw_message )
 	{
 		throw std::invalid_argument( "Message too short" );
 	}
-	if ( !( raw_message[raw_message.size() - 1] == '\r'
-	        && raw_message[raw_message.size()] == '\n' ) )
+	if ( !( raw_message[raw_message.size() - 2] == '\r'
+	        && raw_message[raw_message.size() - 1] == '\n' ) )
 	{
 		throw std::invalid_argument( "Invalid message end" );
 	}
 	raw_message.resize( raw_message.size() - 2 );
+
+	Parsing parser( raw_message );
+	parser.parse();
+	command = parser.get_command();
+	args = parser.args;
 }
 
 Message::~Message( void ) {};
 
 std::string Message::get( std::string arg_name )
 {
-	return ( args[arg_name].front() );
-}
-
-std::list<std::string> Message::get_list( std::string arg_name )
-{
 	return ( args[arg_name] );
 }
+
+/* std::list<std::string> Message::get_list( std::string arg_name ) */
+/* { */
+/* 	return ( args[arg_name] ); */
+/* } */
 
 std::string Message::get_command( void )
 {

@@ -2,7 +2,7 @@
 #define PARSING_H
 
 #include <exception>
-#include "../includes/ft_irc.hpp"
+#include "ft_irc.hpp"
 #include "Tokenizer.hpp"
 
 
