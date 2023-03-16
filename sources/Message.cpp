@@ -20,3 +20,19 @@ Message::Message( std::string raw_message )
 }
 
 Message::~Message( void ) {};
+
+std::string Message::get( std::string arg_name )
+{
+	return ( args[arg_name].front() );
+}
+
+std::list<std::string> Message::get_list( std::string arg_name )
+{
+	return ( args[arg_name] );
+}
+
+std::string Message::get_command( void )
+{
+	return ( command );
+}
+

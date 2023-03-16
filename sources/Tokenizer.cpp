@@ -109,7 +109,7 @@ void Tokenizer::push_token( void )
 	buffer.clear();
 }
 
-std::list<std::string> Tokenizer::get_tokens( void )
+std::vector<std::string> Tokenizer::get_tokens( void )
 {
 	return ( tokens );
 }

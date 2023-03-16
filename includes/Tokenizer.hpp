@@ -10,7 +10,7 @@ class Tokenizer
 	private:
 
 		std::string content;
-		std::list<std::string> tokens;
+		std::vector<std::string> tokens;
 		State state;
 		unsigned int current_position;
 
@@ -29,7 +29,7 @@ class Tokenizer
 		virtual ~Tokenizer();
 		void tokenize( void );
 		void change_state( State new_state );
-		std::list<std::string> get_tokens( void );
+		std::vector<std::string> get_tokens( void );
 };
 
 #endif /* TOKENIZER_H */

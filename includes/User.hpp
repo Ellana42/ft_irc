@@ -12,7 +12,7 @@ class User
 		std::string username;
 		std::string hostname;
 		std::string identifier;
-		Context & context;
+		/* Context & context; */
 		int	socket;
 
 		/* User(); */
