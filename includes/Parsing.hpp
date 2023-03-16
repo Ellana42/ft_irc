@@ -8,6 +8,12 @@
 
 /* enum mode {Mandatory, Optional, List, ListOptional, Special}; */
 
+std::string accepted_commands[17] = {"ADMIN", "INFO", "JOIN", "KICK",
+                                     "LIST", "MODE", "NAMES", "NICK",
+                                     "OPER", "PART", "PRIVMSG", "QUIT",
+                                     "SUMMON", "USER", "USERS", "VERSION", "WHO"
+                                    };
+
 std::string no_params[4] = {"ADMIN", "INFO", "VERSION", "USERS"};
 
 std::string simple_params[4] = {"NICK", "OPER", "PRIVMSG", "USER"};

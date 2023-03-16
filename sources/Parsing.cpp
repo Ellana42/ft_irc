@@ -4,6 +4,19 @@
 #include <stdexcept>
 #include "Tokenizer.hpp"
 
+template<typename T>
+bool is_in_array( T value, T array[], unsigned int size_array )
+{
+	for ( unsigned int i = 0; i < size_array; i++ )
+	{
+		if ( value == array[i] )
+		{
+			return ( true );
+		}
+	}
+	return ( false );
+}
+
 Parsing::Parsing( std::string raw_content ) : tokenizer( Tokenizer(
 	            raw_content ) ), current( 0 )
 {
@@ -11,36 +24,14 @@ Parsing::Parsing( std::string raw_content ) : tokenizer( Tokenizer(
 	tokens = tokenizer.get_tokens();
 	if ( tokens.size() == 0 )
 	{
-		throw
+		throw Parsing::UnknownCommandException();
 	}
-	/* commands["ADMIN"].push_back( "target" ); */
-	/* modes["ADMIN"].push_back( Optional ); */
+	command = tokens[0];
 
-	/* commands["INFO"].push_back( "target" ); */
-	/* modes["INFO"].push_back( Optional ); */
-	/* commands["JOIN"].push_back( "channel" ); */
-	/* modes["JOIN"].push_back( List ); */
-	/* commands["JOIN"].push_back( "key" ); */
-	/* modes["JOIN"].push_back( ListOptional ); */
-
-	/* commands["KICK"].push_back( "channel" ); */
-	/* modes["KICK"].push_back( List ); */
-	/* commands["KICK"].push_back( "user" ); */
-	/* modes["KICK"].push_back( List ); */
-	/* commands["KICK"].push_back( "comment" ); */
-	/* modes["KICK"].push_back( ListOptional ); */
-
-	/* commands["LIST"].push_back( "channel" ); */
-	/* modes["LIST"].push_back( ListOptional ); */
-	/* commands["LIST"].push_back( "target" ); */
-	/* modes["LIST"].push_back( Optional ); */
-
-	/* commands["MODE"].push_back( "channel" ); */
-	/* modes["MODE"].push_back( Mandatory ); */
-	/* commands["MODE"].push_back( "modes" ); */
-	/* modes["MODE"].push_back( Special ); */
-	/* commands["MODE"].push_back( "modeparams" ); */
-	/* modes["MODE"].push_back( Special ); */
+	if ( !is_in_array( command, accepted_commands, 16 ) )
+	{
+		throw Parsing::UnknownCommandException();
+	}
 }
 
 void Parsing::parse( void )
@@ -48,15 +39,15 @@ void Parsing::parse( void )
 
 }
 
-void Parsing::parse_no_arg( void )
-{
-	return ;
-}
+/* void Parsing::parse_no_arg( void ) */
+/* { */
+/* 	return ; */
+/* } */
 
-void Parsing::parse_simple( void )
-{
+/* void Parsing::parse_simple( void ) */
+/* { */
 
-}
+/* } */
 
 std::string Parsing::get_current_token()
 {
