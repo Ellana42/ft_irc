@@ -4,6 +4,18 @@
 #include <stdexcept>
 #include "Tokenizer.hpp"
 
+std::string accepted_commands[17] = {"ADMIN", "INFO", "JOIN", "KICK",
+                                     "LIST", "MODE", "NAMES", "NICK",
+                                     "OPER", "PART", "PRIVMSG", "QUIT",
+                                     "SUMMON", "USER", "USERS", "VERSION", "WHO"
+                                    };
+
+std::string no_params[4] = {"ADMIN", "INFO", "VERSION", "USERS"};
+
+std::string simple_params[4] = {"NICK", "OPER", "PRIVMSG", "USER"};
+std::string params[4][4] = {{"nickname"}, {"name", "password"}, {"msgtarget", "text to be sent"}, {"user", "mode", "unused", "realname"}};
+
+
 template<typename T>
 bool is_in_array( T value, T array[], unsigned int size_array )
 {
@@ -27,27 +39,35 @@ Parsing::Parsing( std::string raw_content ) : tokenizer( Tokenizer(
 		throw Parsing::UnknownCommandException();
 	}
 	command = tokens[0];
-
-	if ( !is_in_array( command, accepted_commands, 16 ) )
-	{
-		throw Parsing::UnknownCommandException();
-	}
 }
 
 void Parsing::parse( void )
 {
+	if ( !is_in_array( command, accepted_commands, 16 ) )
+	{
+		throw Parsing::UnknownCommandException();
+	}
 
+	if ( is_in_array( command, no_params, 4 ) )
+	{
+		parse_no_arg();
+	}
+	return ;
 }
 
-/* void Parsing::parse_no_arg( void ) */
-/* { */
-/* 	return ; */
-/* } */
+void Parsing::parse_no_arg( void )
+{
+	if ( tokens.size() > 1 )
+	{
+		throw Parsing::TooManyParamsException();
+	}
+	return;
+}
 
-/* void Parsing::parse_simple( void ) */
-/* { */
+void Parsing::parse_simple( void )
+{
 
-/* } */
+}
 
 std::string Parsing::get_current_token()
 {
@@ -101,4 +121,24 @@ void Parsing::move( void )
 	current++;
 }
 
+std::string Parsing::get_command( void )
+{
+	return ( command );
+}
+
 Parsing::~Parsing() {}
+
+const char* Parsing::NeedMoreParamsException::what() const throw()
+{
+	return ( "Not enough parameters provided" );
+}
+
+const char* Parsing::TooManyParamsException::what() const throw()
+{
+	return ( "Too many parameters provided" );
+}
+
+const char* Parsing::UnknownCommandException::what() const throw()
+{
+	return ( "Unknown command" );
+}

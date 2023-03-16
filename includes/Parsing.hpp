@@ -8,17 +8,6 @@
 
 /* enum mode {Mandatory, Optional, List, ListOptional, Special}; */
 
-std::string accepted_commands[17] = {"ADMIN", "INFO", "JOIN", "KICK",
-                                     "LIST", "MODE", "NAMES", "NICK",
-                                     "OPER", "PART", "PRIVMSG", "QUIT",
-                                     "SUMMON", "USER", "USERS", "VERSION", "WHO"
-                                    };
-
-std::string no_params[4] = {"ADMIN", "INFO", "VERSION", "USERS"};
-
-std::string simple_params[4] = {"NICK", "OPER", "PRIVMSG", "USER"};
-std::string params[4][4] = {{"nickname"}, {"name", "password"}, {"msgtarget", "text to be sent"}, {"user", "mode", "unused", "realname"}};
-
 class Parsing
 {
 	private:
@@ -59,6 +48,9 @@ class Parsing
 			public:
 				virtual const char* what() const throw();
 		};
+		void parse_no_arg( void );
+		void parse_simple( void );
+		std::string get_command( void );
 };
 
 #endif /* PARSING_H */
