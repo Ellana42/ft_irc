@@ -78,7 +78,7 @@ User & Context::get_user_by_nick( std::string nickname )
 	throw std::out_of_range( "Could not find user by nickname" );
 }
 
-bool Context::is_user_nickname_in_use( std::string nickname )
+bool Context::does_user_with_nick_exist( std::string nickname )
 {
 	try
 	{

@@ -1,5 +1,6 @@
 #include "Message_Handler.hpp"
 #include "Context.hpp"
+#include <exception>
 
 Message_Handler::Message_Handler( Context & context ) : context( context )
 {
@@ -181,7 +182,7 @@ void Message_Handler::handle_nick( Message & message )
 {
 	User & sender = message.get_sender();
 	std::string nickname = message.get( "nickname" );
-	if ( context.is_user_nickname_in_use( nickname ) == true )
+	if ( context.does_user_with_nick_exist( nickname ) == true )
 	{
 		sender.send_reply( rpl::err_nicknameinuse( sender, nickname ) );
 		return ;
@@ -220,11 +221,28 @@ void Message_Handler::handle_part( Message & message )
 
 void Message_Handler::handle_privmsg( Message & message )
 {
-	/* TODO: check if sending to channel or user */
-	User & from_user = message.get_sender();
-	User & to_user = context.get_user_by_nick( message.get( "msgtarget" ) );
-	/* User * to_user = registered_users[message.get( "msgtarget" )]; */
-	to_user.send_reply( rpl::forward( from_user, message ) );
+	User & sender = message.get_sender();
+	std::string dest_nick = message.get( "msgtarget" );
+	std::string text = message.get( "text to send" );
+	if ( text.empty() )
+	{
+		sender.send_reply( rpl::err_notexttosend( sender ) );
+	}
+	if ( context.does_user_with_nick_exist( dest_nick ) == true )
+	{
+		User & dest_user = context.get_user_by_nick( dest_nick );
+		dest_user.send_reply( rpl::forward( sender, message ) );
+	}
+	/* else if ( context.does_chan_with_nick_exist( dest_nick ) == true ) */
+	/* { */
+	/* 	/1* TODO: send to all channel users *1/ */
+	/* 	Channel & dest_chan = context.get_chan_by_nick( dest_nick ); */
+	/* 	dest_chan.send_reply( rpl::forward( sender, message ) ); */
+	/* } */
+	else
+	{
+		sender.send_reply( rpl::err_nosuchnick( sender, dest_nick ) );
+	}
 }
 
 void Message_Handler::handle_quit( Message & message )

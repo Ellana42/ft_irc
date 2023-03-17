@@ -36,7 +36,7 @@ class Context
 
 		User & get_user_by_socket( int socket );
 		User & get_user_by_nick( std::string nickname );
-		bool is_user_nickname_in_use( std::string nickname );
+		bool does_user_with_nick_exist( std::string nickname );
 
 		void debug_print_unregistered_users( void ) const;
 		void debug_print_registered_users( void ) const;
