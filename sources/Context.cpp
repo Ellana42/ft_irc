@@ -105,7 +105,8 @@ void Context::handle_message( User & sender, std::string raw_message )
 	}
 	catch ( std::exception & e )
 	{
-		std::cerr << "Message creation exception: " << e.what() << std::endl;
+		std::cerr << "Message creation error: " << e.what()
+		          << "(Message: [" << raw_message << "] )" << std::endl;
 		if ( message != NULL )
 		{
 			delete ( message );
