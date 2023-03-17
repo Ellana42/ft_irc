@@ -86,63 +86,78 @@ void Context::register_user( User & user )
 
 void Context::handle_message( User & sender, std::string raw_message )
 {
-	/* TODO: There is a better way to do this... refactof the hell out of it pleaaaase. */
-	Message * message;
+	Message * message = NULL;
 
 	try
 	{
 		message = create_message( sender, raw_message );
+		check_message_validity( sender, *message );
+		if ( should_handle_message( sender, *message ) )
+		{
+			handler function = handle[message->get_command()];
+			( *this.*function )( *message );
+		}
+		else
+		{
+			sender.send_reply( rpl::err_notregistered( sender ) );
+		}
+		delete ( message );
 	}
 	catch ( std::exception & e )
 	{
+		std::cerr << "Message creation exception: " << e.what() << std::endl;
+		if ( message != NULL )
+		{
+			delete ( message );
+		}
 		return ;
 	}
-	try
-	{
-		message->parse();
-	}
-	catch ( Parsing::TooManyParamsException & e )
-	{
-		sender.send_reply( rpl::err_toomanyparams( sender, message->get_command() ) );
-	}
-	catch ( Parsing::NeedMoreParamsException & e )
-	{
-		sender.send_reply( rpl::err_needmoreparams( sender, message->get_command() ) );
-	}
-	catch ( Parsing::UnknownCommandException & e )
-	{
-		sender.send_reply( rpl::err_unknowncommand( sender, message->get_command() ) );
-	}
-
-	if ( should_handle_message( sender, *message ) )
-	{
-		handler function = handle[message->get_command()];
-		( *this.*function )( *message );
-	}
-	else
-	{
-		sender.send_reply( rpl::err_notregistered( sender ) );
-	}
-	delete ( message );
 }
 
 Message * Context::create_message( User & sender, std::string raw_message )
 {
+	Message * message = NULL;
 	try
 	{
-		Message * message = new Message( sender, raw_message );
-		if ( message == NULL )
-		{
-			throw std::runtime_error( "Could not malloc message !" );
-		}
-		return ( message );
+		message = new Message( sender, raw_message );
 	}
 	catch ( Parsing::UnknownCommandException & e )
 	{
-		sender.send_reply( rpl::err_unknowncommand( sender, e.what() ) );
-		throw std::runtime_error( "OOPS : TODO: refactor this crap" );
+		sender.send_reply( rpl::err_unknowncommand( sender, "" ) );
+		throw std::runtime_error( e.what() );
 	}
-	return ( NULL );
+	catch ( std::exception & e )
+	{
+		throw std::runtime_error( e.what() );
+	}
+	return ( message );
+}
+
+void Context::check_message_validity( User & sender, Message & message )
+{
+	try
+	{
+		message.parse();
+	}
+	catch ( Parsing::TooManyParamsException & e )
+	{
+		sender.send_reply( rpl::err_toomanyparams( sender, message.get_command() ) );
+		throw std::runtime_error( e.what() );
+	}
+	catch ( Parsing::NeedMoreParamsException & e )
+	{
+		sender.send_reply( rpl::err_needmoreparams( sender, message.get_command() ) );
+		throw std::runtime_error( e.what() );
+	}
+	catch ( Parsing::UnknownCommandException & e )
+	{
+		sender.send_reply( rpl::err_unknowncommand( sender, message.get_command() ) );
+		throw std::runtime_error( e.what() );
+	}
+	catch ( std::exception & e )
+	{
+		throw std::runtime_error( e.what() );
+	}
 }
 
 bool Context::should_handle_message( User & sender, Message & message )

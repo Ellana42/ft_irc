@@ -46,6 +46,7 @@ class Context
 		bool is_user_nickname_in_use( std::string nickname );
 		bool should_handle_message( User & sender, Message & message );
 		Message * create_message( User & sender, std::string raw_message );
+		void check_message_validity( User & sender, Message & message );
 
 		Context( const Context & src );
 		Context & operator=( const Context & rhs );
