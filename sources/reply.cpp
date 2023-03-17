@@ -125,10 +125,13 @@ std::string const rpl::info( User & user, int line )
 	{
 		case 0:
 			reply += "Server name: " SERVER_NAME "\r\n";
+			break;
 		case 1:
 			reply += "Version: " SERVER_VERSION "\r\n";
+			break;
 		case 2:
 			reply += "Created on: " SERVER_CREATION "\r\n";
+			break;
 	}
 	return ( reply );
 }
