@@ -7,9 +7,9 @@
 namespace rpl
 {
 std::string const welcome( User & user );
-std::string const yourhost( void );
-std::string const created( void );
-std::string const myinfo( void );
+std::string const yourhost( User & user );
+std::string const created( User & user );
+std::string const myinfo( User & user );
 std::string const server_version( User & user );
 std::string const adminme( User & user );
 std::string const adminloc1( User & user );
@@ -17,6 +17,8 @@ std::string const adminloc2( User & user );
 std::string const adminemail( User & user );
 std::string const info( User & user, int line );
 std::string const info_end( User & user );
+std::string const confirmation( std::string const identifier,
+                                Message & message );
 
 std::string const forward( User & sender, Message & message );
 

@@ -14,10 +14,11 @@ std::string const rpl::welcome( User & user )
 	return ( reply );
 }
 
-std::string const rpl::yourhost( void )
+std::string const rpl::yourhost( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += RPL_YOURHOST;
+	reply += RPL_YOURHOST " ";
+	reply += user.get_nickname();
 	reply += " :Your host is ";
 	reply += SERVER_NAME;
 	reply += ", running version ";
@@ -26,20 +27,22 @@ std::string const rpl::yourhost( void )
 	return ( reply );
 }
 
-std::string const rpl::created( void )
+std::string const rpl::created( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += RPL_CREATED;
+	reply += RPL_CREATED " ";
+	reply += user.get_nickname();
 	reply += " :This server was created ";
 	reply += SERVER_CREATION;
 	reply += "\r\n";
 	return ( reply );
 }
 
-std::string const rpl::myinfo( void )
+std::string const rpl::myinfo( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply += RPL_MYINFO;
+	reply += RPL_MYINFO " ";
+	reply += user.get_nickname();
 	reply += " :";
 	reply += SERVER_NAME " ";
 	reply += SERVER_VERSION " ";
@@ -149,6 +152,19 @@ std::string const rpl::forward( User & sender, Message & message )
 	reply += message.get( "msgtarget" );
 	reply += " :";
 	reply += message.get( "text to send" );
+	reply += "\r\n";
+	return ( reply );
+}
+
+std::string const rpl::confirmation( std::string const identifier,
+                                     Message & message )
+{
+	std::string reply = ":";
+	reply += identifier;
+	reply += " ";
+	reply += message.get_command();
+	reply += " ";
+	reply += message.get( "nickname" );
 	reply += "\r\n";
 	return ( reply );
 }

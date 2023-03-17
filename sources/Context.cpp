@@ -82,6 +82,10 @@ void Context::register_user( User & user )
 	user.set_registered();
 	registered_users.insert( pair_string_user( user.get_nickname(), &user ) );
 	unregistered_users.erase( user.get_socket() );
+	user.send_reply( rpl::welcome( user ) );
+	user.send_reply( rpl::yourhost( user ) );
+	user.send_reply( rpl::created( user ) );
+	user.send_reply( rpl::myinfo( user ) );
 }
 
 void Context::handle_message( User & sender, std::string raw_message )
@@ -263,9 +267,15 @@ void Context::handle_nick( Message & message )
 	}
 	try
 	{
-		bool user_had_nickname = sender.has_nickname();
+		bool user_is_already_registered = sender.is_fully_registered();
+		std::string old_id = sender.get_identifier();
 		sender.set_nickname( nickname );
-		if ( !user_had_nickname && sender.has_user_info() && sender.has_nickname() )
+		if ( user_is_already_registered )
+		{
+			sender.send_reply( rpl::confirmation( old_id, message ) );
+		}
+		else if ( !user_is_already_registered && sender.has_user_info()
+		          && sender.has_nickname() )
 		{
 			register_user( sender );
 		}
