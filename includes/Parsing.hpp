@@ -6,7 +6,7 @@
 #include "Tokenizer.hpp"
 
 
-/* enum mode {Mandatory, Optional, List, ListOptional, Special}; */
+enum mode {Mandatory, Optional, List, ListOptional, Special};
 
 class Parsing
 {
