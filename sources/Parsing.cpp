@@ -257,6 +257,15 @@ std::list<std::string> Parsing::get_list( std::string arg_name )
 	return ( args_lists[arg_name] );
 }
 
+bool Parsing::has_arg( std::string arg_name )
+{
+	// XXX might be improved by checking the command type and which arguments should exist
+	if ( args.count( arg_name ) == 0 && args_lists.count( arg_name ) == 0 )
+	{
+		return ( false );
+	}
+	return ( true );
+}
 
 Parsing::~Parsing() {}
 

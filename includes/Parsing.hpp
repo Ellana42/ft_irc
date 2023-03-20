@@ -58,6 +58,7 @@ class Parsing
 		std::list<std::string> arg_to_list( std::string current_token );
 		std::string get( std::string arg_name );
 		std::list<std::string> get_list( std::string arg_name );
+		bool has_arg( std::string arg_name );
 };
 
 #endif /* PARSING_H */

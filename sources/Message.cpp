@@ -48,6 +48,11 @@ std::list<std::string> Message::get_list( std::string arg_name )
 	return ( parser->get_list( arg_name ) );
 }
 
+bool Message::has( std::string arg_name )
+{
+	return ( parser->has_arg( arg_name ) );
+}
+
 User * Message::get_sender( void ) const
 {
 	return ( sender );
