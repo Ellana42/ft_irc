@@ -77,12 +77,22 @@ void Parsing::parse( void )
 		{
 			parse_simple();
 		}
-		catch ( std::out_of_range )
+		catch ( std::out_of_range const &e )
 		{
 			throw NeedMoreParamsException();
 		}
 	}
-	return ;
+	else if ( is_in_array( command, complex_params, 8 ) )
+	{
+		try
+		{
+			parse_complex();
+		}
+		catch ( std::out_of_range const &e )
+		{
+			throw NeedMoreParamsException();
+		}
+	}
 }
 
 void Parsing::parse_no_arg( void )
@@ -116,6 +126,29 @@ void Parsing::parse_simple( void )
 	}
 }
 
+void Parsing::parse_complex( void )
+{
+	unsigned int command_index = get_array_index( command, complex_params, 4 );
+	unsigned int i = 0;
+	std::string current_param = complex_params_names[command_index][i] ;
+	mode current_type = complex_params_states[command_index][i] ;
+
+	while ( !current_param.empty() )
+	{
+		if ( !set_current_arg( current_param, current_type ) )
+		{
+			throw NeedMoreParamsException();
+		}
+		move();
+		i++;
+		current_param = complex_params_names[command_index][i] ;
+	}
+	if ( tokens.size() > i + 1 )
+	{
+		throw TooManyParamsException();
+	}
+}
+
 std::string Parsing::get_current_token()
 {
 	if ( current >= tokens.size() )
@@ -133,10 +166,51 @@ bool Parsing::set_current_arg( std::string arg_name )
 		args[arg_name] = current_token;
 		return ( true );
 	}
-	catch ( std::out_of_range )
+	catch ( std::out_of_range const &e )
 	{
 		return ( false );
 	}
+}
+
+std::list<std::string> Parsing::arg_to_list( std::string current_token )
+{
+	std::list<std::string> args_list;
+
+	char *token = ( char * )current_token.c_str();
+
+	char * subtoken = std::strtok( token, "," );
+	args_list.push_back( ( std::string )subtoken );
+	while ( subtoken != NULL )
+	{
+		subtoken = strtok( NULL, "," );
+		args_list.push_back( subtoken );
+	}
+	return args_list;
+}
+
+bool Parsing::set_current_arg( std::string arg_name, mode arg_type )
+{
+	try
+	{
+		std::string current_token = get_current_token();
+		if ( arg_type == List || arg_type == ListOptional )
+		{
+			args_lists[arg_name] = arg_to_list( current_token );
+		}
+		else
+		{
+			args[arg_name] = current_token;
+		}
+	}
+	catch ( std::out_of_range const &e )
+	{
+		if ( arg_type == Mandatory || arg_type == List )
+		{
+			return ( false );
+		}
+		return ( true );
+	}
+	return ( true );
 }
 
 bool Parsing::set_current_arg_list( std::string arg_name )
@@ -157,7 +231,7 @@ bool Parsing::set_current_arg_list( std::string arg_name )
 		}
 		return ( true );
 	}
-	catch ( std::out_of_range )
+	catch ( std::out_of_range const &e )
 	{
 		return ( false );
 	}

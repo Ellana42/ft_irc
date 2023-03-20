@@ -23,6 +23,7 @@ class Parsing
 
 	public:
 		std::map<std::string, std::string> args;
+		std::map<std::string, std::list<std::string> > args_lists;
 
 		Parsing( std::string raw_content );
 		virtual ~Parsing();
@@ -52,6 +53,9 @@ class Parsing
 		void parse_no_arg( void );
 		void parse_simple( void );
 		std::string get_command( void );
+		void parse_complex( void );
+		bool set_current_arg( std::string arg_name, mode arg_type );
+		std::list<std::string> arg_to_list( std::string current_token );
 };
 
 #endif /* PARSING_H */
