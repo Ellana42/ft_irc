@@ -14,9 +14,11 @@ class Message
 
 		std::string command;
 		std::map<std::string, std::string> args;
+		std::map<std::string, std::list<std::string> > args_list;
+
 		User * sender; // TODO change to ref
 
-		Parsing *parser;
+		Parsing *parser; // TODO change to ref
 
 	public:
 		Message( User * sender, std::string content );
@@ -26,6 +28,7 @@ class Message
 		/* std::list<std::string> get_list( std::string arg_name ); */
 		void parse( void );
 		std::string get_command( void );
+		std::list<std::string> get_list( std::string arg_name );
 		User * get_sender( void ) const;
 };
 #endif /* MESSAGE_H */

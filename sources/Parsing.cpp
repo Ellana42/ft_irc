@@ -247,6 +247,17 @@ std::string Parsing::get_command( void )
 	return ( command );
 }
 
+std::string Parsing::get( std::string arg_name )
+{
+	return ( args[arg_name] );
+}
+
+std::list<std::string> Parsing::get_list( std::string arg_name )
+{
+	return ( args_lists[arg_name] );
+}
+
+
 Parsing::~Parsing() {}
 
 const char* Parsing::NeedMoreParamsException::what() const throw()

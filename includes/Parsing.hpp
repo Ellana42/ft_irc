@@ -21,9 +21,9 @@ class Parsing
 		std::vector<std::string> tokens;
 		unsigned int	current;
 
-	public:
 		std::map<std::string, std::string> args;
 		std::map<std::string, std::list<std::string> > args_lists;
+	public:
 
 		Parsing( std::string raw_content );
 		virtual ~Parsing();
@@ -56,6 +56,8 @@ class Parsing
 		void parse_complex( void );
 		bool set_current_arg( std::string arg_name, mode arg_type );
 		std::list<std::string> arg_to_list( std::string current_token );
+		std::string get( std::string arg_name );
+		std::list<std::string> get_list( std::string arg_name );
 };
 
 #endif /* PARSING_H */

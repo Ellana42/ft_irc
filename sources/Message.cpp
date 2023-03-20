@@ -26,8 +26,6 @@ Message::Message( User * sender, std::string raw_message ) : sender( sender ),
 void Message::parse( void )
 {
 	parser->parse();
-	command = parser->get_command();
-	args = parser->args;
 }
 
 Message::~Message( void )
@@ -35,19 +33,19 @@ Message::~Message( void )
 	delete parser;
 };
 
-std::string Message::get( std::string arg_name )
-{
-	return ( args[arg_name] );
-}
-
-/* std::list<std::string> Message::get_list( std::string arg_name ) */
-/* { */
-/* 	return ( args[arg_name] ); */
-/* } */
-
 std::string Message::get_command( void )
 {
-	return ( command );
+	return ( parser->get_command() );
+}
+
+std::string Message::get( std::string arg_name )
+{
+	return ( parser->get( arg_name ) );
+}
+
+std::list<std::string> Message::get_list( std::string arg_name )
+{
+	return ( parser->get_list( arg_name ) );
 }
 
 User * Message::get_sender( void ) const
