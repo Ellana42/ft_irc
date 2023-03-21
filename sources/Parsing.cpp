@@ -11,11 +11,9 @@ std::string accepted_commands[17] = {"ADMIN", "INFO", "JOIN", "KICK",
                                      "SUMMON", "USER", "USERS", "VERSION", "WHO"
                                     };
 
-std::string no_params[4] = {"ADMIN", "INFO", "VERSION", "USERS"};
-
-std::string params[12] = {"NICK", "OPER", "PRIVMSG", "USER", "QUIT", "JOIN", "LIST", "NAMES", "SUMMON", "WHO", "KICK", "PART"};
-std::string params_names[12][10] = {{"nickname"}, {"name", "password"}, {"msgtarget", "text to be sent"}, {"user", "mode", "unused", "realname"}, {"Quit Message"}, {"channel", "key"}, {"channel", "target"}, {"channel", "target"}, {"user", "target", "channel"}, {"mask", "o"}, {"channel", "user", "comment"}, {"channel", "Part Message"}};
-mode params_states[12][10] = {{Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory, Mandatory, Mandatory}, {Optional}, {List, ListOptional}, {ListOptional, Optional}, {ListOptional, Optional}, {Mandatory, Optional, Optional}, {Optional, Optional}, {List, List, Optional}, {List, Optional}};
+std::string params[16] = {"ADMIN", "INFO", "VERSION", "USERS", "NICK", "OPER", "PRIVMSG", "USER", "QUIT", "JOIN", "LIST", "NAMES", "SUMMON", "WHO", "KICK", "PART"};
+std::string params_names[16][10] = {{}, {}, {}, {}, {"nickname"}, {"name", "password"}, {"msgtarget", "text to be sent"}, {"user", "mode", "unused", "realname"}, {"Quit Message"}, {"channel", "key"}, {"channel", "target"}, {"channel", "target"}, {"user", "target", "channel"}, {"mask", "o"}, {"channel", "user", "comment"}, {"channel", "Part Message"}};
+mode params_states[16][10] = {{}, {}, {}, {}, {Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory, Mandatory, Mandatory}, {Optional}, {List, ListOptional}, {ListOptional, Optional}, {ListOptional, Optional}, {Mandatory, Optional, Optional}, {Optional, Optional}, {List, List, Optional}, {List, Optional}};
 
 
 template<typename T>
@@ -64,11 +62,7 @@ void Parsing::parse( void )
 		throw Parsing::UnknownCommandException();
 	}
 
-	if ( is_in_array( command, no_params, 4 ) )
-	{
-		parse_no_arg();
-	}
-	else if ( is_in_array( command, params, 8 ) )
+	if ( is_in_array( command, params, 8 ) )
 	{
 		try
 		{
