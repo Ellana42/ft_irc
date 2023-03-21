@@ -13,12 +13,9 @@ std::string accepted_commands[17] = {"ADMIN", "INFO", "JOIN", "KICK",
 
 std::string no_params[4] = {"ADMIN", "INFO", "VERSION", "USERS"};
 
-std::string simple_params[4] = {"NICK", "OPER", "PRIVMSG", "USER"};
-std::string simple_params_names[4][4] = {{"nickname"}, {"name", "password"}, {"msgtarget", "text to be sent"}, {"user", "mode", "unused", "realname"}};
-
-std::string complex_params[8] = {"QUIT", "JOIN", "LIST", "NAMES", "SUMMON", "WHO", "KICK", "PART"};
-std::string complex_params_names[8][10] = {{"Quit Message"}, {"channel", "key"}, {"channel", "target"}, {"channel", "target"}, {"user", "target", "channel"}, {"mask", "o"}, {"channel", "user", "comment"}, {"channel", "Part Message"}};
-mode complex_params_states[8][10] = {{Optional}, {List, ListOptional}, {ListOptional, Optional}, {ListOptional, Optional}, {Mandatory, Optional, Optional}, {Optional, Optional}, {List, List, Optional}, {List, Optional}};
+std::string params[12] = {"NICK", "OPER", "PRIVMSG", "USER", "QUIT", "JOIN", "LIST", "NAMES", "SUMMON", "WHO", "KICK", "PART"};
+std::string params_names[12][10] = {{"nickname"}, {"name", "password"}, {"msgtarget", "text to be sent"}, {"user", "mode", "unused", "realname"}, {"Quit Message"}, {"channel", "key"}, {"channel", "target"}, {"channel", "target"}, {"user", "target", "channel"}, {"mask", "o"}, {"channel", "user", "comment"}, {"channel", "Part Message"}};
+mode params_states[12][10] = {{Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory, Mandatory, Mandatory}, {Optional}, {List, ListOptional}, {ListOptional, Optional}, {ListOptional, Optional}, {Mandatory, Optional, Optional}, {Optional, Optional}, {List, List, Optional}, {List, Optional}};
 
 
 template<typename T>
@@ -71,18 +68,7 @@ void Parsing::parse( void )
 	{
 		parse_no_arg();
 	}
-	else if ( is_in_array( command, simple_params, 4 ) )
-	{
-		try
-		{
-			parse_simple();
-		}
-		catch ( std::out_of_range const &e )
-		{
-			throw NeedMoreParamsException();
-		}
-	}
-	else if ( is_in_array( command, complex_params, 8 ) )
+	else if ( is_in_array( command, params, 8 ) )
 	{
 		try
 		{
@@ -104,34 +90,12 @@ void Parsing::parse_no_arg( void )
 	return;
 }
 
-void Parsing::parse_simple( void )
-{
-	unsigned int command_index = get_array_index( command, simple_params, 4 );
-	unsigned int i = 0;
-	std::string current_param = simple_params_names[command_index][i] ;
-
-	while ( !current_param.empty() )
-	{
-		if ( !set_current_arg( current_param ) )
-		{
-			throw NeedMoreParamsException();
-		}
-		move();
-		i++;
-		current_param = simple_params_names[command_index][i] ;
-	}
-	if ( tokens.size() > i + 1 )
-	{
-		throw TooManyParamsException();
-	}
-}
-
 void Parsing::parse_complex( void )
 {
-	unsigned int command_index = get_array_index( command, complex_params, 4 );
+	unsigned int command_index = get_array_index( command, params, 12 );
 	unsigned int i = 0;
-	std::string current_param = complex_params_names[command_index][i] ;
-	mode current_type = complex_params_states[command_index][i] ;
+	std::string current_param = params_names[command_index][i] ;
+	mode current_type = params_states[command_index][i] ;
 
 	while ( !current_param.empty() )
 	{
@@ -141,7 +105,7 @@ void Parsing::parse_complex( void )
 		}
 		move();
 		i++;
-		current_param = complex_params_names[command_index][i] ;
+		current_param = params_names[command_index][i] ;
 	}
 	if ( tokens.size() > i + 1 )
 	{
