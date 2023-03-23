@@ -30,6 +30,7 @@ class Message
 		std::string get_command( void );
 		std::list<std::string> get_list( std::string arg_name );
 		bool has( std::string arg_name );
+		Parsing get_parser( void );
 		User * get_sender( void ) const;
 };
 #endif /* MESSAGE_H */

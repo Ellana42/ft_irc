@@ -5,15 +5,23 @@
 #include <stdexcept>
 #include "Tokenizer.hpp"
 
-std::string accepted_commands[17] = {"ADMIN", "INFO", "JOIN", "KICK",
-                                     "LIST", "MODE", "NAMES", "NICK",
-                                     "OPER", "PART", "PRIVMSG", "QUIT",
-                                     "SUMMON", "USER", "USERS", "VERSION", "WHO"
-                                    };
+#define NUMBER_CMD 17
 
-std::string params[16] = {"ADMIN", "INFO", "VERSION", "USERS", "NICK", "OPER", "PRIVMSG", "USER", "QUIT", "JOIN", "LIST", "NAMES", "SUMMON", "WHO", "KICK", "PART"};
-std::string params_names[16][10] = {{}, {}, {}, {}, {"nickname"}, {"name", "password"}, {"msgtarget", "text to be sent"}, {"user", "mode", "unused", "realname"}, {"Quit Message"}, {"channel", "key"}, {"channel", "target"}, {"channel", "target"}, {"user", "target", "channel"}, {"mask", "o"}, {"channel", "user", "comment"}, {"channel", "Part Message"}};
-mode params_states[16][10] = {{}, {}, {}, {}, {Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory, Mandatory, Mandatory}, {Optional}, {List, ListOptional}, {ListOptional, Optional}, {ListOptional, Optional}, {Mandatory, Optional, Optional}, {Optional, Optional}, {List, List, Optional}, {List, Optional}};
+std::string commands[NUMBER_CMD] = {"ADMIN", "INFO", "VERSION", "USERS", "NICK", "OPER", "PRIVMSG", "USER", "QUIT", "JOIN", "LIST", "NAMES", "SUMMON", "WHO", "KICK", "PART", "MODE"};
+std::string params[NUMBER_CMD][10] = {{}, {}, {}, {}, {"nickname"}, {"name", "password"}, {"msgtarget", "text to be sent"}, {"user", "mode", "unused", "realname"}, {"Quit Message"}, {"channel", "key"}, {"channel", "target"}, {"channel", "target"}, {"user", "target", "channel"}, {"mask", "o"}, {"channel", "user", "comment"}, {"channel", "Part Message"}, {"target", "modestring", "mode arguments"}};
+
+mode params_states[NUMBER_CMD][10] = {{}, {}, {}, {}, {Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory, Mandatory, Mandatory}, {Optional}, {List, ListOptional}, {ListOptional, Optional}, {ListOptional, Optional}, {Mandatory, Optional, Optional}, {Optional, Optional}, {List, List, Optional}, {List, Optional}, {Mandatory, Optional, Optional}};
+
+std::ostream &operator<<( std::ostream &os,
+                          const std::vector<std::string> &list )
+{
+	for ( auto const &i : list )
+	{
+		os << "|" << i << "|";
+	}
+	std::cout << std::endl;
+	return os;
+}
 
 
 template<typename T>
@@ -47,6 +55,7 @@ Parsing::Parsing( std::string raw_content ) : tokenizer( Tokenizer(
 {
 	tokenizer.tokenize();
 	tokens = tokenizer.get_tokens();
+	std::cout << tokens << std::endl;
 	if ( tokens.size() == 0 )
 	{
 		throw Parsing::UnknownCommandException();
@@ -57,12 +66,12 @@ Parsing::Parsing( std::string raw_content ) : tokenizer( Tokenizer(
 
 void Parsing::parse( void )
 {
-	if ( !is_in_array( command, accepted_commands, 16 ) )
+	if ( !is_in_array( command, commands, NUMBER_CMD ) )
 	{
 		throw Parsing::UnknownCommandException();
 	}
 
-	if ( is_in_array( command, params, 8 ) )
+	if ( is_in_array( command, commands, NUMBER_CMD ) )
 	{
 		try
 		{
@@ -86,20 +95,23 @@ void Parsing::parse_no_arg( void )
 
 void Parsing::parse_complex( void )
 {
-	unsigned int command_index = get_array_index( command, params, 12 );
+	unsigned int command_index = get_array_index( command, commands, NUMBER_CMD );
 	unsigned int i = 0;
-	std::string current_param = params_names[command_index][i] ;
+	std::string current_param = params[command_index][i] ;
 	mode current_type = params_states[command_index][i] ;
 
+	std::cout << "command index " << command_index << std::endl;
 	while ( !current_param.empty() )
 	{
+		std::cout << "current param : " << current_param << std::endl;
+		std::cout << current_type << std::endl;
 		if ( !set_current_arg( current_param, current_type ) )
 		{
 			throw NeedMoreParamsException();
 		}
 		move();
 		i++;
-		current_param = params_names[command_index][i] ;
+		current_param = params[command_index][i] ;
 	}
 	if ( tokens.size() > i + 1 )
 	{
@@ -213,6 +225,11 @@ std::string Parsing::get( std::string arg_name )
 std::list<std::string> Parsing::get_list( std::string arg_name )
 {
 	return ( args_lists[arg_name] );
+}
+
+std::vector<std::string> Parsing::get_tokens( void )
+{
+	return ( tokens );
 }
 
 bool Parsing::has_arg( std::string arg_name )

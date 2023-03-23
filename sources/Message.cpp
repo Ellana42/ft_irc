@@ -38,6 +38,11 @@ std::string Message::get_command( void )
 	return ( parser->get_command() );
 }
 
+Parsing Message::get_parser( void )
+{
+	return ( *parser );
+}
+
 std::string Message::get( std::string arg_name )
 {
 	return ( parser->get( arg_name ) );
