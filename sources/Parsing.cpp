@@ -12,17 +12,6 @@ std::string params[NUMBER_CMD][10] = {{}, {}, {}, {}, {"nickname"}, {"name", "pa
 
 mode params_states[NUMBER_CMD][10] = {{}, {}, {}, {}, {Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory, Mandatory, Mandatory}, {Optional}, {List, ListOptional}, {ListOptional, Optional}, {ListOptional, Optional}, {Mandatory, Optional, Optional}, {Optional, Optional}, {List, List, Optional}, {List, Optional}, {Mandatory, Optional, Optional}};
 
-std::ostream &operator<<( std::ostream &os,
-                          const std::vector<std::string> &list )
-{
-	for ( auto const &i : list )
-	{
-		os << "|" << i << "|";
-	}
-	std::cout << std::endl;
-	return os;
-}
-
 
 template<typename T>
 bool is_in_array( T value, T array[], unsigned int size_array )
@@ -55,7 +44,6 @@ Parsing::Parsing( std::string raw_content ) : tokenizer( Tokenizer(
 {
 	tokenizer.tokenize();
 	tokens = tokenizer.get_tokens();
-	std::cout << tokens << std::endl;
 	if ( tokens.size() == 0 )
 	{
 		throw Parsing::UnknownCommandException();
@@ -100,11 +88,8 @@ void Parsing::parse_complex( void )
 	std::string current_param = params[command_index][i] ;
 	mode current_type = params_states[command_index][i] ;
 
-	std::cout << "command index " << command_index << std::endl;
 	while ( !current_param.empty() )
 	{
-		std::cout << "current param : " << current_param << std::endl;
-		std::cout << current_type << std::endl;
 		if ( !set_current_arg( current_param, current_type ) )
 		{
 			throw NeedMoreParamsException();
@@ -112,6 +97,7 @@ void Parsing::parse_complex( void )
 		move();
 		i++;
 		current_param = params[command_index][i] ;
+		current_type = params_states[command_index][i] ;
 	}
 	if ( tokens.size() > i + 1 )
 	{
