@@ -27,7 +27,7 @@ class Context
 
 	public:
 		Context();
-		~Context();
+		virtual ~Context();
 
 		void create_unregistered_user( int socket );
 		void register_user( User & user );

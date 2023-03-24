@@ -8,12 +8,10 @@ class Channel
 {
 	private:
 		std::string name;
-		std::map<std::string, User> users;
+		std::map<std::string, User *> users;
 
 	public:
-		Channel();
-		Channel( const Channel & src );
-		Channel & operator=( const Channel & rhs );
+		Channel( User * creator );
 		virtual ~Channel();
 };
 

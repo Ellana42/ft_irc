@@ -43,7 +43,7 @@ class Message_Handler
 
 	public:
 		Message_Handler( Context & context );
-		~Message_Handler( void );
+		virtual ~Message_Handler( void );
 
 		void handle_message( User & sender, std::string raw_message );
 };
