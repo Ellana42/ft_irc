@@ -6,7 +6,7 @@
 #include "Tokenizer.hpp"
 
 
-/* enum mode {Mandatory, Optional, List, ListOptional, Special}; */
+enum mode {Mandatory, Optional, List, ListOptional, Special};
 
 class Parsing
 {
@@ -21,8 +21,9 @@ class Parsing
 		std::vector<std::string> tokens;
 		unsigned int	current;
 
-	public:
 		std::map<std::string, std::string> args;
+		std::map<std::string, std::list<std::string> > args_lists;
+	public:
 
 		Parsing( std::string raw_content );
 		virtual ~Parsing();
@@ -52,6 +53,13 @@ class Parsing
 		void parse_no_arg( void );
 		void parse_simple( void );
 		std::string get_command( void );
+		void parse_complex( void );
+		bool set_current_arg( std::string arg_name, mode arg_type );
+		std::list<std::string> arg_to_list( std::string current_token );
+		std::string get( std::string arg_name );
+		std::list<std::string> get_list( std::string arg_name );
+		bool has_arg( std::string arg_name );
+		std::vector<std::string> get_tokens( void );
 };
 
 #endif /* PARSING_H */

@@ -14,18 +14,23 @@ class Message
 
 		std::string command;
 		std::map<std::string, std::string> args;
-		User & sender;
+		std::map<std::string, std::list<std::string> > args_list;
 
-		Parsing *parser;
+		User * sender; // TODO change to ref
+
+		Parsing *parser; // TODO change to ref
 
 	public:
-		Message( User & sender, std::string content );
+		Message( User * sender, std::string content );
 		virtual ~Message();
 
 		std::string get( std::string arg_name );
 		/* std::list<std::string> get_list( std::string arg_name ); */
 		void parse( void );
 		std::string get_command( void );
-		User & get_sender( void ) const;
+		std::list<std::string> get_list( std::string arg_name );
+		bool has( std::string arg_name );
+		Parsing get_parser( void );
+		User * get_sender( void ) const;
 };
 #endif /* MESSAGE_H */
