@@ -28,10 +28,6 @@ Context::~Context()
 void Context::create_unregistered_user( int socket )
 {
 	User * new_user = new User( *this, socket );
-	if ( new_user == NULL )
-	{
-		throw std::runtime_error( "User creation: Could not allocate memory." );
-	}
 	unregistered_users.insert( pair_int_user ( socket, new_user ) );
 }
 
@@ -83,10 +79,6 @@ void Context::remove_unregistered_user( User & user )
 void Context::create_channel( User & user, std::string name )
 {
 	Channel * new_chan = new Channel( name, user );
-	if ( new_chan == NULL )
-	{
-		throw std::runtime_error( "Channel creation: Could not allocate memory." );
-	}
 	channels.insert( pair_string_chan( name, new_chan ) );
 }
 
