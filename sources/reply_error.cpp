@@ -452,7 +452,6 @@ std::string const rpl::err_alreadyregistred( User & user )
 	std::string reply = SERVER_PREFIX " ";
 	reply += ERR_ALREADYREGISTRED " ";
 	reply += user.get_nickname();
-	reply += " ";
 	reply += " :Unauthorized command (already registered)\r\n";
 	return ( reply );
 }
