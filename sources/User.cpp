@@ -1,6 +1,5 @@
 #include "User.hpp"
 #include "Context.hpp"
-#include <stdexcept>
 
 /* User::User() {} */
 
