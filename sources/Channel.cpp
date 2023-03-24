@@ -48,3 +48,18 @@ bool Channel::is_user_in_channel( User & user )
 	}
 	return ( false );
 }
+
+std::string Channel::get_user_list( void )
+{
+	std::string user_list;
+	std::map<std::string, User *>::iterator it = users.begin();
+	for ( ; it != users.end(); it++ )
+	{
+		if ( it != users.begin() )
+		{
+			user_list += " ";
+		}
+		user_list += it->first;
+	}
+	return ( user_list );
+}
