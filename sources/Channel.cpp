@@ -1,7 +1,8 @@
 #include "Channel.hpp"
 
-Channel::Channel( std::string name, User & creator ) : name( name )
+Channel::Channel( std::string name, User & creator )
 {
+	set_name( name );
 	add_user_to_channel( creator );
 }
 
@@ -10,6 +11,7 @@ Channel::~Channel() {}
 void Channel::set_name( std::string name )
 {
 	/* TODO: Channel name validity check */
+	/* throw exception if name is not valid */
 	this->name = name;
 }
 
