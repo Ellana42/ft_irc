@@ -1,5 +1,6 @@
 #include "Message_Handler.hpp"
 #include "Context.hpp"
+#include "Channel.hpp"
 #include <exception>
 
 Message_Handler::Message_Handler( Context & context ) : context( context )
@@ -233,12 +234,11 @@ void Message_Handler::handle_privmsg( Message & message )
 		User & dest_user = context.get_user_by_nick( dest_nick );
 		dest_user.send_reply( rpl::forward( sender, message ) );
 	}
-	/* else if ( context.does_chan_with_nick_exist( dest_nick ) == true ) */
-	/* { */
-	/* 	/1* TODO: send to all channel users *1/ */
-	/* 	Channel & dest_chan = context.get_chan_by_nick( dest_nick ); */
-	/* 	dest_chan.send_reply( rpl::forward( sender, message ) ); */
-	/* } */
+	else if ( context.does_channel_exist( dest_nick ) == true )
+	{
+		Channel & dest_chan = context.get_channel_by_name( dest_nick );
+		dest_chan.send_reply( rpl::forward( sender, message ) );
+	}
 	else
 	{
 		sender.send_reply( rpl::err_nosuchnick( sender, dest_nick ) );

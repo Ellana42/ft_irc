@@ -23,7 +23,7 @@ class User
 
 	public:
 		User( Context & context, int socket );
-		~User();
+		virtual ~User();
 
 		std::string const & get_nickname( void ) const;
 		std::string const & get_username( void ) const;
