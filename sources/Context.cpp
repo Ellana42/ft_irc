@@ -82,6 +82,18 @@ void Context::create_channel( User & user, std::string name )
 	channels.insert( pair_string_chan( name, new_chan ) );
 }
 
+void Context::add_user_to_channel( User & user, std::string channel_name )
+{
+	if ( does_channel_exist( channel_name ) == false )
+	{
+		create_channel( user, channel_name );
+	}
+	else
+	{
+		channels[channel_name]->add_user( user );
+	}
+}
+
 void Context::remove_channel( Channel & channel )
 {
 	std::map<std::string, Channel *>::iterator it = channels.find(
@@ -183,3 +195,14 @@ void Context::debug_print_registered_users( void ) const
 	}
 }
 
+void Context::debug_print_channels( void ) const
+{
+	std::map<std::string, Channel *>::const_iterator it = channels.begin();
+	std::map<std::string, Channel *>::const_iterator it_end = channels.end();
+	std::cout << "Channels :" << std::endl;
+	for ( ; it != it_end; it++ )
+	{
+		std::cout << "\t[" << it->second->get_name() << "] ";
+	}
+	std::cout << std::endl;
+}

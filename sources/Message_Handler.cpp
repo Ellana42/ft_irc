@@ -2,6 +2,8 @@
 #include "Context.hpp"
 #include "Channel.hpp"
 #include <exception>
+#include <list>
+#include <stdexcept>
 
 Message_Handler::Message_Handler( Context & context ) : context( context )
 {
@@ -151,8 +153,28 @@ void Message_Handler::handle_info( Message & message )
 
 void Message_Handler::handle_join( Message & message )
 {
-	/* TODO: implement function */
-	( void )message;
+	User & sender = message.get_sender();
+	std::list<std::string> chan_names = message.get_list( "channel" );
+	if ( chan_names.empty() )
+	{
+		throw std::runtime_error( "JOIN: did not provide channels to join!" );
+	}
+	std::list<std::string>::iterator it = chan_names.begin();
+	for ( ; it != chan_names.end(); it++ )
+	{
+		try
+		{
+			context.add_user_to_channel( sender, *it );
+			Channel & channel = context.get_channel_by_name( *it );
+			channel.send_reply( rpl::join_channel( sender, channel ) );
+			sender.send_reply( rpl::namreply( sender, channel ) );
+			sender.send_reply( rpl::endofnames( sender, channel ) );
+		}
+		catch ( std::exception & e )
+		{
+			sender.send_reply( rpl::err_nosuchchannel( sender, *it ) );
+		}
+	}
 }
 
 void Message_Handler::handle_kick( Message & message )

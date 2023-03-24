@@ -45,10 +45,12 @@ class Context
 		bool does_user_with_nick_exist( std::string nickname );
 
 		Channel & get_channel_by_name( std::string name );
+		void add_user_to_channel( User & user, std::string channel_name );
 		bool does_channel_exist( std::string name );
 
 		void debug_print_unregistered_users( void ) const;
 		void debug_print_registered_users( void ) const;
+		void debug_print_channels( void ) const;
 };
 
 #endif /* CONTEXT_H */

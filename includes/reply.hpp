@@ -3,6 +3,7 @@
 #include "ft_irc.hpp"
 #include "User.hpp"
 #include "Message.hpp"
+#include "Channel.hpp"
 
 namespace rpl
 {
@@ -19,6 +20,9 @@ std::string const info( User & user, int line );
 std::string const info_end( User & user );
 std::string const confirmation( std::string const identifier,
                                 Message & message );
+std::string const join_channel( User & user, Channel & channel );
+std::string const namreply( User & user, Channel & channel );
+std::string const endofnames( User & user, Channel & channel );
 
 std::string const forward( User & sender, Message & message );
 

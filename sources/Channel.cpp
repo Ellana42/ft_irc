@@ -3,7 +3,7 @@
 Channel::Channel( std::string name, User & creator )
 {
 	set_name( name );
-	add_user_to_channel( creator );
+	add_user( creator );
 }
 
 Channel::~Channel() {}
@@ -20,12 +20,12 @@ std::string const & Channel::get_name( void ) const
 	return ( this->name );
 }
 
-void Channel::add_user_to_channel( User & user )
+void Channel::add_user( User & user )
 {
 	users.insert( pair_string_user( user.get_nickname(), &user ) );
 }
 
-void Channel::remove_user_from_channel( User & user )
+void Channel::remove_user( User & user )
 {
 	users.erase( user.get_nickname() );
 }

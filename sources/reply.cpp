@@ -2,6 +2,7 @@
 #include "ft_irc.hpp"
 #include "reply_macros.hpp"
 #include "reply_macros_error.hpp"
+#include "Channel.hpp"
 
 std::string const rpl::welcome( User & user )
 {
@@ -171,3 +172,51 @@ std::string const rpl::confirmation( std::string const identifier,
 	reply += "\r\n";
 	return ( reply );
 }
+
+/* :coucou!~b@localhost JOIN :#test */
+std::string const rpl::join_channel( User & user, Channel & channel )
+{
+	std::string reply = ":";
+	reply += user.get_identifier();
+	reply += " JOIN :";
+	reply += channel.get_name();
+	reply += "\r\n";
+	return ( reply );
+}
+
+/* To reply to a NAMES message, a reply pair consisting */
+/* of RPL_NAMREPLY and RPL_ENDOFNAMES is sent by the */
+/* server back to the client.  If there is no channel */
+/* found as in the query, then only RPL_ENDOFNAMES is */
+/* returned.  The exception to this is when a NAMES */
+/* message is sent with no parameters and all visible */
+/* channels and contents are sent back in a series of */
+/* RPL_NAMEREPLY messages with a RPL_ENDOFNAMES to mark */
+/* the end. */
+/* Message format: "( "=" / "*" / "@" ) <channel> :[ "@" / "+" ] <nick> *( " " [ "@" / "+" ] <nick> )" */
+/* "@" is used for secret channels, "*" for private */
+/* channels, and "=" for others (public channels). */
+std::string const rpl::namreply( User & user, Channel & channel )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_NAMREPLY " ";
+	reply += user.get_nickname();
+	reply += " = ";
+	reply += channel.get_name();
+	reply += " :";
+	reply += channel.get_user_list();
+	reply += "\r\n";
+	return ( reply );
+}
+
+std::string const rpl::endofnames( User & user, Channel & channel )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_ENDOFNAMES " ";
+	reply += user.get_nickname();
+	reply += " ";
+	reply += channel.get_name();
+	reply += " :End of NAMES list\r\n";
+	return ( reply );
+}
+
