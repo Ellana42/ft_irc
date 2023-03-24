@@ -90,13 +90,13 @@ void Message_Handler::check_message_validity( User & sender, Message & message )
 
 bool Message_Handler::should_handle_message( User & sender, Message & message )
 {
-	if ( sender.is_fully_registered() == false && ( message.get_command() != "USER"
-	        || message.get_command() != "NICK" || message.get_command() != "QUIT" ) )
+	std::string command = message.get_command();
+	if ( sender.is_fully_registered() == true || command == "USER"
+	        || command == "NICK" || command == "QUIT" )
 	{
-		return ( false );
+		return ( true );
 	}
-	return ( true );
-
+	return ( false );
 }
 void Message_Handler::initialize_message_handlers( void )
 {
