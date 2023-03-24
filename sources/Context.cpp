@@ -1,4 +1,5 @@
 #include "Context.hpp"
+#include "Channel.hpp"
 
 template <typename T, typename U>
 void delete_map( std::map<T, U> & map )
@@ -21,7 +22,7 @@ Context::~Context()
 	delete ( message_handler );
 	delete_map( unregistered_users );
 	delete_map( registered_users );
-	/* delete_map( channels ); */
+	delete_map( channels );
 }
 
 void Context::create_unregistered_user( int socket )
@@ -43,6 +44,61 @@ void Context::register_user( User & user )
 	registered_users.insert( pair_string_user( user.get_nickname(), &user ) );
 	unregistered_users.erase( user.get_socket() );
 	user.set_registered();
+}
+
+void Context::remove_user( User & user )
+{
+	if ( user.is_fully_registered() )
+	{
+		this->remove_registered_user( user );
+	}
+	else
+	{
+		this->remove_unregistered_user( user );
+	}
+}
+
+void Context::remove_registered_user( User & user )
+{
+	std::map<std::string, User *>::iterator it = registered_users.find(
+	            user.get_nickname() );
+	if ( it != registered_users.end() )
+	{
+		delete( it->second );
+		registered_users.erase( it->first );
+	}
+}
+
+void Context::remove_unregistered_user( User & user )
+{
+	std::map<int, User *>::iterator it = unregistered_users.find(
+	        user.get_socket() );
+	if ( it != unregistered_users.end() )
+	{
+		delete( it->second );
+		unregistered_users.erase( it->first );
+	}
+}
+
+void Context::create_channel( User & user, std::string name )
+{
+	Channel * new_chan = new Channel( name, user );
+	if ( new_chan == NULL )
+	{
+		throw std::runtime_error( "Channel creation: Could not allocate memory." );
+	}
+	channels.insert( pair_string_chan( name, new_chan ) );
+}
+
+void Context::remove_channel( Channel & channel )
+{
+	std::map<std::string, Channel *>::iterator it = channels.find(
+	            channel.get_name() );
+	if ( it != channels.end() )
+	{
+		delete ( it->second );
+		channels.erase( it->first );
+	}
 }
 
 void Context::handle_message( User & sender, std::string raw_message )
@@ -89,6 +145,26 @@ bool Context::does_user_with_nick_exist( std::string nickname )
 	{
 		return ( false );
 	}
+}
+
+Channel & Context::get_channel_by_name( std::string name )
+{
+	std::map<std::string, Channel *>::iterator it = channels.find( name );
+	if ( it != channels.end() )
+	{
+		return ( *channels[name] );
+	}
+	throw std::out_of_range( "Could not find channel by name" );
+}
+
+bool Context::does_channel_exist( std::string name )
+{
+	std::map<std::string, Channel *>::iterator it = channels.find( name );
+	if ( it != channels.end() )
+	{
+		return ( true );
+	}
+	return ( false );
 }
 
 void Context::debug_print_unregistered_users( void ) const
