@@ -220,3 +220,17 @@ std::string const rpl::endofnames( User & user, std::string chan_name )
 	return ( reply );
 }
 
+std::string const rpl::part( User & user, Channel & channel, Message & message )
+{
+	std::string reply = ":";
+	reply += user.get_identifier();
+	reply += " PART ";
+	reply += channel.get_name();
+	reply += " :";
+	if ( message.has( "Part Message" ) )
+	{
+		reply += message.get( "Part Message" );
+	}
+	reply += "\r\n";
+	return ( reply );
+}

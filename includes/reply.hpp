@@ -23,6 +23,7 @@ std::string const confirmation( std::string const identifier,
 std::string const join_channel( User & user, Channel & channel );
 std::string const namreply( User & user, Channel & channel );
 std::string const endofnames( User & user, std::string chan_name );
+std::string const part( User & user, Channel & channel, Message & message );
 
 std::string const forward( User & sender, Message & message );
 

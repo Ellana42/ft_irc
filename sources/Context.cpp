@@ -1,5 +1,6 @@
 #include "Context.hpp"
 #include "Channel.hpp"
+#include <stdexcept>
 
 template <typename T, typename U>
 void delete_map( std::map<T, U> & map )
@@ -113,7 +114,7 @@ void Context::remove_user_from_channel( User & user, std::string channel_name )
 {
 	if ( does_channel_exist( channel_name ) == false )
 	{
-		return ;
+		throw std::out_of_range( "Remove from channel: no such channel" );
 	}
 	else
 	{

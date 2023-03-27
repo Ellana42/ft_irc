@@ -272,8 +272,30 @@ void Message_Handler::handle_oper( Message & message )
 
 void Message_Handler::handle_part( Message & message )
 {
-	/* TODO: implement function */
-	( void )message;
+	User & sender = message.get_sender();
+	std::list<std::string> chan_names = message.get_list( "channel" );
+	std::string part_msg = message.get( "Part Message" );
+	std::list<std::string>::iterator it = chan_names.begin();
+	for ( ; it != chan_names.end(); it++ )
+	{
+		try
+		{
+			Channel & channel = context.get_channel_by_name( *it );
+			if ( channel.is_user_in_channel( sender ) == false )
+			{
+				sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
+				continue ;
+			}
+			context.remove_user_from_channel( sender, *it );
+			channel.send_reply( rpl::part( sender, channel, message ) );
+			sender.send_reply( rpl::part( sender, channel, message ) );
+		}
+		catch( std::exception & e )
+		{
+			sender.send_reply( rpl::err_nosuchchannel( sender, *it ) );
+		}
+	}
+
 }
 
 void Message_Handler::handle_privmsg( Message & message )
