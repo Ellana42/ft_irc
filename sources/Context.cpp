@@ -194,6 +194,10 @@ bool Context::does_user_with_nick_exist( std::string nickname )
 
 Channel & Context::get_channel_by_name( std::string name )
 {
+	if ( name == DEFAULT_CHAN )
+	{
+		throw std::out_of_range( "Could not find channel by name" );
+	}
 	std::map<std::string, Channel *>::iterator it = channels.find( name );
 	if ( it != channels.end() )
 	{
