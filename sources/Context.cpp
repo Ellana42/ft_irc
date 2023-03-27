@@ -99,10 +99,13 @@ void Context::add_user_to_channel( User & user, std::string channel_name )
 	else
 	{
 		channels[channel_name]->add_user( user );
-	}
-	if ( channels[DEFAULT_CHAN]->is_user_in_channel( user ) )
-	{
-		channels[DEFAULT_CHAN]->remove_user( user );
+		if ( channel_name != DEFAULT_CHAN
+		        && channels[DEFAULT_CHAN]->is_user_in_channel( user ) )
+		{
+			std::cout << "Removing user " << user.get_nickname() << " from default chan" <<
+			          std::endl;
+			channels[DEFAULT_CHAN]->remove_user( user );
+		}
 	}
 }
 
@@ -204,6 +207,25 @@ Channel & Context::get_channel_by_name( std::string name )
 		return ( *channels[name] );
 	}
 	throw std::out_of_range( "Could not find channel by name" );
+}
+
+Channel & Context::get_default_channel( void )
+{
+	return ( *channels[DEFAULT_CHAN] );
+}
+
+std::list<std::string> Context::get_channel_names( void )
+{
+	std::list<std::string> channel_names;
+	std::map<std::string, Channel *>::iterator it = channels.begin();
+	for ( ; it != channels.end(); it++ )
+	{
+		if ( it->first != DEFAULT_CHAN )
+		{
+			channel_names.push_back( it->first );
+		}
+	}
+	return ( channel_names );
 }
 
 bool Context::does_channel_exist( std::string name )

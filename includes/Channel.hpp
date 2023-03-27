@@ -26,6 +26,7 @@ class Channel
 
 		std::string get_user_list( void );
 		bool is_user_in_channel( User & user );
+		bool is_empty( void );
 };
 
 #endif /* CHANNEL_H */

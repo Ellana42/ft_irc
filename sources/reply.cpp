@@ -209,13 +209,13 @@ std::string const rpl::namreply( User & user, Channel & channel )
 	return ( reply );
 }
 
-std::string const rpl::endofnames( User & user, Channel & channel )
+std::string const rpl::endofnames( User & user, std::string chan_name )
 {
 	std::string reply = SERVER_PREFIX " ";
 	reply += RPL_ENDOFNAMES " ";
 	reply += user.get_nickname();
 	reply += " ";
-	reply += channel.get_name();
+	reply += chan_name;
 	reply += " :End of NAMES list\r\n";
 	return ( reply );
 }
