@@ -13,6 +13,7 @@ class Channel
 		std::map<std::string, User *> users;
 
 	public:
+		Channel( std::string name );
 		Channel( std::string name, User & creator );
 		virtual ~Channel();
 

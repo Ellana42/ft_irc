@@ -1,5 +1,10 @@
 #include "Channel.hpp"
 
+Channel::Channel( std::string name )
+{
+	set_name( name );
+}
+
 Channel::Channel( std::string name, User & creator )
 {
 	set_name( name );

@@ -6,6 +6,8 @@
 #include "Message_Handler.hpp"
 #include "reply.hpp"
 
+# define DEFAULT_CHAN "*"
+
 class User;
 class Channel;
 
@@ -27,6 +29,7 @@ class Context
 
 		void remove_registered_user( User & user );
 		void remove_unregistered_user( User & user );
+		void create_channel( std::string name );
 
 	public:
 		Context();
@@ -47,6 +50,8 @@ class Context
 		Channel & get_channel_by_name( std::string name );
 		void add_user_to_channel( User & user, std::string channel_name );
 		bool does_channel_exist( std::string name );
+		void remove_user_from_channel( User & user, std::string channel_name );
+		bool is_user_in_any_channel( User & user );
 
 		void debug_print_unregistered_users( void ) const;
 		void debug_print_registered_users( void ) const;

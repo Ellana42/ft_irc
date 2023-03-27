@@ -15,6 +15,7 @@ void delete_map( std::map<T, U> & map )
 Context::Context() : message_handler( NULL )
 {
 	message_handler = new Message_Handler( *this );
+	create_channel( DEFAULT_CHAN );
 }
 
 Context::~Context()
@@ -40,6 +41,7 @@ void Context::register_user( User & user )
 	registered_users.insert( pair_string_user( user.get_nickname(), &user ) );
 	unregistered_users.erase( user.get_socket() );
 	user.set_registered();
+	add_user_to_channel( user, DEFAULT_CHAN );
 }
 
 void Context::remove_user( User & user )
@@ -76,6 +78,12 @@ void Context::remove_unregistered_user( User & user )
 	}
 }
 
+void Context::create_channel( std::string name )
+{
+	Channel * new_chan = new Channel( name );
+	channels.insert( pair_string_chan( name, new_chan ) );
+}
+
 void Context::create_channel( User & user, std::string name )
 {
 	Channel * new_chan = new Channel( name, user );
@@ -92,6 +100,39 @@ void Context::add_user_to_channel( User & user, std::string channel_name )
 	{
 		channels[channel_name]->add_user( user );
 	}
+	if ( channels[DEFAULT_CHAN]->is_user_in_channel( user ) )
+	{
+		channels[DEFAULT_CHAN]->remove_user( user );
+	}
+}
+
+void Context::remove_user_from_channel( User & user, std::string channel_name )
+{
+	if ( does_channel_exist( channel_name ) == false )
+	{
+		return ;
+	}
+	else
+	{
+		channels[channel_name]->remove_user( user );
+		if ( is_user_in_any_channel( user ) == false )
+		{
+			channels[DEFAULT_CHAN]->add_user( user );
+		}
+	}
+}
+
+bool Context::is_user_in_any_channel( User & user )
+{
+	std::map<std::string, Channel *>::iterator it = channels.begin();
+	for ( ; it != channels.end(); it++ )
+	{
+		if ( it->second->is_user_in_channel( user ) == true )
+		{
+			return ( true );
+		}
+	}
+	return ( false );
 }
 
 void Context::remove_channel( Channel & channel )
