@@ -139,7 +139,10 @@ std::list<std::string> Parsing::arg_to_list( std::string current_token )
 	while ( subtoken != NULL )
 	{
 		subtoken = strtok( NULL, "," );
-		args_list.push_back( subtoken );
+		if ( subtoken != NULL )
+		{
+			args_list.push_back( subtoken );
+		}
 	}
 	return args_list;
 }
