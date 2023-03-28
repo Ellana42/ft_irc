@@ -40,6 +40,7 @@ class Message_Handler
 		Message * create_message( User & sender, std::string raw_message );
 		void check_message_validity( User & sender, Message & message );
 		void welcome_user( User & user );
+		bool username_is_valid( std::string username );
 
 	public:
 		Message_Handler( Context & context );

@@ -1,7 +1,17 @@
 #include "Message_Handler.hpp"
 #include "Context.hpp"
 #include "Channel.hpp"
+#include <cctype>
 #include <exception>
+
+bool is_in( char c, std::string str )
+{
+	if ( str.find( c ) != std::string::npos )
+	{
+		return ( true );
+	}
+	return ( false );
+}
 
 Message_Handler::Message_Handler( Context & context ) : context( context )
 {
@@ -260,6 +270,7 @@ void Message_Handler::handle_summon( Message & message )
 void Message_Handler::handle_user( Message & message )
 {
 	/* TODO: add user mode support */
+	/* TODO: checks validity*/
 	User & sender = message.get_sender();
 	if ( sender.is_fully_registered() )
 	{
@@ -271,7 +282,15 @@ void Message_Handler::handle_user( Message & message )
 		sender.send_reply( rpl::err_notregistered( sender ) );
 		return;
 	}
-	sender.set_username( message.get( "username" ) );
+
+	if ( username_is_valid( message.get( "user" ) ) )
+	{
+		sender.set_username( message.get( "user" ) );
+	}
+	else
+	{
+		// reply problem and return
+	}
 	/* sender.set_mode( message.get( "mode" ) ); */
 	sender.set_hostname( message.get( "unused" ) );
 	sender.set_realname( message.get( "realname" ) );
@@ -312,4 +331,22 @@ void Message_Handler::welcome_user( User & user )
 		user.send_reply( rpl::myinfo( user ) );
 	}
 	catch ( std::exception & e ) {}
+}
+
+bool Message_Handler::username_is_valid( std::string username )
+{
+	const std::string accepted_chars = "@._";
+
+	if ( std::isdigit( username[0] ) )
+	{
+		return ( false );
+	}
+	for ( size_t i = 0; i < username.size(); i++ )
+	{
+		if ( !std::isalnum( username[i] ) && !is_in( username[i], accepted_chars ) )
+		{
+			return ( false );
+		}
+	}
+	return ( true );
 }

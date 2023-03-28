@@ -50,7 +50,7 @@ void User::set_nickname( std::string nickname )
 
 void User::set_username( std::string username )
 {
-	this->username = username;
+	this->username = username.substr( 0, MAX_USER_SIZE );
 	this->update_identifier();
 }
 
