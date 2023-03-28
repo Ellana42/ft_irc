@@ -16,12 +16,12 @@ class Message
 		std::map<std::string, std::string> args;
 		std::map<std::string, std::list<std::string> > args_list;
 
-		User * sender; // TODO change to ref
+		User & sender; // TODO change to ref
 
 		Parsing *parser; // TODO change to ref
 
 	public:
-		Message( User * sender, std::string content );
+		Message( User & sender, std::string content );
 		virtual ~Message();
 
 		std::string get( std::string arg_name );
@@ -31,6 +31,6 @@ class Message
 		std::list<std::string> get_list( std::string arg_name );
 		bool has( std::string arg_name );
 		Parsing get_parser( void );
-		User * get_sender( void ) const;
+		User & get_sender( void ) const;
 };
 #endif /* MESSAGE_H */

@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include "Parsing.hpp"
 
-Message::Message( User * sender, std::string raw_message ) : sender( sender ),
+Message::Message( User & sender, std::string raw_message ) : sender( sender ),
 	parser( NULL )
 {
 	if ( raw_message.size() > MAX_SIZE )
@@ -58,7 +58,7 @@ bool Message::has( std::string arg_name )
 	return ( parser->has_arg( arg_name ) );
 }
 
-User * Message::get_sender( void ) const
+User & Message::get_sender( void ) const
 {
 	return ( sender );
 }
