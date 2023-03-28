@@ -103,8 +103,8 @@ void Context::add_user_to_channel( User & user, std::string channel_name )
 		if ( channel_name != DEFAULT_CHAN
 		        && channels[DEFAULT_CHAN]->is_user_in_channel( user ) )
 		{
-			std::cout << "Removing user " << user.get_nickname() << " from default chan" <<
-			          std::endl;
+			/* std::cout << "Removing user " << user.get_nickname() << " from default chan" << */
+			/*           std::endl; */
 			channels[DEFAULT_CHAN]->remove_user( user );
 		}
 	}
