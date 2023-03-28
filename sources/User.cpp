@@ -170,7 +170,7 @@ bool User::nickname_is_valid( std::string nickname )
 
 	if ( nickname.size() == 0 || nickname.size() > 9 )
 	{
-		return ( false );
+		throw NicknameTooLongException();
 	}
 	if ( std::isdigit( nickname[0] ) )
 	{

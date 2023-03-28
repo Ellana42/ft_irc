@@ -52,6 +52,7 @@ class User
 
 		class InvalidUsernameException : public std::exception {};
 		class InvalidNicknameException : public std::exception {};
+		class NicknameTooLongException : public std::exception {};
 };
 
 std::ostream & operator<<( std::ostream & os, User const & obj );

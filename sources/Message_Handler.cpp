@@ -259,9 +259,13 @@ void Message_Handler::handle_nick( Message & message )
 			welcome_user( sender );
 		}
 	}
-	catch ( std::exception & e )
+	catch ( User::InvalidNicknameException & e )
 	{
 		sender.send_reply( rpl::err_erroneusnickname( sender, nickname ) );
+	}
+	catch ( User::NicknameTooLongException & e )
+	{
+		sender.send_reply( rpl::err_nicknametoolong( sender, nickname ) );
 	}
 }
 
@@ -362,10 +366,6 @@ void Message_Handler::handle_user( Message & message )
 		/* sender.set_mode( message.get( "mode" ) ); */
 	}
 	catch ( User::InvalidUsernameException & e )
-	{
-		/* TODO: sender.send_reply(rpl::) */
-	}
-	catch ( User::InvalidNicknameException & e )
 	{
 		/* TODO: sender.send_reply(rpl::) */
 	}
