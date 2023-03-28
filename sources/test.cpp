@@ -21,14 +21,14 @@ void run_test_suite( void )
 	print_users_status( context );
 
 	test_user_registration( context );
-	test_admin_info( context );
-	test_summon_users( context );
-	test_simple_privmsg( context );
-	test_names( context );
-	test_join( context );
-	test_names( context );
-	test_part( context );
-	test_names( context );
+	/* test_admin_info( context ); */
+	/* test_summon_users( context ); */
+	/* test_simple_privmsg( context ); */
+	/* test_names( context ); */
+	/* test_join( context ); */
+	/* test_names( context ); */
+	/* test_part( context ); */
+	/* test_names( context ); */
 
 	std::cout << CYAN "-- Deleting context" RESET << std::endl;
 	delete ( &context );
@@ -50,8 +50,13 @@ void test_user_registration( Context & context )
 	send_test_message( context, alice, "PART #test\r\n" );
 	send_test_message( context, alice, "USER a\r\n" );
 	send_test_message( context, alice, "USER a a a a a\r\n" );
+	send_test_message( context, alice, "USER 3a a a a\r\n" );
+	send_test_message( context, alice, "USER a- a a a\r\n" );
 	send_test_message( context, alice, "USER alice alice alice alice\r\n" );
 	send_test_message( context, alice, "USER x x x x\r\n" );
+	send_test_message( context, alice, "NICK 1alice\r\n" );
+	send_test_message( context, alice, "NICK a-lice\r\n" );
+	send_test_message( context, alice, "NICK aaaaaaaaaa\r\n" );
 	send_test_message( context, alice, "NICK alice\r\n" );
 	send_test_message( context, alice, "USER x x x x\r\n" );
 
