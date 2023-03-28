@@ -19,10 +19,7 @@ class Message
 		User & sender;
 		Parsing *parser;
 
-		void parse( void );
-
 		Parsing get_parser( void );
-		User & get_sender( void ) const;
 
 	public:
 		Message( User & sender, std::string content );
@@ -33,5 +30,9 @@ class Message
 		std::list<std::string> get_list( std::string arg_name );
 		bool has( std::string arg_name );
 		bool has_list( std::string arg_name );
+
+		void parse( void );
+
+		User & get_sender( void ) const;
 };
 #endif /* MESSAGE_H */
