@@ -367,7 +367,7 @@ void Message_Handler::handle_user( Message & message )
 	}
 	catch ( User::InvalidUsernameException & e )
 	{
-		/* TODO: sender.send_reply(rpl::) */
+		sender.send_reply( rpl::err_invalidusername() );
 	}
 }
 

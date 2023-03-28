@@ -21,14 +21,14 @@ void run_test_suite( void )
 	print_users_status( context );
 
 	test_user_registration( context );
-	/* test_admin_info( context ); */
-	/* test_summon_users( context ); */
-	/* test_simple_privmsg( context ); */
-	/* test_names( context ); */
-	/* test_join( context ); */
-	/* test_names( context ); */
-	/* test_part( context ); */
-	/* test_names( context ); */
+	test_admin_info( context );
+	test_summon_users( context );
+	test_simple_privmsg( context );
+	test_names( context );
+	test_join( context );
+	test_names( context );
+	test_part( context );
+	test_names( context );
 
 	std::cout << CYAN "-- Deleting context" RESET << std::endl;
 	delete ( &context );
