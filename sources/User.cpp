@@ -95,7 +95,7 @@ void User::read_from_socket( void )
 void User::send_reply( std::string reply )
 {
 	/* send( socket, reply.c_str(), reply.length(), 0 ); */
-	std::cout << "[" << socket << "] " << reply << std::endl;
+	std::cout << "[" << socket << "] " << reply;
 }
 
 bool User::has_nickname( void )
@@ -115,4 +115,10 @@ bool User::has_user_info( void )
 		return ( true );
 	}
 	return ( false );
+}
+
+std::ostream & operator<<( std::ostream & os, User const & obj )
+{
+	os << "[" << obj.get_socket() << "][" << obj.get_identifier() << "]";
+	return ( os );
 }

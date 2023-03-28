@@ -45,17 +45,36 @@ Parsing Message::get_parser( void )
 
 std::string Message::get( std::string arg_name )
 {
-	return ( parser->get( arg_name ) );
+	if ( parser->has_arg( arg_name ) )
+	{
+		return ( parser->get( arg_name ) );
+	}
+	else
+	{
+		throw std::out_of_range( "This argument does not exist" );
+	}
 }
 
 std::list<std::string> Message::get_list( std::string arg_name )
 {
-	return ( parser->get_list( arg_name ) );
+	if ( parser->has_list( arg_name ) )
+	{
+		return ( parser->get_list( arg_name ) );
+	}
+	else
+	{
+		throw std::out_of_range( "This argument does not exist" );
+	}
 }
 
 bool Message::has( std::string arg_name )
 {
 	return ( parser->has_arg( arg_name ) );
+}
+
+bool Message::has_list( std::string arg_name )
+{
+	return ( parser->has_list( arg_name ) );
 }
 
 User & Message::get_sender( void ) const
