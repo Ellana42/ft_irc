@@ -27,8 +27,8 @@ std::string const & Channel::get_name( void ) const
 
 void Channel::add_user( User & user )
 {
-	std::cout << "CHAN [" << name << "] : Adding user \"" << user.get_nickname() <<
-	          "\"" << std::endl;
+	/* std::cout << "CHAN [" << name << "] : Adding user \"" << user.get_nickname() << */
+	/*           "\"" << std::endl; */
 	users.insert( pair_string_user( user.get_nickname(), &user ) );
 }
 

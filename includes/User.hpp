@@ -45,4 +45,6 @@ class User
 		bool has_user_info( void );
 };
 
+std::ostream & operator<<( std::ostream & os, User const & obj );
+
 #endif /* USER_H */
