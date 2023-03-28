@@ -3,6 +3,8 @@
 
 #include "ft_irc.hpp"
 
+#define MAX_USER_SIZE 18
+
 class Context;
 
 class User
