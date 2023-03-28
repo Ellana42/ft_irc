@@ -155,7 +155,7 @@ std::string const rpl::forward( User & sender, Message & message )
 	reply += " ";
 	reply += message.get( "msgtarget" );
 	reply += " :";
-	reply += message.get( "text to send" );
+	reply += message.get( "text to be sent" );
 	reply += "\r\n";
 	return ( reply );
 }

@@ -51,7 +51,7 @@ std::string Message::get( std::string arg_name )
 	}
 	else
 	{
-		throw std::out_of_range( "This argument does not exist" );
+		throw std::out_of_range( arg_name + ": This argument does not exist" );
 	}
 }
 
@@ -63,7 +63,7 @@ std::list<std::string> Message::get_list( std::string arg_name )
 	}
 	else
 	{
-		throw std::out_of_range( "This argument does not exist" );
+		throw std::out_of_range( arg_name + ": This argument does not exist" );
 	}
 }
 

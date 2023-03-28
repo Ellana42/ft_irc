@@ -212,9 +212,13 @@ void Message_Handler::handle_mode( Message & message )
 void Message_Handler::handle_names( Message & message )
 {
 	User & sender = message.get_sender();
-	std::list<std::string> chan_names = message.get_list( "channel" );
+	std::list<std::string> chan_names;
 	bool show_default_chan = false;
-	if ( chan_names.empty() )
+	if ( message.has_list( "channel" ) )
+	{
+		chan_names = message.get_list( "channel" );
+	}
+	else
 	{
 		chan_names = context.get_channel_names();
 		show_default_chan = true;
@@ -284,7 +288,11 @@ void Message_Handler::handle_part( Message & message )
 {
 	User & sender = message.get_sender();
 	std::list<std::string> chan_names = message.get_list( "channel" );
-	std::string part_msg = message.get( "Part Message" );
+	std::string part_msg = "";
+	if ( message.has( "Part Message" ) )
+	{
+		part_msg = message.get( "Part Message" );
+	}
 	std::list<std::string>::iterator it = chan_names.begin();
 	for ( ; it != chan_names.end(); it++ )
 	{
@@ -312,7 +320,7 @@ void Message_Handler::handle_privmsg( Message & message )
 {
 	User & sender = message.get_sender();
 	std::string dest_nick = message.get( "msgtarget" );
-	std::string text = message.get( "text to send" );
+	std::string text = message.get( "text to be sent" );
 	if ( text.empty() )
 	{
 		sender.send_reply( rpl::err_notexttosend( sender ) );
