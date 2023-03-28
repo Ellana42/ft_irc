@@ -2,6 +2,8 @@
 #include "Context.hpp"
 #include "Channel.hpp"
 #include <exception>
+#include <list>
+#include <stdexcept>
 
 Message_Handler::Message_Handler( Context & context ) : context( context )
 {
@@ -17,6 +19,7 @@ void Message_Handler::handle_message( User & sender, std::string raw_message )
 	try
 	{
 		message = create_message( sender, raw_message );
+
 		check_message_validity( sender, *message );
 		if ( should_handle_message( sender, *message ) )
 		{
@@ -32,7 +35,7 @@ void Message_Handler::handle_message( User & sender, std::string raw_message )
 	catch ( std::exception & e )
 	{
 		std::cerr << "Message creation error: " << e.what()
-		          << "(Message: [" << raw_message << "] )" << std::endl;
+		          << " (Message was: [" << raw_message << "] )" << std::endl;
 		if ( message != NULL )
 		{
 			delete ( message );
@@ -151,8 +154,31 @@ void Message_Handler::handle_info( Message & message )
 
 void Message_Handler::handle_join( Message & message )
 {
-	/* TODO: implement function */
-	( void )message;
+	/* TODO: handle "0" as param to part with all channels */
+	User & sender = message.get_sender();
+	std::list<std::string> chan_names = message.get_list( "channel" );
+	if ( chan_names.empty() )
+	{
+		throw std::runtime_error( "JOIN: did not provide channels to join!" );
+	}
+	/* TODO: if first chan name is 0, add condition here and part all user chans */
+	/* TODO: add security so you can't JOIN "*" */
+	std::list<std::string>::iterator it = chan_names.begin();
+	for ( ; it != chan_names.end(); it++ )
+	{
+		try
+		{
+			context.add_user_to_channel( sender, *it );
+			Channel & channel = context.get_channel_by_name( *it );
+			channel.send_reply( rpl::join_channel( sender, channel ) );
+			sender.send_reply( rpl::namreply( sender, channel ) );
+			sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
+		}
+		catch ( std::exception & e )
+		{
+			sender.send_reply( rpl::err_nosuchchannel( sender, *it ) );
+		}
+	}
 }
 
 void Message_Handler::handle_kick( Message & message )
@@ -175,8 +201,38 @@ void Message_Handler::handle_mode( Message & message )
 
 void Message_Handler::handle_names( Message & message )
 {
-	/* TODO: implement function */
-	( void )message;
+	User & sender = message.get_sender();
+	std::list<std::string> chan_names = message.get_list( "channel" );
+	bool show_default_chan = false;
+	if ( chan_names.empty() )
+	{
+		chan_names = context.get_channel_names();
+		show_default_chan = true;
+	}
+	std::list<std::string>::iterator it = chan_names.begin();
+	std::list<std::string>::iterator last = ( ++chan_names.rbegin() ).base();
+	for ( ; it != chan_names.end(); it++ )
+	{
+		try
+		{
+			Channel & channel = context.get_channel_by_name( *it );
+			sender.send_reply( rpl::namreply( sender, channel ) );
+		}
+		catch( std::exception & e ) {}
+		if ( show_default_chan == false && it == last )
+		{
+			sender.send_reply( rpl::endofnames( sender, *it ) );
+		}
+	}
+	if ( show_default_chan == true )
+	{
+		Channel & channel = context.get_default_channel();
+		if ( channel.is_empty() == false )
+		{
+			sender.send_reply( rpl::namreply( sender, channel ) );
+		}
+		sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
+	}
 }
 
 void Message_Handler::handle_nick( Message & message )
@@ -216,8 +272,30 @@ void Message_Handler::handle_oper( Message & message )
 
 void Message_Handler::handle_part( Message & message )
 {
-	/* TODO: implement function */
-	( void )message;
+	User & sender = message.get_sender();
+	std::list<std::string> chan_names = message.get_list( "channel" );
+	std::string part_msg = message.get( "Part Message" );
+	std::list<std::string>::iterator it = chan_names.begin();
+	for ( ; it != chan_names.end(); it++ )
+	{
+		try
+		{
+			Channel & channel = context.get_channel_by_name( *it );
+			if ( channel.is_user_in_channel( sender ) == false )
+			{
+				sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
+				continue ;
+			}
+			context.remove_user_from_channel( sender, *it );
+			channel.send_reply( rpl::part( sender, channel, message ) );
+			sender.send_reply( rpl::part( sender, channel, message ) );
+		}
+		catch( std::exception & e )
+		{
+			sender.send_reply( rpl::err_nosuchchannel( sender, *it ) );
+		}
+	}
+
 }
 
 void Message_Handler::handle_privmsg( Message & message )
