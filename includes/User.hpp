@@ -22,7 +22,9 @@ class User
 
 		/* User(); */
 		void update_identifier( void );
+
 		bool username_is_valid( std::string username );
+		bool nickname_is_valid( std::string nickname );
 
 	public:
 		User( Context & context, int socket );
@@ -48,17 +50,8 @@ class User
 		bool has_user_info( void );
 
 
-		class InvalidUsernameException : public std::exception
-		{
-				/* public: */
-				/* 	virtual const char* what() const throw(); */
-		};
-
-		class InvalidNicknameException : public std::exception
-		{
-				/* public: */
-				/* 	virtual const char* what() const throw(); */
-		};
+		class InvalidUsernameException : public std::exception {};
+		class InvalidNicknameException : public std::exception {};
 };
 
 std::ostream & operator<<( std::ostream & os, User const & obj );

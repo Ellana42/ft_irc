@@ -53,8 +53,15 @@ int const & User::get_socket( void ) const
 
 void User::set_nickname( std::string nickname )
 {
-	this->nickname = nickname;
-	this->update_identifier();
+	if ( nickname_is_valid( nickname ) )
+	{
+		this->nickname = nickname;
+		this->update_identifier();
+	}
+	else
+	{
+		throw InvalidNicknameException();
+	}
 }
 
 void User::set_username( std::string username )
@@ -139,16 +146,6 @@ std::ostream & operator<<( std::ostream & os, User const & obj )
 	return ( os );
 }
 
-/* const char* User::InvalidNicknameException::what() const throw() */
-/* { */
-/* 	return ( "Invalid nickname" ); */
-/* } */
-
-/* const char* User::InvalidUsernameException::what() const throw() */
-/* { */
-/* 	return ( "Invalid username" ); */
-/* } */
-
 bool User::username_is_valid( std::string username )
 {
 	const std::string accepted_chars = "@._";
@@ -160,6 +157,28 @@ bool User::username_is_valid( std::string username )
 	for ( size_t i = 0; i < username.size(); i++ )
 	{
 		if ( !std::isalnum( username[i] ) && !is_in( username[i], accepted_chars ) )
+		{
+			return ( false );
+		}
+	}
+	return ( true );
+}
+
+bool User::nickname_is_valid( std::string nickname )
+{
+	const std::string accepted_chars = "_\\^|[]{}`";
+
+	if ( nickname.size() == 0 || nickname.size() > 9 )
+	{
+		return ( false );
+	}
+	if ( std::isdigit( nickname[0] ) )
+	{
+		return ( false );
+	}
+	for ( size_t i = 0; i < nickname.size(); i++ )
+	{
+		if ( !std::isalnum( nickname[i] ) && !is_in( nickname[i], accepted_chars ) )
 		{
 			return ( false );
 		}
