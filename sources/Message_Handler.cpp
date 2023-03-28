@@ -135,10 +135,9 @@ void Message_Handler::initialize_message_handlers( void )
 void Message_Handler::handle_admin( Message & message )
 {
 	User & sender = message.get_sender();
-	std::string target = message.get( "target" );
-	if ( !target.empty() )
+	if ( message.has( "target" ) )
 	{
-		sender.send_reply( rpl::err_nosuchserver( sender, target ) );
+		sender.send_reply( rpl::err_nosuchserver( sender, message.get( "target" ) ) );
 		return ;
 	}
 	sender.send_reply( rpl::adminme( sender ) );
@@ -150,10 +149,9 @@ void Message_Handler::handle_admin( Message & message )
 void Message_Handler::handle_info( Message & message )
 {
 	User & sender = message.get_sender();
-	std::string target = message.get( "target" );
-	if ( !target.empty() )
+	if ( message.has( "target" ) )
 	{
-		sender.send_reply( rpl::err_nosuchserver( sender, target ) );
+		sender.send_reply( rpl::err_nosuchserver( sender, message.get( "target" ) ) );
 		return ;
 	}
 	sender.send_reply( rpl::info( sender, 0 ) );
