@@ -224,12 +224,23 @@ std::vector<std::string> Parsing::get_tokens( void )
 bool Parsing::has_arg( std::string arg_name )
 {
 	// XXX might be improved by checking the command type and which arguments should exist
-	if ( args.count( arg_name ) == 0 && args_lists.count( arg_name ) == 0 )
+	if ( args.count( arg_name ) == 0 )
 	{
 		return ( false );
 	}
 	return ( true );
 }
+
+bool Parsing::has_list( std::string arg_name )
+{
+	// XXX might be improved by checking the command type and which arguments should exist
+	if ( args_lists.count( arg_name ) == 0 )
+	{
+		return ( false );
+	}
+	return ( true );
+}
+
 
 Parsing::~Parsing() {}
 

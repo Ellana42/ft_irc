@@ -17,20 +17,21 @@ class Message
 		std::map<std::string, std::list<std::string> > args_list;
 
 		User * sender; // TODO change to ref
-
 		Parsing *parser; // TODO change to ref
+		//
+		void parse( void );
+
+		Parsing get_parser( void );
+		User * get_sender( void ) const;
 
 	public:
 		Message( User * sender, std::string content );
 		virtual ~Message();
 
-		std::string get( std::string arg_name );
-		/* std::list<std::string> get_list( std::string arg_name ); */
-		void parse( void );
 		std::string get_command( void );
+		std::string get( std::string arg_name );
 		std::list<std::string> get_list( std::string arg_name );
 		bool has( std::string arg_name );
-		Parsing get_parser( void );
-		User * get_sender( void ) const;
+		bool has_list( std::string arg_name );
 };
 #endif /* MESSAGE_H */

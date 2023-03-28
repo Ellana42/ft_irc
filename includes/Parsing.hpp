@@ -60,6 +60,7 @@ class Parsing
 		std::list<std::string> get_list( std::string arg_name );
 		bool has_arg( std::string arg_name );
 		std::vector<std::string> get_tokens( void );
+		bool has_list( std::string arg_name );
 };
 
 #endif /* PARSING_H */
