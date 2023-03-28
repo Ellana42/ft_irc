@@ -21,7 +21,14 @@ void run_test_suite( void )
 	print_users_status( context );
 
 	test_user_registration( context );
+	test_admin_info( context );
+	test_summon_users( context );
 	test_simple_privmsg( context );
+	test_names( context );
+	test_join( context );
+	test_names( context );
+	test_part( context );
+	test_names( context );
 
 	std::cout << CYAN "-- Deleting context" RESET << std::endl;
 	delete ( &context );
@@ -59,6 +66,40 @@ void test_user_registration( Context & context )
 	print_users_status( context );
 }
 
+void test_admin_info( Context & context )
+{
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl;
+	std::cout << CYAN "\t TESTING ADMIN & INFO COMMANDS" RESET << std::endl;
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl << std::endl;
+
+	User & alice = context.get_user_by_nick( "alice" );
+	User & bob = context.get_user_by_nick( "bob" );
+
+	send_test_message( context, alice, "ADMIN\r\n" );
+	send_test_message( context, alice, "INFO\r\n" );
+	send_test_message( context, bob, "INFO hello\r\n" );
+	send_test_message( context, bob, "ADMIN hello\r\n" );
+}
+
+void test_summon_users( Context & context )
+{
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl;
+	std::cout << CYAN "\t TESTING SUMMON & USERS COMMANDS" RESET << std::endl;
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl << std::endl;
+
+	User & alice = context.get_user_by_nick( "alice" );
+	User & bob = context.get_user_by_nick( "bob" );
+
+	send_test_message( context, alice, "SUMMON\r\n" );
+	send_test_message( context, alice, "USERS\r\n" );
+	send_test_message( context, bob, "SUMMON hello\r\n" );
+	send_test_message( context, bob, "USERS hello\r\n" );
+}
+
 void test_simple_privmsg( Context & context )
 {
 	std::cout << CYAN "-----------------------------------------------" RESET <<
@@ -74,6 +115,56 @@ void test_simple_privmsg( Context & context )
 	send_test_message( context, bob, "PRIVMSG alice hi I'm bob\r\n" );
 	send_test_message( context, bob, "PRIVMSG alice :hi I'm bob\r\n" );
 	send_test_message( context, alice, "PRIVMSG bob\r\n" );
+}
+
+void test_names( Context & context )
+{
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl;
+	std::cout << CYAN "\t TESTING NAMES" RESET << std::endl;
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl << std::endl;
+
+	User & alice = context.get_user_by_nick( "alice" );
+	User & bob = context.get_user_by_nick( "bob" );
+
+	send_test_message( context, alice, "NAMES\r\n" );
+	send_test_message( context, bob, "NAMES\r\n" );
+	send_test_message( context, bob, "NAMES #test\r\n" );
+	send_test_message( context, alice, "NAMES #test,#hello\r\n" );
+}
+
+void test_join( Context & context )
+{
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl;
+	std::cout << CYAN "\t TESTING JOIN" RESET << std::endl;
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl << std::endl;
+
+	User & alice = context.get_user_by_nick( "alice" );
+	User & bob = context.get_user_by_nick( "bob" );
+
+	send_test_message( context, alice, "JOIN #test\r\n" );
+	send_test_message( context, bob, "JOIN\r\n" );
+	send_test_message( context, bob, "JOIN #test,#hello\r\n" );
+	send_test_message( context, alice, "JOIN #hello\r\n" );
+}
+
+void test_part( Context & context )
+{
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl;
+	std::cout << CYAN "\t TESTING PART" RESET << std::endl;
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl << std::endl;
+
+	User & alice = context.get_user_by_nick( "alice" );
+	User & bob = context.get_user_by_nick( "bob" );
+
+	send_test_message( context, alice, "PART #test :bye\r\n" );
+	send_test_message( context, bob, "PART\r\n" );
+	send_test_message( context, bob, "PART #test,#hello\r\n" );
 }
 
 void create_new_user( Context & context, int socket )

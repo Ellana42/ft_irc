@@ -34,9 +34,8 @@ void Channel::add_user( User & user )
 
 void Channel::remove_user( User & user )
 {
-	std::cout << "CHAN [" << name << "] : removing user \"" << user.get_nickname()
-	          <<
-	          "\"" << std::endl;
+	/* std::cout << "CHAN [" << name << "] : removing user \"" << user.get_nickname() */
+	/*           << "\"" << std::endl; */
 	users.erase( user.get_nickname() );
 }
 
