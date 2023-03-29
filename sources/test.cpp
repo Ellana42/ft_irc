@@ -29,6 +29,7 @@ void run_test_suite( void )
 	test_names( context );
 	test_part( context );
 	test_names( context );
+	test_quit( context );
 
 	std::cout << CYAN "-- Deleting context" RESET << std::endl;
 	delete ( &context );
@@ -170,6 +171,41 @@ void test_part( Context & context )
 	send_test_message( context, alice, "PART #test :bye\r\n" );
 	send_test_message( context, bob, "PART\r\n" );
 	send_test_message( context, bob, "PART #test,#hello\r\n" );
+}
+
+void test_quit( Context & context )
+{
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl;
+	std::cout << CYAN "\t TESTING QUIT" RESET << std::endl;
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl << std::endl;
+
+	User & alice = context.get_user_by_nick( "alice" );
+	User & bob = context.get_user_by_nick( "bob" );
+
+	send_test_message( context, alice, "JOIN #test,#hello\r\n" );
+	send_test_message( context, bob, "JOIN #test,#hello\r\n" );
+	send_test_message( context, alice, "QUIT bye bye\r\n" );
+	send_test_message( context, alice, "QUIT :bye bye\r\n" );
+	send_test_message( context, bob, "QUIT :see ya !\r\n" );
+
+	create_new_user( context, SOCKET_A );
+	create_new_user( context, SOCKET_B );
+	print_users_status( context );
+
+	User & nick = context.get_user_by_socket( SOCKET_A );
+	User & rick = context.get_user_by_socket( SOCKET_B );
+
+	send_test_message( context, nick, "NICK nick\r\n" );
+	send_test_message( context, nick, "USER nick nick nick nick\r\n" );
+	send_test_message( context, rick, "NICK rick\r\n" );
+	send_test_message( context, rick, "USER rick rick rick rick\r\n" );
+
+	send_test_message( context, nick, "JOIN #test,#hello\r\n" );
+	send_test_message( context, rick, "JOIN #test,#hello\r\n" );
+	send_test_message( context, nick, "QUIT\r\n" );
+	send_test_message( context, rick, "QUIT\r\n" );
 }
 
 void create_new_user( Context & context, int socket )

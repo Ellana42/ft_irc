@@ -29,7 +29,8 @@ class Channel
 		void remove_user( User & user );
 		void send_reply( std::string reply );
 
-		std::string get_user_list( void );
+		std::list<User *> get_user_list( void );
+		std::string get_user_list_string( void );
 		bool is_user_in_channel( User & user );
 		bool is_empty( void );
 };
