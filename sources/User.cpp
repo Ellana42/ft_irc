@@ -3,6 +3,15 @@
 
 /* User::User() {} */
 
+bool is_in( char c, std::string str )
+{
+	if ( str.find( c ) != std::string::npos )
+	{
+		return ( true );
+	}
+	return ( false );
+}
+
 User::User( Context & context, int socket ) : nickname( "*" ), username( "*" ),
 	hostname( "*" ), realname( "*" ), fully_registered( false ), context( context ),
 	socket( socket )
@@ -44,14 +53,28 @@ int const & User::get_socket( void ) const
 
 void User::set_nickname( std::string nickname )
 {
-	this->nickname = nickname;
-	this->update_identifier();
+	if ( nickname_is_valid( nickname ) )
+	{
+		this->nickname = nickname;
+		this->update_identifier();
+	}
+	else
+	{
+		throw InvalidNicknameException();
+	}
 }
 
 void User::set_username( std::string username )
 {
-	this->username = username.substr( 0, MAX_USER_SIZE );
-	this->update_identifier();
+	if ( username_is_valid( username ) )
+	{
+		this->username = username.substr( 0, MAX_USER_SIZE );
+		this->update_identifier();
+	}
+	else
+	{
+		throw InvalidUsernameException();
+	}
 }
 
 void User::set_realname( std::string realname )
@@ -121,4 +144,44 @@ std::ostream & operator<<( std::ostream & os, User const & obj )
 {
 	os << "[" << obj.get_socket() << "][" << obj.get_identifier() << "]";
 	return ( os );
+}
+
+bool User::username_is_valid( std::string username )
+{
+	const std::string accepted_chars = "@._";
+
+	if ( std::isdigit( username[0] ) )
+	{
+		return ( false );
+	}
+	for ( size_t i = 0; i < username.size(); i++ )
+	{
+		if ( !std::isalnum( username[i] ) && !is_in( username[i], accepted_chars ) )
+		{
+			return ( false );
+		}
+	}
+	return ( true );
+}
+
+bool User::nickname_is_valid( std::string nickname )
+{
+	const std::string accepted_chars = "_\\^|[]{}`";
+
+	if ( nickname.size() == 0 || nickname.size() > 9 )
+	{
+		throw NicknameTooLongException();
+	}
+	if ( std::isdigit( nickname[0] ) )
+	{
+		return ( false );
+	}
+	for ( size_t i = 0; i < nickname.size(); i++ )
+	{
+		if ( !std::isalnum( nickname[i] ) && !is_in( nickname[i], accepted_chars ) )
+		{
+			return ( false );
+		}
+	}
+	return ( true );
 }

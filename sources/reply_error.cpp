@@ -15,6 +15,13 @@ std::string const rpl::err_nosuchnick( User & user,
 	reply += " :No such nick/channel\r\n";
 	return ( reply );
 }
+/* Used to indicate the username parameter supplied is */
+/* problematic */
+std::string const rpl::err_invalidusername( void )
+{
+	std::string reply = "ERROR :Invalid user name\r\n";
+	return ( reply );
+}
 
 /* Used to indicate the server name given currently */
 /* does not exist. */

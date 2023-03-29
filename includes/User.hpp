@@ -3,7 +3,7 @@
 
 #include "ft_irc.hpp"
 
-#define MAX_USER_SIZE 18
+#define MAX_USER_SIZE 19
 
 class Context;
 
@@ -22,6 +22,9 @@ class User
 
 		/* User(); */
 		void update_identifier( void );
+
+		bool username_is_valid( std::string username );
+		bool nickname_is_valid( std::string nickname );
 
 	public:
 		User( Context & context, int socket );
@@ -45,6 +48,11 @@ class User
 		void send_reply( std::string reply );
 		bool has_nickname( void );
 		bool has_user_info( void );
+
+
+		class InvalidUsernameException : public std::exception {};
+		class InvalidNicknameException : public std::exception {};
+		class NicknameTooLongException : public std::exception {};
 };
 
 std::ostream & operator<<( std::ostream & os, User const & obj );
