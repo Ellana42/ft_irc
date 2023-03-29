@@ -1,5 +1,6 @@
 #include "User.hpp"
 #include "Context.hpp"
+#include <cstddef>
 
 /* User::User() {} */
 
@@ -97,6 +98,33 @@ void User::set_registered( void )
 	this->fully_registered = true;
 }
 
+
+void User::set_modes( std::string mode_string )
+{
+	std::string::iterator it = mode_string.begin();
+	for ( ; it != mode_string.end(); it++ )
+	{
+		size_t pos = this->mode.find( *it, 0 );
+		if ( pos == std::string::npos )
+		{
+			this->mode += *it;
+		}
+	}
+}
+
+void User::remove_modes( std::string mode_string )
+{
+	std::string::iterator it = mode_string.begin();
+	for ( ; it != mode_string.end(); it++ )
+	{
+		size_t pos = this->mode.find( *it, 0 );
+		if ( pos != std::string::npos )
+		{
+			this->mode.erase( pos, 1 );
+		}
+	}
+}
+
 void User::update_identifier( void )
 {
 	this->identifier = this->nickname + "!" + this->username + "@" + this->hostname;
@@ -140,12 +168,6 @@ bool User::has_user_info( void )
 	return ( false );
 }
 
-std::ostream & operator<<( std::ostream & os, User const & obj )
-{
-	os << "[" << obj.get_socket() << "][" << obj.get_identifier() << "]";
-	return ( os );
-}
-
 bool User::username_is_valid( std::string username )
 {
 	const std::string accepted_chars = "@._";
@@ -184,4 +206,10 @@ bool User::nickname_is_valid( std::string nickname )
 		}
 	}
 	return ( true );
+}
+
+std::ostream & operator<<( std::ostream & os, User const & obj )
+{
+	os << "[" << obj.get_socket() << "][" << obj.get_identifier() << "]";
+	return ( os );
 }

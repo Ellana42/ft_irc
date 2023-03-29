@@ -7,10 +7,11 @@
 class Channel
 {
 	private:
-		typedef std::pair<std::string, User *> pair_string_user;
+		typedef std::pair<User *, std::string> pair_user_string;
 
 		std::string name;
-		std::map<std::string, User *> users;
+		std::map<User *, std::string> users;
+		std::string mode;
 
 	public:
 		Channel( std::string name );
@@ -19,6 +20,10 @@ class Channel
 
 		void set_name( std::string name );
 		std::string const & get_name( void ) const;
+		void set_modes( std::string mode_string );
+		void remove_modes( std::string mode_string );
+		void set_modes( User & user, std::string mode_string );
+		void remove_modes( User & user, std::string mode_string );
 
 		void add_user( User & user );
 		void remove_user( User & user );
