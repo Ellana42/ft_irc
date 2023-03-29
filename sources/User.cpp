@@ -125,6 +125,16 @@ void User::remove_modes( std::string mode_string )
 	}
 }
 
+bool User::does_user_have_mode( char c )
+{
+	size_t pos = this->mode.find( c, 0 );
+	if ( pos != std::string::npos )
+	{
+		return ( true );
+	}
+	return ( false );
+}
+
 void User::update_identifier( void )
 {
 	this->identifier = this->nickname + "!" + this->username + "@" + this->hostname;
