@@ -39,6 +39,48 @@ void Channel::remove_user( User & user )
 	users.erase( &user );
 }
 
+void Channel::set_modes( std::string mode_string )
+{
+	std::string::iterator it = mode_string.begin();
+	for ( ; it != mode_string.end(); it++ )
+	{
+		size_t pos = this->mode.find( *it, 0 );
+		if ( pos == std::string::npos )
+		{
+			this->mode += *it;
+		}
+	}
+}
+
+void Channel::remove_modes( std::string mode_string )
+{
+	std::string::iterator it = mode_string.begin();
+	for ( ; it != mode_string.end(); it++ )
+	{
+		size_t pos = this->mode.find( *it, 0 );
+		if ( pos != std::string::npos )
+		{
+			this->mode.erase( pos, 1 );
+		}
+	}
+}
+
+void Channel::set_modes( User & user, std::string mode_string )
+{
+	if ( is_user_in_channel( user ) == true )
+	{
+		user.set_modes( mode_string );
+	}
+}
+
+void Channel::remove_modes( User & user, std::string mode_string )
+{
+	if ( is_user_in_channel( user ) == true )
+	{
+		user.remove_modes( mode_string );
+	}
+}
+
 void Channel::send_reply( std::string reply )
 {
 	std::map<User *, std::string>::iterator it = users.begin();

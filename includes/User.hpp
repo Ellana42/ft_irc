@@ -43,7 +43,8 @@ class User
 		void set_username( std::string username );
 		void set_realname( std::string realname );
 		void set_hostname( std::string hostname );
-		void set_mode( std::string mode );
+		void set_modes( std::string mode_string );
+		void remove_modes( std::string mode_string );
 		void set_registered( void );
 
 		void read_from_socket( void );
