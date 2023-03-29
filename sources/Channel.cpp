@@ -102,7 +102,7 @@ void Channel::remove_modes( User & user, std::string mode_string )
 	}
 }
 
-bool Channel::does_channel_have_mode( char c )
+bool Channel::has_mode( char c )
 {
 	size_t pos = this->mode.find( c, 0 );
 	if ( pos != std::string::npos )
@@ -112,7 +112,7 @@ bool Channel::does_channel_have_mode( char c )
 	return ( false );
 }
 
-bool Channel::does_user_have_mode( User & user, char c )
+bool Channel::has_mode( User & user, char c )
 {
 	std::string & user_modes = this->users[&user];
 	size_t pos = user_modes.find( c, 0 );

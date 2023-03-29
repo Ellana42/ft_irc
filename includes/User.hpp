@@ -45,7 +45,7 @@ class User
 		void set_hostname( std::string hostname );
 		void set_modes( std::string mode_string );
 		void remove_modes( std::string mode_string );
-		bool does_user_have_mode( char c );
+		bool has_mode( char c );
 
 		void set_registered( void );
 

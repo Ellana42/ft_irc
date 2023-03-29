@@ -125,7 +125,7 @@ void User::remove_modes( std::string mode_string )
 	}
 }
 
-bool User::does_user_have_mode( char c )
+bool User::has_mode( char c )
 {
 	size_t pos = this->mode.find( c, 0 );
 	if ( pos != std::string::npos )
