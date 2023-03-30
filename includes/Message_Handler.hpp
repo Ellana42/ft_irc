@@ -7,6 +7,8 @@
 
 class Context;
 
+enum TypeTarget {Channel_, User_};
+
 class Message_Handler
 {
 	private:
@@ -23,7 +25,7 @@ class Message_Handler
 		void handle_join( Message & message );
 		void handle_kick( Message & message );
 		void handle_list( Message & message );
-		void handle_mode( Message & message );
+		void handle_mode(  Message & message );
 		void handle_names( Message & message );
 		void handle_nick( Message & message );
 		void handle_oper( Message & message );

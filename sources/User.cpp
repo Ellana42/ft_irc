@@ -94,7 +94,13 @@ void User::set_registered( void )
 }
 
 
-void User::set_modes( std::string mode_string )
+void User::set_modes( std::string modes_to_add, std::string modes_to_remove )
+{
+	add_modes( modes_to_add );
+	remove_modes( modes_to_remove );
+}
+
+void User::add_modes( std::string mode_string )
 {
 	std::string::iterator it = mode_string.begin();
 	for ( ; it != mode_string.end(); it++ )
