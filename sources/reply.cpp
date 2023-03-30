@@ -204,7 +204,7 @@ std::string const rpl::namreply( User & user, Channel & channel )
 	reply += " = ";
 	reply += channel.get_name();
 	reply += " :";
-	reply += channel.get_user_list();
+	reply += channel.get_user_list_string();
 	reply += "\r\n";
 	return ( reply );
 }
@@ -224,12 +224,33 @@ std::string const rpl::part( User & user, Channel & channel, Message & message )
 {
 	std::string reply = ":";
 	reply += user.get_identifier();
-	reply += " PART ";
+	reply += " ";
+	reply += message.get_command();
+	reply += " ";
 	reply += channel.get_name();
 	reply += " :";
 	if ( message.has( "Part Message" ) )
 	{
 		reply += message.get( "Part Message" );
+	}
+	reply += "\r\n";
+	return ( reply );
+}
+
+std::string const rpl::quit( User & user, Message & message )
+{
+	std::string reply = ":";
+	reply += user.get_identifier();
+	reply += " ";
+	reply += message.get_command();
+	reply += " :";
+	if ( message.has( "Quit Message" ) )
+	{
+		reply += message.get( "Quit Message" );
+	}
+	else
+	{
+		reply += user.get_nickname();
 	}
 	reply += "\r\n";
 	return ( reply );

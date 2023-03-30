@@ -30,7 +30,6 @@ class Context
 		void remove_registered_user( User & user );
 		void remove_unregistered_user( User & user );
 		void create_channel( std::string name );
-		bool is_user_in_any_channel( User & user );
 
 	public:
 		Context();
@@ -53,8 +52,13 @@ class Context
 		std::list<std::string> get_channel_names( void );
 		void add_user_to_channel( User & user, std::string channel_name );
 		void remove_user_from_channel( User & user, std::string channel_name );
+		void remove_user_from_all_channels( User & user );
 
 		bool does_channel_exist( std::string name );
+
+		bool is_user_in_any_channel( User & user );
+		std::list<Channel *> get_user_channels( User & user );
+		std::list<User *> get_users_in_same_channels( User & user );
 
 		void debug_print_unregistered_users( void ) const;
 		void debug_print_registered_users( void ) const;

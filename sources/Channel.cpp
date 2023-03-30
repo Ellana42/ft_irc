@@ -152,7 +152,18 @@ bool Channel::is_empty( void )
 	return ( false );
 }
 
-std::string Channel::get_user_list( void )
+std::list<User *> Channel::get_user_list( void )
+{
+	std::list<User *> user_list;
+	std::map<User *, std::string>::iterator it = users.begin();
+	for ( ; it != users.end(); it++ )
+	{
+		user_list.push_back( it->first );
+	}
+	return ( user_list );
+}
+
+std::string Channel::get_user_list_string( void )
 {
 	std::string user_list;
 	std::map<User *, std::string>::iterator it = users.begin();
