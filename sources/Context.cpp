@@ -209,6 +209,17 @@ User & Context::get_user_by_nick( std::string nickname )
 	throw std::out_of_range( "Could not find user by nickname" );
 }
 
+void Context::update_user_nick( User & user, std::string new_nick )
+{
+	std::map<std::string, User *>::iterator it = registered_users.find(
+	            user.get_nickname() );
+	if ( it != registered_users.end() )
+	{
+		registered_users.insert( pair_string_user( new_nick, &user ) );
+		registered_users.erase( user.get_nickname() );
+	}
+}
+
 bool Context::does_user_with_nick_exist( std::string nickname )
 {
 	try
