@@ -15,11 +15,20 @@ std::string const rpl::err_nosuchnick( User & user,
 	reply += " :No such nick/channel\r\n";
 	return ( reply );
 }
+
 /* Used to indicate the username parameter supplied is */
 /* problematic */
 std::string const rpl::err_invalidusername( void )
 {
 	std::string reply = "ERROR :Invalid user name\r\n";
+	return ( reply );
+}
+
+/* Used to indicate the modestring parameter supplied is */
+/* problematic */
+std::string const rpl::err_invalidmodestring( void )
+{
+	std::string reply = "ERROR :Invalid mode string\r\n";
 	return ( reply );
 }
 

@@ -4,7 +4,7 @@
 #include "ft_irc.hpp"
 
 enum state {PlusMinus, ModeChar};
-enum mode {Plus, Minus};
+enum type {Plus, Minus};
 
 class ModeParsing
 {
@@ -12,7 +12,7 @@ class ModeParsing
 		std::string modestring;
 
 		state current_state;
-		mode current_mode;
+		type current_type;
 		std::string added_modes;
 		std::string removed_modes;
 

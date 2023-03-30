@@ -27,13 +27,13 @@ void ModeParsing::parse_plus_minus( void )
 {
 	if ( get_char() == '+' )
 	{
-		current_mode = Plus;
+		current_type = Plus;
 		current_state = ModeChar;
 		move();
 	}
 	else if ( get_char() == '-' )
 	{
-		current_mode = Minus;
+		current_type = Minus;
 		current_state = ModeChar;
 		move();
 	}
@@ -48,12 +48,12 @@ void ModeParsing::parse_mode_char( void )
 {
 	if ( std::isalpha( get_char() ) )
 	{
-		if ( current_mode == Plus )
+		if ( current_type == Plus )
 		{
 			added_modes.push_back( get_char() );
 			move();
 		}
-		else if ( current_mode == Minus )
+		else if ( current_type == Minus )
 		{
 			removed_modes.push_back( get_char() );
 			move();

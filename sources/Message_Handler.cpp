@@ -1,10 +1,12 @@
 #include "Message_Handler.hpp"
+#include "Mode_Parsing.hpp"
 #include "Context.hpp"
 #include "Channel.hpp"
 #include <cctype>
 #include <exception>
 #include <list>
 #include <stdexcept>
+#include <string>
 
 Message_Handler::Message_Handler( Context & context ) : context( context )
 {
@@ -196,6 +198,21 @@ void Message_Handler::handle_mode( Message & message )
 {
 	/* TODO: implement function */
 	( void )message;
+
+	if ( message.has( "modestring" ) )
+	{
+		ModeParsing parsing( message.get( "modestring" ) );
+		try
+		{
+			parsing.parse();
+			std::string added_modes = parsing.get_added_modes();
+			std::string removed_modes = parsing.get_removed_modes();
+		}
+		catch ( ModeParsing::InvalidModestringException & e )
+		{
+			rpl::err_invalidmodestring();
+		}
+	}
 }
 
 void Message_Handler::handle_names( Message & message )
