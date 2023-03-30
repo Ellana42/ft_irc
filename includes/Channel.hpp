@@ -24,6 +24,8 @@ class Channel
 		void remove_modes( std::string mode_string );
 		void set_modes( User & user, std::string mode_string );
 		void remove_modes( User & user, std::string mode_string );
+		bool has_mode( char c );
+		bool has_mode( User & user, char c );
 
 		void add_user( User & user );
 		void remove_user( User & user );
