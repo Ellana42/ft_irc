@@ -32,4 +32,9 @@
 # define ADMIN_INFO_2 "The best 42 Paris IRC server !"
 # define ADMIN_EMAIL "iazimzha@student.42.fr mcombeau@student.42.fr mkaploun@student.42.fr"
 
+bool is_in( char c, std::string str );
+
+template <typename T, typename U>
+void delete_map( std::map<T, U> & map );
+
 #endif /* FT_IRC_H */

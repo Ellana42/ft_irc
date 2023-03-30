@@ -4,15 +4,6 @@
 
 /* User::User() {} */
 
-bool is_in( char c, std::string str )
-{
-	if ( str.find( c ) != std::string::npos )
-	{
-		return ( true );
-	}
-	return ( false );
-}
-
 User::User( Context & context, int socket ) : nickname( "*" ), username( "*" ),
 	hostname( "*" ), realname( "*" ), fully_registered( false ), context( context ),
 	socket( socket )

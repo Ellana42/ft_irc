@@ -2,17 +2,6 @@
 #include "Channel.hpp"
 #include <stdexcept>
 
-template <typename T, typename U>
-void delete_map( std::map<T, U> & map )
-{
-	typename std::map<T, U>::iterator it = map.begin();
-	for ( ; it != map.end(); it++ )
-	{
-		delete ( it->second );
-	}
-	map.clear();
-}
-
 Context::Context() : message_handler( NULL )
 {
 	message_handler = new Message_Handler( *this );

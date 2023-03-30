@@ -196,9 +196,7 @@ void Message_Handler::handle_list( Message & message )
 
 void Message_Handler::handle_mode( Message & message )
 {
-	/* TODO: implement function */
-	( void )message;
-
+	std::string target = message.get( "target" );
 	if ( message.has( "modestring" ) )
 	{
 		ModeParsing parsing( message.get( "modestring" ) );
@@ -213,6 +211,7 @@ void Message_Handler::handle_mode( Message & message )
 			rpl::err_invalidmodestring();
 		}
 	}
+	/* if ( message.has( "" ) ) */
 }
 
 void Message_Handler::handle_names( Message & message )
