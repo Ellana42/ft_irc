@@ -4,6 +4,8 @@
 #include "User.hpp"
 #include "ft_irc.hpp"
 
+#define MAX_CHAN_NAME_LENGTH 50
+
 class Channel
 {
 	private:
@@ -35,6 +37,17 @@ class Channel
 		std::string get_user_list_string( void );
 		bool is_user_in_channel( User & user );
 		bool is_empty( void );
+
+		class AlreadyInChannelException: public std::exception
+		{
+			public:
+				virtual const char* what() const throw();
+		};
+		class InvalidChannelNameException: public std::exception
+		{
+			public:
+				virtual const char* what() const throw();
+		};
 };
 
 #endif /* CHANNEL_H */

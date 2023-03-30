@@ -73,24 +73,31 @@ void Context::remove_unregistered_user( User & user )
 void Context::create_channel( std::string name )
 {
 	Channel * new_chan = new Channel( name );
-	channels.insert( pair_string_chan( name, new_chan ) );
+	std::string chan_name = string_to_lowercase( new_chan->get_name() );
+	channels.insert( pair_string_chan( chan_name, new_chan ) );
 }
 
 void Context::create_channel( User & user, std::string name )
 {
 	Channel * new_chan = new Channel( name, user );
-	channels.insert( pair_string_chan( name, new_chan ) );
+	std::string chan_name = string_to_lowercase( new_chan->get_name() );
+	channels.insert( pair_string_chan( chan_name, new_chan ) );
 }
 
 void Context::add_user_to_channel( User & user, std::string channel_name )
 {
+	if ( channel_name == DEFAULT_CHAN )
+	{
+		throw std::out_of_range( "Channel: Attempting to add user to default channel!" );
+	}
 	if ( does_channel_exist( channel_name ) == false )
 	{
 		create_channel( user, channel_name );
 	}
 	else
 	{
-		channels[channel_name]->add_user( user );
+		std::string chan_name = string_to_lowercase( channel_name );
+		channels[chan_name]->add_user( user );
 		if ( channel_name != DEFAULT_CHAN
 		        && channels[DEFAULT_CHAN]->is_user_in_channel( user ) )
 		{
@@ -109,7 +116,8 @@ void Context::remove_user_from_channel( User & user, std::string channel_name )
 	}
 	else
 	{
-		channels[channel_name]->remove_user( user );
+		std::string chan_name = string_to_lowercase( channel_name );
+		channels[chan_name]->remove_user( user );
 		if ( is_user_in_any_channel( user ) == false )
 		{
 			channels[DEFAULT_CHAN]->add_user( user );
@@ -142,8 +150,8 @@ bool Context::is_user_in_any_channel( User & user )
 
 void Context::remove_channel( Channel & channel )
 {
-	std::map<std::string, Channel *>::iterator it = channels.find(
-	            channel.get_name() );
+	std::string chan_name = string_to_lowercase( channel.get_name() );
+	std::map<std::string, Channel *>::iterator it = channels.find( chan_name );
 	if ( it != channels.end() )
 	{
 		delete ( it->second );
@@ -184,6 +192,17 @@ User & Context::get_user_by_nick( std::string nickname )
 	throw std::out_of_range( "Could not find user by nickname" );
 }
 
+void Context::update_user_nick( User & user, std::string new_nick )
+{
+	std::map<std::string, User *>::iterator it = registered_users.find(
+	            user.get_nickname() );
+	if ( it != registered_users.end() )
+	{
+		registered_users.insert( pair_string_user( new_nick, &user ) );
+		registered_users.erase( user.get_nickname() );
+	}
+}
+
 bool Context::does_user_with_nick_exist( std::string nickname )
 {
 	try
@@ -203,10 +222,11 @@ Channel & Context::get_channel_by_name( std::string name )
 	{
 		throw std::out_of_range( "Could not find channel by name" );
 	}
-	std::map<std::string, Channel *>::iterator it = channels.find( name );
+	std::string chan_name = string_to_lowercase( name );
+	std::map<std::string, Channel *>::iterator it = channels.find( chan_name );
 	if ( it != channels.end() )
 	{
-		return ( *channels[name] );
+		return ( *channels[chan_name] );
 	}
 	throw std::out_of_range( "Could not find channel by name" );
 }
@@ -224,7 +244,7 @@ std::list<std::string> Context::get_channel_names( void )
 	{
 		if ( it->first != DEFAULT_CHAN )
 		{
-			channel_names.push_back( it->first );
+			channel_names.push_back( it->second->get_name() );
 		}
 	}
 	return ( channel_names );
@@ -232,7 +252,8 @@ std::list<std::string> Context::get_channel_names( void )
 
 bool Context::does_channel_exist( std::string name )
 {
-	std::map<std::string, Channel *>::iterator it = channels.find( name );
+	std::string chan_name = string_to_lowercase( name );
+	std::map<std::string, Channel *>::iterator it = channels.find( chan_name );
 	if ( it != channels.end() )
 	{
 		return ( true );

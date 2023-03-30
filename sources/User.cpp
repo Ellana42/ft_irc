@@ -47,6 +47,10 @@ void User::set_nickname( std::string nickname )
 {
 	if ( nickname_is_valid( nickname ) )
 	{
+		if ( this->is_fully_registered() == true )
+		{
+			context.update_user_nick( *this, nickname );
+		}
 		this->nickname = nickname;
 		this->update_identifier();
 	}
