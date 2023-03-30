@@ -1,6 +1,7 @@
 #include "Channel.hpp"
 #include "Context.hpp"
 #include <cctype>
+#include <stdexcept>
 
 Channel::Channel( std::string name )
 {
@@ -100,18 +101,59 @@ void Channel::remove_modes( std::string mode_string )
 
 void Channel::set_modes( User & user, std::string mode_string )
 {
-	if ( is_user_in_channel( user ) == true )
+	if ( is_user_in_channel( user ) == false )
 	{
-		user.set_modes( mode_string );
+		throw std::out_of_range( "Mode change: User not in channel!" );
+	}
+	std::string::iterator it = mode_string.begin();
+	std::string & user_modes = this->users[&user];
+	for ( ; it != mode_string.end(); it++ )
+	{
+		size_t pos = user_modes.find( *it, 0 );
+		if ( pos == std::string::npos )
+		{
+			user_modes += *it;
+		}
 	}
 }
 
 void Channel::remove_modes( User & user, std::string mode_string )
 {
-	if ( is_user_in_channel( user ) == true )
+	if ( is_user_in_channel( user ) == false )
 	{
-		user.remove_modes( mode_string );
+		throw std::out_of_range( "Mode change: User not in channel!" );
 	}
+	std::string::iterator it = mode_string.begin();
+	std::string & user_modes = this->users[&user];
+	for ( ; it != mode_string.end(); it++ )
+	{
+		size_t pos = user_modes.find( *it, 0 );
+		if ( pos != std::string::npos )
+		{
+			user_modes.erase( pos, 1 );
+		}
+	}
+}
+
+bool Channel::has_mode( char c )
+{
+	size_t pos = this->mode.find( c, 0 );
+	if ( pos != std::string::npos )
+	{
+		return ( true );
+	}
+	return ( false );
+}
+
+bool Channel::has_mode( User & user, char c )
+{
+	std::string & user_modes = this->users[&user];
+	size_t pos = user_modes.find( c, 0 );
+	if ( pos != std::string::npos )
+	{
+		return ( true );
+	}
+	return ( false );
 }
 
 void Channel::send_reply( std::string reply )

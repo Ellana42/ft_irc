@@ -45,13 +45,14 @@ class User
 		void set_hostname( std::string hostname );
 		void set_modes( std::string mode_string );
 		void remove_modes( std::string mode_string );
+		bool has_mode( char c );
+
 		void set_registered( void );
 
 		void read_from_socket( void );
 		void send_reply( std::string reply );
 		bool has_nickname( void );
 		bool has_user_info( void );
-
 
 		class InvalidUsernameException : public std::exception {};
 		class InvalidNicknameException : public std::exception {};
