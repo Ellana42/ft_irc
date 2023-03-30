@@ -40,6 +40,7 @@ class Context
 		void remove_user( User & user );
 		void create_channel( User & user, std::string name );
 		void remove_channel( Channel & channel );
+		void update_user_nick( User & user, std::string new_nick );
 
 		void handle_message( User & sender, std::string raw_message );
 

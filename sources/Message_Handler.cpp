@@ -173,6 +173,7 @@ void Message_Handler::handle_join( Message & message )
 			sender.send_reply( rpl::namreply( sender, channel ) );
 			sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
 		}
+		catch ( Channel::AlreadyInChannelException & e ) {}
 		catch ( std::exception & e )
 		{
 			sender.send_reply( rpl::err_nosuchchannel( sender, *it ) );
