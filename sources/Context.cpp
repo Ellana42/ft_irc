@@ -3,31 +3,6 @@
 #include <iterator>
 #include <stdexcept>
 
-template <typename T, typename U>
-void delete_map( std::map<T, U> & map )
-{
-	typename std::map<T, U>::iterator it = map.begin();
-	for ( ; it != map.end(); it++ )
-	{
-		delete ( it->second );
-	}
-	map.clear();
-}
-
-template <typename T>
-bool is_in_list( std::list<T> list, T elem )
-{
-	typename std::list<T>::iterator it = list.begin();
-	for ( ; it != list.end(); it++ )
-	{
-		if ( *it == elem )
-		{
-			return ( true );
-		}
-	}
-	return ( false );
-}
-
 Context::Context() : message_handler( NULL )
 {
 	message_handler = new Message_Handler( *this );

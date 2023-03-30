@@ -38,4 +38,7 @@ bool is_in( char c, std::string str );
 template <typename T, typename U>
 void delete_map( std::map<T, U> & map );
 
+template <typename T>
+bool is_in_list( std::list<T> list, T elem );
+
 #endif /* FT_IRC_H */
