@@ -22,6 +22,7 @@
 #include <exception>
 #include <new>
 #include <stdexcept>
+#include "Colors.h"
 
 # define SERVER_PREFIX ":ircserv.42.fr"
 # define SERVER_NAME "ircserv"

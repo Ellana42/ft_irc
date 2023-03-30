@@ -352,8 +352,19 @@ void Message_Handler::handle_privmsg( Message & message )
 
 void Message_Handler::handle_quit( Message & message )
 {
-	/* TODO: implement function */
-	( void )message;
+	User & sender = message.get_sender();
+	if ( context.is_user_in_any_channel( sender ) == true )
+	{
+		std::list<User *> users_in_same_channels = context.get_users_in_same_channels(
+		            sender );
+		std::list<User *>::iterator it = users_in_same_channels.begin();
+		for ( ; it != users_in_same_channels.end(); it++ )
+		{
+
+			( *it )->send_reply( rpl::quit( sender, message ) );
+		}
+	}
+	context.remove_user( sender );
 }
 
 void Message_Handler::handle_summon( Message & message )

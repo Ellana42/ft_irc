@@ -1,6 +1,32 @@
 #include "Context.hpp"
 #include "Channel.hpp"
+#include <iterator>
 #include <stdexcept>
+
+template <typename T, typename U>
+void delete_map( std::map<T, U> & map )
+{
+	typename std::map<T, U>::iterator it = map.begin();
+	for ( ; it != map.end(); it++ )
+	{
+		delete ( it->second );
+	}
+	map.clear();
+}
+
+template <typename T>
+bool is_in_list( std::list<T> list, T elem )
+{
+	typename std::list<T>::iterator it = list.begin();
+	for ( ; it != list.end(); it++ )
+	{
+		if ( *it == elem )
+		{
+			return ( true );
+		}
+	}
+	return ( false );
+}
 
 Context::Context() : message_handler( NULL )
 {
@@ -52,6 +78,7 @@ void Context::remove_registered_user( User & user )
 	            user.get_nickname() );
 	if ( it != registered_users.end() )
 	{
+		remove_user_from_all_channels( *( it->second ) );
 		delete( it->second );
 		registered_users.erase( it->first );
 	}
@@ -112,6 +139,16 @@ void Context::remove_user_from_channel( User & user, std::string channel_name )
 		{
 			channels[DEFAULT_CHAN]->add_user( user );
 		}
+	}
+}
+
+void Context::remove_user_from_all_channels( User & user )
+{
+	std::list<Channel *> chans = get_user_channels( user );
+	std::list<Channel *>::iterator it = chans.begin();
+	for ( ; it != chans.end(); it++ )
+	{
+		remove_user_from_channel( user, ( *it )->get_name() );
 	}
 }
 
@@ -226,6 +263,40 @@ bool Context::does_channel_exist( std::string name )
 		return ( true );
 	}
 	return ( false );
+}
+
+std::list<Channel *> Context::get_user_channels( User & user )
+{
+	std::list<Channel *> user_chans;
+	std::map<std::string, Channel *>::iterator it = channels.begin();
+	for ( ; it != channels.end(); it++ )
+	{
+		if ( it->second->is_user_in_channel( user ) == true )
+		{
+			user_chans.push_back( it->second );
+		}
+	}
+	return ( user_chans );
+}
+
+std::list<User *> Context::get_users_in_same_channels( User & user )
+{
+	std::list<User *> users_in_same_channels;
+	std::list<Channel *> chans = get_user_channels( user );
+	std::list<Channel *>::iterator it = chans.begin();
+	for ( ; it != chans.end(); it++ )
+	{
+		std::list<User *> chan_users = ( *it )->get_user_list();
+		std::list<User *>::iterator uit = chan_users.begin();
+		for ( ; uit != chan_users.end(); uit++ )
+		{
+			if ( *uit != &user && is_in_list( users_in_same_channels, *uit ) == false )
+			{
+				users_in_same_channels.push_back( *uit );
+			}
+		}
+	}
+	return ( users_in_same_channels );
 }
 
 void Context::debug_print_unregistered_users( void ) const
