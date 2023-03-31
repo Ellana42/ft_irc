@@ -1,10 +1,13 @@
 #include "Message_Handler.hpp"
+#include "Mode_Parsing.hpp"
 #include "Context.hpp"
 #include "Channel.hpp"
+#include "Parsing.hpp"
 #include <cctype>
 #include <exception>
 #include <list>
 #include <stdexcept>
+#include <string>
 
 Message_Handler::Message_Handler( Context & context ) : context( context )
 {
@@ -195,8 +198,70 @@ void Message_Handler::handle_list( Message & message )
 
 void Message_Handler::handle_mode( Message & message )
 {
-	/* TODO: implement function */
-	( void )message;
+	User & sender = message.get_sender();
+
+	std::string target = message.get( "target" );
+	TypeTarget type_target = Channel_;
+	User * target_user;
+	Channel * target_channel;
+
+	if ( is_channel( target ) )
+	{
+		if ( !context.does_channel_exist( target ) )
+		{
+			rpl::err_nosuchchannel( sender, target );
+			return;
+		}
+		target_channel = &context.get_channel_by_name( target );
+	}
+	else
+	{
+		if ( !context.does_user_with_nick_exist( target ) )
+		{
+			rpl::err_nosuchchannel( sender, target );
+			return;
+		}
+		type_target = User_;
+		target_user = &context.get_user_by_nick( target );
+		if ( target != sender.get_nickname() )
+		{
+			rpl::err_usersdontmatch( sender );
+			return;
+		}
+	}
+
+	if ( message.has( "modestring" ) )
+	{
+		ModeParsing parsing( message.get( "modestring" ) );
+		try
+		{
+			parsing.parse();
+			std::string added_modes = parsing.get_added_modes();
+			std::string removed_modes = parsing.get_removed_modes();
+
+			if ( type_target == User_ )
+			{
+				target_user->set_modes( added_modes, removed_modes );
+			}
+			else
+			{
+				target_channel->set_modes( added_modes, removed_modes );
+			}
+		}
+		catch ( ModeParsing::InvalidModestringException & e )
+		{
+			rpl::err_invalidmodestring();
+		}
+	}
+	else
+	{
+		// TODO: implement rpl umodeis
+		return;
+	}
+	if ( message.has( "mode arguments" ) )
+	{
+		// TODO: implement
+	}
 }
 
 void Message_Handler::handle_names( Message & message )

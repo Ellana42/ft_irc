@@ -92,5 +92,6 @@ std::string const err_nooperhost( User & user );
 std::string const err_umodeunknownflag( User & user );
 std::string const err_usersdontmatch( User & user );
 std::string const err_invalidusername( void );
+std::string const err_invalidmodestring( void );
 
 }

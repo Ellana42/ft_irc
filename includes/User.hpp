@@ -43,7 +43,8 @@ class User
 		void set_username( std::string username );
 		void set_realname( std::string realname );
 		void set_hostname( std::string hostname );
-		void set_modes( std::string mode_string );
+		void set_modes( std::string modes_to_add, std::string modes_to_remove );
+		void add_modes( std::string mode_string );
 		void remove_modes( std::string mode_string );
 		bool has_mode( char c );
 

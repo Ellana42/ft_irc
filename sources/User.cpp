@@ -4,15 +4,6 @@
 
 /* User::User() {} */
 
-bool is_in( char c, std::string str )
-{
-	if ( str.find( c ) != std::string::npos )
-	{
-		return ( true );
-	}
-	return ( false );
-}
-
 User::User( Context & context, int socket ) : nickname( "*" ), username( "*" ),
 	hostname( "*" ), realname( "*" ), fully_registered( false ), context( context ),
 	socket( socket )
@@ -103,7 +94,13 @@ void User::set_registered( void )
 }
 
 
-void User::set_modes( std::string mode_string )
+void User::set_modes( std::string modes_to_add, std::string modes_to_remove )
+{
+	add_modes( modes_to_add );
+	remove_modes( modes_to_remove );
+}
+
+void User::add_modes( std::string mode_string )
 {
 	std::string::iterator it = mode_string.begin();
 	for ( ; it != mode_string.end(); it++ )
