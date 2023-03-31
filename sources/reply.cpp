@@ -4,7 +4,7 @@
 #include "reply_macros_error.hpp"
 #include "Channel.hpp"
 
-std::string const rpl::list_start( User & user )
+std::string const rpl::liststart( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
 	reply += "321 ";
@@ -14,7 +14,7 @@ std::string const rpl::list_start( User & user )
 	return ( reply );
 }
 
-std::string const rpl::list_item( User & user, Channel & channel )
+std::string const rpl::list( User & user, Channel & channel )
 {
 	std::string reply = SERVER_PREFIX " ";
 	reply += "322 ";
@@ -27,7 +27,7 @@ std::string const rpl::list_item( User & user, Channel & channel )
 	return ( reply );
 }
 
-std::string const rpl::list_end( User & user )
+std::string const rpl::listend( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";
 	reply += "323 ";
