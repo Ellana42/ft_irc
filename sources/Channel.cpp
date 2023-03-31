@@ -202,6 +202,12 @@ std::list<User *> Channel::get_user_list( void )
 	return ( user_list );
 }
 
+unsigned int Channel::get_nbr_users( void )
+{
+	return ( users.size() );
+}
+
+
 std::string Channel::get_user_list_string( void )
 {
 	std::string user_list;

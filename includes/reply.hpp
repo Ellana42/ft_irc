@@ -93,5 +93,8 @@ std::string const err_umodeunknownflag( User & user );
 std::string const err_usersdontmatch( User & user );
 std::string const err_invalidusername( void );
 std::string const err_invalidmodestring( void );
+std::string const list_start( User & user );
+std::string const list_item( User & user, Channel & channel );
+std::string const list_end( User & user );
 
 }

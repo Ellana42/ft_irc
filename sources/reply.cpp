@@ -4,6 +4,39 @@
 #include "reply_macros_error.hpp"
 #include "Channel.hpp"
 
+std::string const rpl::list_start( User & user )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += "321 ";
+	reply += user.get_nickname();
+	reply += " Channel : Users Name";
+	reply += "\r\n";
+	return ( reply );
+}
+
+std::string const rpl::list_item( User & user, Channel & channel )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += "322 ";
+	reply += user.get_nickname();
+	reply += " ";
+	reply += channel.get_name();
+	reply += " ";
+	reply += channel.get_nbr_users();
+	reply += "\r\n";
+	return ( reply );
+}
+
+std::string const rpl::list_end( User & user )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += "323 ";
+	reply += user.get_nickname();
+	reply += " :End of LIST";
+	reply += "\r\n";
+	return ( reply );
+}
+
 std::string const rpl::welcome( User & user )
 {
 	std::string reply = SERVER_PREFIX " ";

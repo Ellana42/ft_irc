@@ -35,6 +35,7 @@ class Channel
 		void send_reply( std::string reply );
 
 		std::list<User *> get_user_list( void );
+		unsigned int get_nbr_users( void );
 		std::string get_user_list_string( void );
 		bool is_user_in_channel( User & user );
 		bool is_empty( void );
