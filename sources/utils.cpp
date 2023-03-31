@@ -48,3 +48,13 @@ bool is_in_list( std::list<T> list, T elem )
 	return ( false );
 }
 
+std::string string_to_lowercase( std::string string )
+{
+	std::string lowercase = string;
+	std::string::iterator it = lowercase.begin();
+	for ( ; it != lowercase.end(); it++ )
+	{
+		*it = std::tolower( *it );
+	}
+	return ( lowercase );
+}

@@ -41,5 +41,6 @@ void delete_map( std::map<T, U> & map );
 template <typename T>
 bool is_in_list( std::list<T> list, T elem );
 bool is_channel( std::string name );
+std::string string_to_lowercase( std::string string );
 
 #endif /* FT_IRC_H */
