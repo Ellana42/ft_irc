@@ -192,8 +192,29 @@ void Message_Handler::handle_kick( Message & message )
 
 void Message_Handler::handle_list( Message & message )
 {
-	/* TODO: implement function */
-	( void )message;
+	User & sender = message.get_sender();
+	std::list<std::string> channels;
+
+	rpl::liststart( sender );
+	if ( message.has_list( "channel" ) )
+	{
+		channels = message.get_list( "channel" );
+		std::list<std::string>::iterator it = channels.begin();
+		for ( ; it != channels.end(); it++ )
+		{
+			rpl::list( sender, context.get_channel_by_name( *it ) );
+		}
+	}
+	else
+	{
+		channels = context.get_channel_names();
+		std::list<std::string>::iterator it = channels.begin();
+		for ( ; it != channels.end(); it++ )
+		{
+			rpl::list( sender, context.get_channel_by_name( *it ) );
+		}
+	}
+	rpl::listend( sender );
 }
 
 void Message_Handler::handle_mode( Message & message )
