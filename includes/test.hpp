@@ -20,7 +20,8 @@ void test_names( Context & context );
 void test_join( Context & context );
 void test_part( Context & context );
 void test_quit( Context & context );
-
+void test_mode( Context & context );
+void test_list( Context & context );
 void create_new_user( Context & context, int socket );
 void send_test_message( Context & context, User & sender, std::string command );
 void print_users_status( Context & context );
