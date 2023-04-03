@@ -3,6 +3,8 @@
 #include "reply_macros.hpp"
 #include "reply_macros_error.hpp"
 #include "Channel.hpp"
+#include <cstdlib>
+#include <sstream>
 
 std::string const rpl::liststart( User & user )
 {
@@ -16,13 +18,17 @@ std::string const rpl::liststart( User & user )
 
 std::string const rpl::list( User & user, Channel & channel )
 {
+	std::ostringstream nbr_user_str;
+
+	nbr_user_str << channel.get_nbr_users();
+
 	std::string reply = SERVER_PREFIX " ";
 	reply += "322 ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += channel.get_name();
 	reply += " ";
-	reply += channel.get_nbr_users();
+	reply += nbr_user_str.str();
 	reply += "\r\n";
 	return ( reply );
 }
