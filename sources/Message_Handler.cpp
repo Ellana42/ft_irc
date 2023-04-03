@@ -287,6 +287,7 @@ void Message_Handler::handle_mode( Message & message )
 
 void Message_Handler::handle_names( Message & message )
 {
+	// TODO: special print for channel operators
 	User & sender = message.get_sender();
 	std::list<std::string> chan_names;
 	bool show_default_chan = false;
@@ -491,6 +492,7 @@ void Message_Handler::handle_version( Message & message )
 void Message_Handler::handle_who( Message & message )
 {
 	/* TODO: implement function */
+	// TODO: special print for channel operators
 	( void )message;
 }
 
