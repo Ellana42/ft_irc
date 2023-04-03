@@ -192,8 +192,29 @@ void Message_Handler::handle_kick( Message & message )
 
 void Message_Handler::handle_list( Message & message )
 {
-	/* TODO: implement function */
-	( void )message;
+	User & sender = message.get_sender();
+	std::list<std::string> channels;
+
+	sender.send_reply( rpl::liststart( sender ) );
+	if ( message.has_list( "channel" ) )
+	{
+		channels = message.get_list( "channel" );
+		std::list<std::string>::iterator it = channels.begin();
+		for ( ; it != channels.end(); it++ )
+		{
+			sender.send_reply( rpl::list( sender, context.get_channel_by_name( *it ) ) );
+		}
+	}
+	else
+	{
+		channels = context.get_channel_names();
+		std::list<std::string>::iterator it = channels.begin();
+		for ( ; it != channels.end(); it++ )
+		{
+			sender.send_reply( rpl::list( sender, context.get_channel_by_name( *it ) ) );
+		}
+	}
+	sender.send_reply( rpl::listend( sender ) );
 }
 
 void Message_Handler::handle_mode( Message & message )
@@ -209,7 +230,7 @@ void Message_Handler::handle_mode( Message & message )
 	{
 		if ( !context.does_channel_exist( target ) )
 		{
-			rpl::err_nosuchchannel( sender, target );
+			sender.send_reply( rpl::err_nosuchchannel( sender, target ) );
 			return;
 		}
 		target_channel = &context.get_channel_by_name( target );
@@ -218,14 +239,14 @@ void Message_Handler::handle_mode( Message & message )
 	{
 		if ( !context.does_user_with_nick_exist( target ) )
 		{
-			rpl::err_nosuchchannel( sender, target );
+			sender.send_reply( rpl::err_nosuchchannel( sender, target ) );
 			return;
 		}
 		type_target = User_;
 		target_user = &context.get_user_by_nick( target );
 		if ( target != sender.get_nickname() )
 		{
-			rpl::err_usersdontmatch( sender );
+			sender.send_reply( rpl::err_usersdontmatch( sender ) );
 			return;
 		}
 	}
@@ -250,7 +271,7 @@ void Message_Handler::handle_mode( Message & message )
 		}
 		catch ( ModeParsing::InvalidModestringException & e )
 		{
-			rpl::err_invalidmodestring();
+			sender.send_reply( rpl::err_invalidmodestring() );
 		}
 	}
 	else

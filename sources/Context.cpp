@@ -2,6 +2,7 @@
 #include "Channel.hpp"
 #include <iterator>
 #include <stdexcept>
+#include "ft_irc.hpp"
 
 Context::Context() : message_handler( NULL )
 {

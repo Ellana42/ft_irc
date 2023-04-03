@@ -22,6 +22,7 @@ class Channel
 
 		void set_name( std::string name );
 		std::string const & get_name( void ) const;
+		std::string const & get_mode( void ) const;
 		void set_modes( std::string modes_to_add, std::string modes_to_remove );
 		void add_modes( std::string mode_string );
 		void remove_modes( std::string mode_string );
@@ -35,6 +36,7 @@ class Channel
 		void send_reply( std::string reply );
 
 		std::list<User *> get_user_list( void );
+		unsigned int get_nbr_users( void );
 		std::string get_user_list_string( void );
 		bool is_user_in_channel( User & user );
 		bool is_empty( void );

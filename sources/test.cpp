@@ -37,6 +37,8 @@ void run_test_suite( void )
 	test_names( context );
 	test_part( context );
 	test_names( context );
+	test_mode( context );
+	test_list( context );
 	test_quit( context );
 
 	std::cout << CYAN "-- Deleting context" RESET << std::endl;
@@ -303,6 +305,52 @@ void test_quit( Context & context )
 	send_test_message( context, dante, "QUIT\r\n" );
 }
 
+void test_mode( Context & context )
+{
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl;
+	std::cout << CYAN "\t TESTING MODE" RESET << std::endl;
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl << std::endl;
+
+	User & alice = context.get_user_by_nick( "alice" );
+
+	context.create_channel( alice, "#achannel" );
+
+	Channel & channel = context.get_channel_by_name( "#achannel" );
+
+	std::cout << "Modes alice : " << alice.get_mode() << std::endl;
+	send_test_message( context, alice, "MODE alice +abc-efg+ad\r\n" );
+	std::cout << "Modes alice : " << alice.get_mode() << std::endl;
+	send_test_message( context, alice, "MODE alice +x-da+t\r\n" );
+	std::cout << "Modes alice : " << alice.get_mode() << std::endl;
+
+	std::cout << "Modes channel" << channel.get_mode() << std::endl;
+	send_test_message( context, alice, "MODE #achannel +abc-efg+ad\r\n" );
+	std::cout << "Modes channel : " << channel.get_mode() << std::endl;
+	send_test_message( context, alice, "MODE #achannel +x-da+t\r\n" );
+	std::cout << "Modes channel : " << channel.get_mode() << std::endl;
+
+	// TODO: overload << operator for user and channels
+}
+
+void test_list( Context & context )
+{
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl;
+	std::cout << CYAN "\t TESTING MODE" RESET << std::endl;
+	std::cout << CYAN "-----------------------------------------------" RESET <<
+	          std::endl << std::endl;
+
+	User & alice = context.get_user_by_nick( "alice" );
+
+	send_test_message( context, alice, "LIST\r\n" );
+	context.create_channel( alice, "#channel1" );
+	context.create_channel( alice, "#channel2" );
+	send_test_message( context, alice, "LIST\r\n" );
+	send_test_message( context, alice, "LIST #channel1\r\n" );
+}
+
 void create_new_user( Context & context, int socket )
 {
 	std::cout << CYAN "-- Creating unregistered user on socket [" << socket << "]"
@@ -324,4 +372,3 @@ void send_test_message( Context & context, User & sender, std::string command )
 	context.handle_message( sender, command );
 	std::cout << std::endl;
 }
-

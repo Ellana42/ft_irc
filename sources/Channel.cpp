@@ -55,6 +55,12 @@ std::string const & Channel::get_name( void ) const
 	return ( this->name );
 }
 
+std::string const & Channel::get_mode( void ) const
+{
+	return ( this->mode );
+}
+
+
 void Channel::add_user( User & user )
 {
 	/* std::cout << "CHAN [" << name << "] : Adding user \"" << user.get_nickname() << */
@@ -201,6 +207,12 @@ std::list<User *> Channel::get_user_list( void )
 	}
 	return ( user_list );
 }
+
+unsigned int Channel::get_nbr_users( void )
+{
+	return ( users.size() );
+}
+
 
 std::string Channel::get_user_list_string( void )
 {
