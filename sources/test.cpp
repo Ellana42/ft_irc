@@ -274,12 +274,14 @@ void test_part( Context & context )
 	User & alice = context.get_user_by_nick( "alice" );
 	User & bob = context.get_user_by_nick( "bob" );
 
+
 	send_test_message( context, bob, "PART\r\n" );
-	send_test_message( context, bob, "PART #hello #test\r\n" );
+	send_test_message( context, bob, "JOIN 0\r\n" );
+	/* send_test_message( context, bob, "PART #hello #test\r\n" ); */
 	send_test_message( context, alice, "PART #doesnotexist :bye\r\n" );
 	send_test_message( context, alice, "PART #test,!test,&test,+test :bye\r\n" );
 	send_test_message( context, alice, "PART #test :bye\r\n" );
-	send_test_message( context, bob, "PART #test,#hello\r\n" );
+	/* send_test_message( context, bob, "PART #test,#hello\r\n" ); */
 }
 
 void test_quit( Context & context )
