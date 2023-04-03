@@ -217,10 +217,23 @@ void Message_Handler::handle_list( Message & message )
 	sender.send_reply( rpl::listend( sender ) );
 }
 
+bool has_unknown_modes( std::string modes, std::string accepted_modes )
+{
+	for ( unsigned int i = 0; i < modes.size(); i++ )
+	{
+		if ( !is_in( modes[i], accepted_modes ) )
+		{
+			return ( true );
+		}
+	}
+	return ( false );
+}
+
 void Message_Handler::handle_mode( Message & message )
 {
 	User & sender = message.get_sender();
 
+	const std::string accepted_modes = "oO";
 	std::string target = message.get( "target" );
 	TypeTarget type_target = Channel_;
 	User * target_user;
@@ -256,9 +269,15 @@ void Message_Handler::handle_mode( Message & message )
 		ModeParsing parsing( message.get( "modestring" ) );
 		try
 		{
+			// TODO: filter operators that aren't o or O
 			parsing.parse();
 			std::string added_modes = parsing.get_added_modes();
 			std::string removed_modes = parsing.get_removed_modes();
+			if ( has_unknown_modes( added_modes, accepted_modes )
+			        || has_unknown_modes( removed_modes, accepted_modes ) )
+			{
+				sender.send_reply( rpl::err_umodeunknownflag( sender ) );
+			}
 
 			if ( type_target == User_ )
 			{

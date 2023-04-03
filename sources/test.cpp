@@ -324,11 +324,15 @@ void test_mode( Context & context )
 	std::cout << "Modes alice : " << alice.get_mode() << std::endl;
 	send_test_message( context, alice, "MODE alice +x-da+t\r\n" );
 	std::cout << "Modes alice : " << alice.get_mode() << std::endl;
+	send_test_message( context, alice, "MODE alice +o-O\r\n" );
+	std::cout << "Modes alice : " << alice.get_mode() << std::endl;
 
 	std::cout << "Modes channel" << channel.get_mode() << std::endl;
 	send_test_message( context, alice, "MODE #achannel +abc-efg+ad\r\n" );
 	std::cout << "Modes channel : " << channel.get_mode() << std::endl;
 	send_test_message( context, alice, "MODE #achannel +x-da+t\r\n" );
+	std::cout << "Modes channel : " << channel.get_mode() << std::endl;
+	send_test_message( context, alice, "MODE #achannel +oooooO\r\n" );
 	std::cout << "Modes channel : " << channel.get_mode() << std::endl;
 
 	// TODO: overload << operator for user and channels
