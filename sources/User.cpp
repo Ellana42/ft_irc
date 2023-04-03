@@ -38,6 +38,11 @@ std::string const & User::get_identifier( void ) const
 	return ( this->identifier );
 }
 
+bool User::is_operator( void ) const
+{
+	return ( has_mode( 'o' ) );
+}
+
 int const & User::get_socket( void ) const
 {
 	return ( this->socket );
@@ -131,7 +136,7 @@ void User::remove_modes( std::string mode_string )
 	}
 }
 
-bool User::has_mode( char c )
+bool User::has_mode( char c ) const
 {
 	size_t pos = this->mode.find( c, 0 );
 	if ( pos != std::string::npos )

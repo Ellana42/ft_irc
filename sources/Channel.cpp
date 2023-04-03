@@ -1,5 +1,6 @@
 #include "Channel.hpp"
 #include "Context.hpp"
+#include "User.hpp"
 #include <cctype>
 #include <stdexcept>
 
@@ -167,6 +168,17 @@ bool Channel::has_mode( User & user, char c )
 	}
 	return ( false );
 }
+
+bool Channel::is_operator( User & user )
+{
+	return ( has_mode( user, 'o' ) );
+}
+
+bool Channel::is_creator( User & user )
+{
+	return ( has_mode( user, 'O' ) );
+}
+
 
 void Channel::send_reply( std::string reply )
 {
