@@ -43,6 +43,11 @@ int const & User::get_socket( void ) const
 	return ( this->socket );
 }
 
+std::string const & User::get_mode( void ) const
+{
+	return ( this->mode );
+}
+
 void User::set_nickname( std::string nickname )
 {
 	if ( nickname_is_valid( nickname ) )

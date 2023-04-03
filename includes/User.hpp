@@ -36,6 +36,7 @@ class User
 		std::string const & get_realname( void ) const;
 		std::string const & get_hostname( void ) const;
 		std::string const & get_identifier( void ) const;
+		std::string const & get_mode( void ) const;
 		int const & get_socket( void ) const;
 		bool is_fully_registered( void ) const;
 

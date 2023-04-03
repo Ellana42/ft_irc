@@ -55,6 +55,12 @@ std::string const & Channel::get_name( void ) const
 	return ( this->name );
 }
 
+std::string const & Channel::get_mode( void ) const
+{
+	return ( this->mode );
+}
+
+
 void Channel::add_user( User & user )
 {
 	/* std::cout << "CHAN [" << name << "] : Adding user \"" << user.get_nickname() << */
