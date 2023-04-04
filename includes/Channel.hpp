@@ -30,7 +30,7 @@ class Channel
 		void remove_modes( User & user, std::string mode_string );
 		bool has_mode( char c );
 		bool has_mode( User & user, char c );
-		std::string const get_user_modes( User * user ) ;
+		std::string const get_user_modes( User & user ) ;
 		bool is_operator( User & user );
 		bool is_creator( User & user );
 

@@ -169,11 +169,11 @@ bool Channel::has_mode( User & user, char c )
 	return ( false );
 }
 
-std::string const Channel::get_user_modes( User * user )
+std::string const Channel::get_user_modes( User & user )
 {
-	if ( is_user_in_channel( *user ) )
+	if ( is_user_in_channel( user ) )
 	{
-		return ( users[user] );
+		return ( users[&user] );
 	}
 	else
 	{
