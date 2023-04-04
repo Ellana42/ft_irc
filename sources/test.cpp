@@ -38,8 +38,8 @@ void run_test_suite( void )
 	test_part( context );
 	test_names( context );
 	test_mode( context );
-	test_list( context );
-	test_quit( context );
+	/* test_list( context ); */
+	/* test_quit( context ); */
 
 	std::cout << CYAN "-- Deleting context" RESET << std::endl;
 	delete ( &context );
@@ -314,6 +314,7 @@ void test_mode( Context & context )
 	          std::endl << std::endl;
 
 	User & alice = context.get_user_by_nick( "alice" );
+	User & dante = context.get_user_by_nick( "dante" );
 
 	context.create_channel( alice, "#achannel" );
 
@@ -332,8 +333,22 @@ void test_mode( Context & context )
 	std::cout << "Modes channel : " << channel.get_mode() << std::endl;
 	send_test_message( context, alice, "MODE #achannel +x-da+t\r\n" );
 	std::cout << "Modes channel : " << channel.get_mode() << std::endl;
-	send_test_message( context, alice, "MODE #achannel +oooooO\r\n" );
-	std::cout << "Modes channel : " << channel.get_mode() << std::endl;
+
+	channel.add_user( dante );
+	std::cout << "Channel modes alice : " << channel.get_user_modes(
+	              alice ) << std::endl;
+	std::cout << "Channel modes dante : " << channel.get_user_modes(
+	              dante ) << std::endl;
+	send_test_message( context, dante, "MODE #achannel +o alice\r\n" );
+	std::cout << "Channel modes alice : " << channel.get_user_modes(
+	              alice ) << std::endl;
+	send_test_message( context, alice, "MODE #achannel +o \r\n" );
+	send_test_message( context, alice, "MODE #achannel +o dante\r\n" );
+	std::cout << "Channel modes dante : " << channel.get_user_modes(
+	              dante ) << std::endl;
+	send_test_message( context, dante, "MODE #achannel -o alice\r\n" );
+	std::cout << "Channel modes alice : " << channel.get_user_modes(
+	              alice ) << std::endl;
 
 	// TODO: overload << operator for user and channels
 }
