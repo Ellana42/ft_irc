@@ -69,14 +69,30 @@ void Channel::add_user( User & user )
 	{
 		throw Channel::AlreadyInChannelException();
 	}
-	users.insert( pair_user_string( &user, "" ) );
+	users.insert( pair_nick_user( user.get_nickname(), &user ) );
+	user_modes.insert( pair_nick_mode( user.get_nickname(), "" ) );
 }
 
 void Channel::remove_user( User & user )
 {
 	/* std::cout << "CHAN [" << name << "] : removing user \"" << user.get_nickname() */
 	/*           << "\"" << std::endl; */
-	users.erase( &user );
+	users.erase( user.get_nickname() );
+	user_modes.erase( user.get_nickname() );
+}
+
+void Channel::update_user_nick( User & user, std::string new_nick )
+{
+	std::map<std::string, User *>::iterator it = users.find( user.get_nickname() );
+	std::map<std::string, std::string>::iterator mit = user_modes.find(
+	            user.get_nickname() );
+	if ( it != users.end() && mit != user_modes.end() )
+	{
+		user_modes.insert( pair_nick_mode( new_nick, mit->second ) );
+		user_modes.erase( user.get_nickname() );
+		users.insert( pair_nick_user( new_nick, &user ) );
+		users.erase( user.get_nickname() );
+	}
 }
 
 void Channel::set_modes( std::string modes_to_add, std::string modes_to_remove )
@@ -118,13 +134,13 @@ void Channel::set_modes( User & user, std::string mode_string )
 		throw std::out_of_range( "Mode change: User not in channel!" );
 	}
 	std::string::iterator it = mode_string.begin();
-	std::string & user_modes = this->users[&user];
+	std::string & modes = this->user_modes[user.get_nickname()];
 	for ( ; it != mode_string.end(); it++ )
 	{
-		size_t pos = user_modes.find( *it, 0 );
+		size_t pos = modes.find( *it, 0 );
 		if ( pos == std::string::npos )
 		{
-			user_modes += *it;
+			modes += *it;
 		}
 	}
 }
@@ -136,13 +152,13 @@ void Channel::remove_modes( User & user, std::string mode_string )
 		throw std::out_of_range( "Mode change: User not in channel!" );
 	}
 	std::string::iterator it = mode_string.begin();
-	std::string & user_modes = this->users[&user];
+	std::string & modes = this->user_modes[user.get_nickname()];
 	for ( ; it != mode_string.end(); it++ )
 	{
-		size_t pos = user_modes.find( *it, 0 );
+		size_t pos = modes.find( *it, 0 );
 		if ( pos != std::string::npos )
 		{
-			user_modes.erase( pos, 1 );
+			modes.erase( pos, 1 );
 		}
 	}
 }
@@ -159,8 +175,8 @@ bool Channel::has_mode( char c )
 
 bool Channel::has_mode( User & user, char c )
 {
-	std::string & user_modes = this->users[&user];
-	size_t pos = user_modes.find( c, 0 );
+	std::string & modes = this->user_modes[user.get_nickname()];
+	size_t pos = modes.find( c, 0 );
 	if ( pos != std::string::npos )
 	{
 		return ( true );
@@ -170,16 +186,16 @@ bool Channel::has_mode( User & user, char c )
 
 void Channel::send_reply( std::string reply )
 {
-	std::map<User *, std::string>::iterator it = users.begin();
+	std::map<std::string, User *>::iterator it = users.begin();
 	for ( ; it != users.end(); it++ )
 	{
-		it->first->send_reply( reply );
+		it->second->send_reply( reply );
 	}
 }
 
 bool Channel::is_user_in_channel( User & user )
 {
-	std::map<User *, std::string>::iterator it = users.find( &user );
+	std::map<std::string, User *>::iterator it = users.find( user.get_nickname() );
 	if ( it != users.end() )
 	{
 		return ( true );
@@ -189,7 +205,7 @@ bool Channel::is_user_in_channel( User & user )
 
 bool Channel::is_empty( void )
 {
-	std::map<User *, std::string>::iterator it = users.begin();
+	std::map<std::string, User *>::iterator it = users.begin();
 	if ( it == users.end() )
 	{
 		return ( true );
@@ -200,10 +216,10 @@ bool Channel::is_empty( void )
 std::list<User *> Channel::get_user_list( void )
 {
 	std::list<User *> user_list;
-	std::map<User *, std::string>::iterator it = users.begin();
+	std::map<std::string, User *>::iterator it = users.begin();
 	for ( ; it != users.end(); it++ )
 	{
-		user_list.push_back( it->first );
+		user_list.push_back( it->second );
 	}
 	return ( user_list );
 }
@@ -217,14 +233,14 @@ unsigned int Channel::get_nbr_users( void )
 std::string Channel::get_user_list_string( void )
 {
 	std::string user_list;
-	std::map<User *, std::string>::iterator it = users.begin();
+	std::map<std::string, User *>::iterator it = users.begin();
 	for ( ; it != users.end(); it++ )
 	{
 		if ( it != users.begin() )
 		{
 			user_list += " ";
 		}
-		user_list += it->first->get_nickname();
+		user_list += it->first;
 	}
 	return ( user_list );
 }

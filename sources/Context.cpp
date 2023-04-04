@@ -199,6 +199,12 @@ void Context::update_user_nick( User & user, std::string new_nick )
 	            user.get_nickname() );
 	if ( it != registered_users.end() )
 	{
+		std::list<Channel *> chans = get_user_channels( user );
+		std::list<Channel *>::iterator it = chans.begin();
+		for ( ; it != chans.end(); it++ )
+		{
+			( *it )->update_user_nick( user, new_nick );
+		}
 		registered_users.insert( pair_string_user( new_nick, &user ) );
 		registered_users.erase( user.get_nickname() );
 	}
