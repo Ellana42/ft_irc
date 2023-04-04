@@ -252,7 +252,7 @@ void Message_Handler::handle_mode( Message & message )
 	{
 		if ( !context.does_user_with_nick_exist( target ) )
 		{
-			sender.send_reply( rpl::err_nosuchchannel( sender, target ) );
+			sender.send_reply( rpl::err_nosuchnick( sender, target ) );
 			return;
 		}
 		type_target = User_;
@@ -269,7 +269,6 @@ void Message_Handler::handle_mode( Message & message )
 		ModeParsing parsing( message.get( "modestring" ) );
 		try
 		{
-			// TODO: filter operators that aren't o or O
 			parsing.parse();
 			std::string added_modes = parsing.get_added_modes();
 			std::string removed_modes = parsing.get_removed_modes();
@@ -281,7 +280,8 @@ void Message_Handler::handle_mode( Message & message )
 
 			if ( type_target == User_ )
 			{
-				target_user->set_modes( added_modes, removed_modes );
+				target_user->remove_modes(
+				    removed_modes ); // NOTE: to change if more modes, works for oO
 			}
 			else
 			{
