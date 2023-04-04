@@ -278,14 +278,47 @@ void Message_Handler::handle_mode( Message & message )
 				sender.send_reply( rpl::err_umodeunknownflag( sender ) );
 			}
 
-			if ( type_target == User_ )
+			if ( is_in( 'o', added_modes ) || is_in( 'o', removed_modes )
+			        || is_in( 'O', added_modes ) || is_in( 'o', removed_modes ) )
 			{
-				target_user->remove_modes(
-				    removed_modes ); // NOTE: to change if more modes, works for oO
-			}
-			else
-			{
-				target_channel->set_modes( added_modes, removed_modes );
+				if ( type_target == User_ )
+				{
+					target_user->remove_modes(
+					    removed_modes ); // NOTE: to change if more modes, works for oO
+				}
+				else
+				{
+					if ( target_channel->is_operator( sender ) && is_in( 'o', added_modes ) )
+					{
+						if ( message.has( "mode arguments" ) )
+						{
+							try
+							{
+								User target_user = context.get_user_by_nick(
+								                       message.get( "mode arguments" ) );
+
+								target_user.add_modes( "o" );
+								target_user.remove_modes(
+								    removed_modes );
+							}
+							catch ( std::out_of_range & e )
+							{
+								sender.send_reply( rpl::err_nosuchnick( sender,
+								                                        message.get( "mode arguments" ) ) );
+							}
+						}
+						else
+						{
+							sender.send_reply( rpl::err_nosuchnick( sender,
+							                                        message.get( "mode arguments" ) ) );
+						}
+					}
+					else
+					{
+						sender.send_reply( rpl::err_chanoprivsneeded( sender,
+						                   target_channel->get_name() ) );
+					}
+				}
 			}
 		}
 		catch ( ModeParsing::InvalidModestringException & e )
