@@ -169,6 +169,18 @@ bool Channel::has_mode( User & user, char c )
 	return ( false );
 }
 
+std::string const Channel::get_user_modes( User * user )
+{
+	if ( is_user_in_channel( *user ) )
+	{
+		return ( users[user] );
+	}
+	else
+	{
+		throw std::out_of_range( "User is not in channel" );
+	}
+}
+
 bool Channel::is_operator( User & user )
 {
 	return ( has_mode( user, 'o' ) );
