@@ -9,10 +9,12 @@
 class Channel
 {
 	private:
-		typedef std::pair<User *, std::string> pair_user_string;
+		typedef std::pair<std::string, User *> pair_nick_user;
+		typedef std::pair<std::string, std::string> pair_nick_mode;
 
 		std::string name;
-		std::map<User *, std::string> users;
+		std::map<std::string, User *> users;
+		std::map<std::string, std::string> user_modes;
 		std::string mode;
 
 	public:
@@ -36,6 +38,7 @@ class Channel
 
 		void add_user( User & user );
 		void remove_user( User & user );
+		void update_user_nick( User & user, std::string new_nick );
 		void send_reply( std::string reply );
 
 		std::list<User *> get_user_list( void );

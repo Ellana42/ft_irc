@@ -276,6 +276,14 @@ std::string const rpl::part( User & user, Channel & channel, Message & message )
 	return ( reply );
 }
 
+std::string const rpl::create_part_message( Channel & channel )
+{
+	std::string msg = "PART ";
+	msg += channel.get_name();
+	msg += "\r\n";
+	return ( msg );
+}
+
 std::string const rpl::quit( User & user, Message & message )
 {
 	std::string reply = ":";

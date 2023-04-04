@@ -156,14 +156,22 @@ void Message_Handler::handle_info( Message & message )
 
 void Message_Handler::handle_join( Message & message )
 {
-	/* TODO: handle "0" as param to part with all channels */
 	User & sender = message.get_sender();
 	std::list<std::string> chan_names = message.get_list( "channel" );
 	if ( chan_names.empty() )
 	{
 		throw std::runtime_error( "JOIN: did not provide channels to join!" );
 	}
-	/* TODO: if first chan name is 0, add condition here and part all user chans */
+	if ( chan_names.front() == "0" )
+	{
+		std::list<Channel *> chan_list = context.get_user_channels( sender );
+		std::list<Channel *>::iterator it = chan_list.begin();
+		for ( ; it != chan_list.end(); it++ )
+		{
+			context.handle_message( sender, rpl::create_part_message( *( *it ) ) );
+		}
+		return ;
+	}
 	/* TODO: add security so you can't JOIN "*" */
 	std::list<std::string>::iterator it = chan_names.begin();
 	for ( ; it != chan_names.end(); it++ )
