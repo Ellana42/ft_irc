@@ -83,6 +83,7 @@ void Context::create_channel( User & user, std::string name )
 	Channel * new_chan = new Channel( name, user );
 	std::string chan_name = string_to_lowercase( new_chan->get_name() );
 	channels.insert( pair_string_chan( chan_name, new_chan ) );
+	user.add_modes( "oO" );
 }
 
 void Context::add_user_to_channel( User & user, std::string channel_name )
