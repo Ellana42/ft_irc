@@ -203,10 +203,13 @@ void Channel::send_reply( std::string reply )
 
 bool Channel::is_user_in_channel( User & user )
 {
-	std::map<User *, std::string>::iterator it = users.find( &user );
-	if ( it != users.end() )
+	std::map<User *, std::string>::iterator it;
+	for ( it = users.begin(); it != users.end(); it++ )
 	{
-		return ( true );
+		if ( it->first->get_nickname() == user.get_nickname() )
+		{
+			return ( true );
+		}
 	}
 	return ( false );
 }
