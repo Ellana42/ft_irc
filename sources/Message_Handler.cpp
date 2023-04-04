@@ -297,9 +297,8 @@ void Message_Handler::handle_mode( Message & message )
 								User target_user = context.get_user_by_nick(
 								                       message.get( "mode arguments" ) );
 
-								target_user.add_modes( "o" );
-								target_user.remove_modes(
-								    removed_modes );
+								target_channel->set_modes( target_user, "o" );
+								target_channel->remove_modes( target_user, removed_modes );
 							}
 							catch ( std::out_of_range & e )
 							{
