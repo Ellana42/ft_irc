@@ -296,7 +296,7 @@ void Message_Handler::handle_mode( Message & message )
 				}
 				else
 				{
-					if ( target_channel->is_operator( sender ) && is_in( 'o', added_modes ) )
+					if ( target_channel->is_operator( sender ) )
 					{
 						if ( message.has( "mode arguments" ) )
 						{
@@ -305,7 +305,10 @@ void Message_Handler::handle_mode( Message & message )
 								User target_user = context.get_user_by_nick(
 								                       message.get( "mode arguments" ) );
 
-								target_channel->set_modes( target_user, "o" );
+								if ( is_in( 'o', added_modes ) )
+								{
+									target_channel->set_modes( target_user, "o" );
+								}
 								target_channel->remove_modes( target_user, removed_modes );
 							}
 							catch ( std::out_of_range & e )
