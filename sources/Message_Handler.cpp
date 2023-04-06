@@ -225,10 +225,23 @@ void Message_Handler::handle_list( Message & message )
 	sender.send_reply( rpl::listend( sender ) );
 }
 
+bool has_unknown_modes( std::string modes, std::string accepted_modes )
+{
+	for ( unsigned int i = 0; i < modes.size(); i++ )
+	{
+		if ( !is_in( modes[i], accepted_modes ) )
+		{
+			return ( true );
+		}
+	}
+	return ( false );
+}
+
 void Message_Handler::handle_mode( Message & message )
 {
 	User & sender = message.get_sender();
 
+	const std::string accepted_modes = "oO";
 	std::string target = message.get( "target" );
 	TypeTarget type_target = Channel_;
 	User * target_user;
@@ -247,7 +260,7 @@ void Message_Handler::handle_mode( Message & message )
 	{
 		if ( !context.does_user_with_nick_exist( target ) )
 		{
-			sender.send_reply( rpl::err_nosuchchannel( sender, target ) );
+			sender.send_reply( rpl::err_nosuchnick( sender, target ) );
 			return;
 		}
 		type_target = User_;
@@ -267,14 +280,71 @@ void Message_Handler::handle_mode( Message & message )
 			parsing.parse();
 			std::string added_modes = parsing.get_added_modes();
 			std::string removed_modes = parsing.get_removed_modes();
-
-			if ( type_target == User_ )
+			if ( has_unknown_modes( added_modes, accepted_modes )
+			        || has_unknown_modes( removed_modes, accepted_modes ) )
 			{
-				target_user->set_modes( added_modes, removed_modes );
+				sender.send_reply( rpl::err_umodeunknownflag( sender ) );
 			}
-			else
+
+			if ( is_in( 'o', added_modes ) || is_in( 'o', removed_modes )
+			        || is_in( 'O', added_modes ) || is_in( 'o', removed_modes ) )
 			{
-				target_channel->set_modes( added_modes, removed_modes );
+				if ( type_target == User_ )
+				{
+					target_user->remove_modes(
+					    removed_modes );
+				}
+				else
+				{
+					if ( target_channel->is_operator( sender ) )
+					{
+						if ( message.has( "mode arguments" ) )
+						{
+							try
+							{
+								User target_user = context.get_user_by_nick(
+								                       message.get( "mode arguments" ) );
+
+								if ( is_in( 'o', added_modes ) )
+								{
+									target_channel->set_modes( target_user, "o" );
+								}
+								target_channel->remove_modes( target_user, removed_modes );
+							}
+							catch ( std::out_of_range & e )
+							{
+								if ( message.has( "mode arguments" ) )
+								{
+									std::cout << "HERE" << std::endl;
+									sender.send_reply( rpl::err_nosuchnick( sender,
+									                                        message.get( "mode arguments" ) ) );
+								}
+								else
+								{
+									sender.send_reply( rpl::err_nosuchnick( sender, "" ) );
+								}
+							}
+						}
+						else
+						{
+							if ( message.has( "mode arguments" ) )
+							{
+								sender.send_reply( rpl::err_nosuchnick( sender,
+								                                        message.get( "mode arguments" ) ) );
+							}
+							else
+							{
+								sender.send_reply( rpl::err_nosuchnick( sender,
+								                                        "" ) );
+							}
+						}
+					}
+					else
+					{
+						sender.send_reply( rpl::err_chanoprivsneeded( sender,
+						                   target_channel->get_name() ) );
+					}
+				}
 			}
 		}
 		catch ( ModeParsing::InvalidModestringException & e )
@@ -295,6 +365,7 @@ void Message_Handler::handle_mode( Message & message )
 
 void Message_Handler::handle_names( Message & message )
 {
+	// TODO: special print for channel operators
 	User & sender = message.get_sender();
 	std::list<std::string> chan_names;
 	bool show_default_chan = false;
@@ -499,6 +570,7 @@ void Message_Handler::handle_version( Message & message )
 void Message_Handler::handle_who( Message & message )
 {
 	/* TODO: implement function */
+	// TODO: special print for channel operators
 	( void )message;
 }
 

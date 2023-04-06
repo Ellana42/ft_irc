@@ -47,7 +47,8 @@ class User
 		void set_modes( std::string modes_to_add, std::string modes_to_remove );
 		void add_modes( std::string mode_string );
 		void remove_modes( std::string mode_string );
-		bool has_mode( char c );
+		bool has_mode( char c ) const ;
+		bool is_operator( void ) const;
 
 		void set_registered( void );
 

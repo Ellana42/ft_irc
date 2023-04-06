@@ -1,5 +1,6 @@
 #include "Channel.hpp"
 #include "Context.hpp"
+#include "User.hpp"
 #include <cctype>
 #include <stdexcept>
 
@@ -183,6 +184,29 @@ bool Channel::has_mode( User & user, char c )
 	}
 	return ( false );
 }
+
+std::string const Channel::get_user_modes( User & user )
+{
+	if ( is_user_in_channel( user ) )
+	{
+		return ( user_modes[user.get_nickname()] );
+	}
+	else
+	{
+		throw std::out_of_range( "User is not in channel" );
+	}
+}
+
+bool Channel::is_operator( User & user )
+{
+	return ( has_mode( user, 'o' ) || is_creator( user ) );
+}
+
+bool Channel::is_creator( User & user )
+{
+	return ( has_mode( user, 'O' ) );
+}
+
 
 void Channel::send_reply( std::string reply )
 {
