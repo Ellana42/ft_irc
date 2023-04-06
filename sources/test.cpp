@@ -38,8 +38,8 @@ void run_test_suite( void )
 	test_part( context );
 	test_names( context );
 	test_mode( context );
-	/* test_list( context ); */
-	/* test_quit( context ); */
+	test_list( context );
+	test_quit( context );
 
 	std::cout << CYAN "-- Deleting context" RESET << std::endl;
 	delete ( &context );
@@ -351,6 +351,9 @@ void test_mode( Context & context )
 	send_test_message( context, dante, "MODE #achannel -o alice\r\n" );
 	std::cout << "Channel modes alice : " << channel.get_user_modes(
 	              alice ) << std::endl;
+	send_test_message( context, alice, "MODE #achannel -o dante\r\n" );
+	std::cout << "Channel modes dante : " << channel.get_user_modes(
+	              dante ) << std::endl;
 
 	// TODO: overload << operator for user and channels
 }
