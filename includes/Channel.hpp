@@ -16,6 +16,7 @@ class Channel
 		std::map<std::string, User *> users;
 		std::map<std::string, std::string> user_modes;
 		std::string mode;
+		std::string creator_nick;
 
 	public:
 		Channel( std::string name );
@@ -24,6 +25,8 @@ class Channel
 
 		void set_name( std::string name );
 		std::string const & get_name( void ) const;
+		void set_creator( std::string nick );
+		std::string const & get_creator( void ) const;
 		std::string const & get_mode( void ) const;
 		void set_modes( std::string modes_to_add, std::string modes_to_remove );
 		void add_modes( std::string mode_string );

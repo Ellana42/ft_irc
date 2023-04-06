@@ -17,6 +17,7 @@ Channel::Channel( std::string name )
 Channel::Channel( std::string name, User & creator )
 {
 	set_name( name );
+	set_creator( creator.get_nickname() );
 	add_user( creator );
 }
 
@@ -56,11 +57,21 @@ std::string const & Channel::get_name( void ) const
 	return ( this->name );
 }
 
+void Channel::set_creator( std::string nick )
+{
+	this->creator_nick = nick;
+	return ;
+}
+
+std::string const & Channel::get_creator( void ) const
+{
+	return ( this->creator_nick );
+}
+
 std::string const & Channel::get_mode( void ) const
 {
 	return ( this->mode );
 }
-
 
 void Channel::add_user( User & user )
 {
@@ -72,6 +83,10 @@ void Channel::add_user( User & user )
 	}
 	users.insert( pair_nick_user( user.get_nickname(), &user ) );
 	user_modes.insert( pair_nick_mode( user.get_nickname(), "" ) );
+	if ( user.get_nickname() == this->creator_nick )
+	{
+		set_modes( user, "Oo" );
+	}
 }
 
 void Channel::remove_user( User & user )
@@ -87,12 +102,17 @@ void Channel::update_user_nick( User & user, std::string new_nick )
 	std::map<std::string, User *>::iterator it = users.find( user.get_nickname() );
 	std::map<std::string, std::string>::iterator mit = user_modes.find(
 	            user.get_nickname() );
+	bool is_chan_creator = is_creator( user );
 	if ( it != users.end() && mit != user_modes.end() )
 	{
 		user_modes.insert( pair_nick_mode( new_nick, mit->second ) );
 		user_modes.erase( user.get_nickname() );
 		users.insert( pair_nick_user( new_nick, &user ) );
 		users.erase( user.get_nickname() );
+		if ( is_chan_creator == true )
+		{
+			set_creator( new_nick );
+		}
 	}
 }
 
@@ -204,7 +224,11 @@ bool Channel::is_operator( User & user )
 
 bool Channel::is_creator( User & user )
 {
-	return ( has_mode( user, 'O' ) );
+	if ( user.get_nickname() == this->creator_nick || has_mode( user, 'O' ) )
+	{
+		return ( true );
+	}
+	return ( false );
 }
 
 
