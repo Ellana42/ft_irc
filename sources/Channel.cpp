@@ -199,7 +199,7 @@ std::string const Channel::get_user_modes( User & user )
 
 bool Channel::is_operator( User & user )
 {
-	return ( has_mode( user, 'o' ) );
+	return ( has_mode( user, 'o' ) || is_creator( user ) );
 }
 
 bool Channel::is_creator( User & user )
