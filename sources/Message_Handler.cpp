@@ -313,14 +313,30 @@ void Message_Handler::handle_mode( Message & message )
 							}
 							catch ( std::out_of_range & e )
 							{
-								sender.send_reply( rpl::err_nosuchnick( sender,
-								                                        message.get( "mode arguments" ) ) );
+								if ( message.has( "mode arguments" ) )
+								{
+									std::cout << "HERE" << std::endl;
+									sender.send_reply( rpl::err_nosuchnick( sender,
+									                                        message.get( "mode arguments" ) ) );
+								}
+								else
+								{
+									sender.send_reply( rpl::err_nosuchnick( sender, "" ) );
+								}
 							}
 						}
 						else
 						{
-							sender.send_reply( rpl::err_nosuchnick( sender,
-							                                        message.get( "mode arguments" ) ) );
+							if ( message.has( "mode arguments" ) )
+							{
+								sender.send_reply( rpl::err_nosuchnick( sender,
+								                                        message.get( "mode arguments" ) ) );
+							}
+							else
+							{
+								sender.send_reply( rpl::err_nosuchnick( sender,
+								                                        "" ) );
+							}
 						}
 					}
 					else
