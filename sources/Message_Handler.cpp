@@ -292,7 +292,7 @@ void Message_Handler::handle_mode( Message & message )
 				if ( type_target == User_ )
 				{
 					target_user->remove_modes(
-					    removed_modes ); // NOTE: to change if more modes, works for oO
+					    removed_modes );
 				}
 				else
 				{
