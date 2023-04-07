@@ -14,12 +14,13 @@ struct s_socket
 class Application
 {
 	private:
-		/* Context &context; */
+		Context * context;
 
 		s_socket server;
 		s_socket clients;
 
 		std::list<pthread_t> threads;
+		const static int max_clients = SOMAXCONN;
 
 	public:
 		Application();

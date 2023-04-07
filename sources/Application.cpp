@@ -18,6 +18,8 @@ std::string const welcome()
 
 Application::Application()
 {
+	context = new Context();
+
 	std::cout << "Creating server socket..." << std::endl;
 	server.fd = socket( AF_INET, SOCK_STREAM, 0 );
 
@@ -28,25 +30,22 @@ Application::Application()
 	}
 
 	server.info.sin_family = AF_INET;
-	server.info.sin_port = htons(6667); // TODO test other ports ?
-	server.info.sin_addr.s_addr = htonl(INADDR_ANY);
+	server.info.sin_port = htons( 6667 ); // TODO test other ports ?
+	server.info.sin_addr.s_addr = htonl( INADDR_ANY );
 
 	std::cout << "Binding socket to sockaddr..." << std::endl;
 	if ( bind( server.fd, ( struct sockaddr * ) &server.info,
-             sizeof( server.info ) ) == -1 )
+	           sizeof( server.info ) ) == -1 )
 	{
 		std::cerr << "Can't bind to IP/port";
 		throw std::runtime_error( "Can't bind to IP/port" );
 	}
 	std::cout << "Mark the socket for listening..." << std::endl;
-	if ( listen(server.fd, SOMAXCONN) == -1 )
+	if ( listen( server.fd, SOMAXCONN ) == -1 )
 	{
 		std::cerr << "Can't listen !";
 		throw std::runtime_error( "Can't listen !" );
 	}
-
-	// set up maximum number of clients
-	max_clients = SOMAXCONN;
 }
 
 void Application::launch_server()
@@ -72,7 +71,7 @@ void Application::launch_server()
 
 			std::cout << "Accept client call..." << std::endl;
 			clients.fd = accept( server.fd, ( struct sockaddr * ) &clients.info,
-                                &clientSize );
+			                     &clientSize );
 
 			std::cout << "Received call..." << std::endl;
 			if ( clients.fd == -1 )
@@ -89,6 +88,10 @@ void Application::launch_server()
 			}
 			client_fds[num_clients + 1].fd = clients.fd;
 			client_fds[num_clients + 1].events = POLLIN;
+
+			// Creating new user for client
+			context->create_unregistered_user( clients.fd );
+
 			num_clients++;
 		}
 		int i = 1;
@@ -112,8 +115,12 @@ void Application::launch_server()
 				}
 				std::cout << "Received: " << std::string( buf, 0, bytes_recv );
 
-				std::string response = welcome();
-				send( client_fds[i].fd, response.c_str(), response.length() + 1, 0 );
+				// TODO : check for incomplete messages / read until \r\n
+				context->handle_message( context->get_user_by_socket( clients.fd ),
+				                         std::string( buf, 0, bytes_recv ) );
+
+				/* std::string response = welcome(); */
+				/* send( client_fds[i].fd, response.c_str(), response.length() + 1, 0 ); */
 			}
 			i++;
 		}
@@ -121,4 +128,7 @@ void Application::launch_server()
 	close( server.fd );
 }
 
-Application::~Application() {}
+Application::~Application()
+{
+	delete context;
+}

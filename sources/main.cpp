@@ -1,8 +1,11 @@
 #include "test.hpp"
+#include "ft_irc.hpp"
+#include "Application.hpp"
 
 int main( void )
 {
-	run_test_suite();
+	Application app;
+
+	app.launch_server();
 	return ( 0 );
 }
-
