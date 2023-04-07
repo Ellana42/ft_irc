@@ -542,15 +542,21 @@ void Message_Handler::handle_user( Message & message )
 	try
 	{
 
+		std::cout << "HERE" << std::endl;
 		sender.set_username( message.get( "user" ) );
 		sender.set_hostname( message.get( "unused" ) );
 		sender.set_realname( message.get( "realname" ) );
+		std::cout << "THERE" << std::endl;
 		welcome_user( sender );
 		/* sender.set_mode( message.get( "mode" ) ); */
 	}
 	catch ( User::InvalidUsernameException & e )
 	{
 		sender.send_reply( rpl::err_invalidusername() );
+	}
+	catch ( std::exception & e )
+	{
+		std::cout << "Another exception" << std::endl;
 	}
 }
 
@@ -588,5 +594,9 @@ void Message_Handler::welcome_user( User & user )
 		user.send_reply( rpl::created( user ) );
 		user.send_reply( rpl::myinfo( user ) );
 	}
-	catch ( std::exception & e ) {}
+	catch ( std::exception & e )
+	{
+		std::cout << "Exception in welcome" << std::endl;
+		std::cout << e.what() << std::endl;
+	}
 }

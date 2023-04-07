@@ -88,10 +88,10 @@ void Context::create_channel( User & user, std::string name )
 
 void Context::add_user_to_channel( User & user, std::string channel_name )
 {
-	if ( channel_name == DEFAULT_CHAN )
-	{
-		throw std::out_of_range( "Channel: Attempting to add user to default channel!" );
-	}
+	/* if ( channel_name == DEFAULT_CHAN ) */
+	/* { */
+	/* 	throw std::out_of_range( "Channel: Attempting to add user to default channel!" ); */
+	/* } */
 	if ( does_channel_exist( channel_name ) == false )
 	{
 		create_channel( user, channel_name );

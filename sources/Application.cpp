@@ -30,6 +30,7 @@ Application::Application()
 	}
 
 	server.info.sin_family = AF_INET;
+	// TODO: try multiple ports
 	server.info.sin_port = htons( 6667 ); // TODO test other ports ?
 	server.info.sin_addr.s_addr = htonl( INADDR_ANY );
 
@@ -113,11 +114,14 @@ void Application::launch_server()
 					client_fds[i].fd = -1;
 					num_clients--;
 				}
-				std::cout << "Received: " << std::string( buf, 0, bytes_recv );
+
+				std::string received = std::string( buf, 0, bytes_recv );
+
+				std::cout << "Received: " << received;
 
 				// TODO : check for incomplete messages / read until \r\n
 				context->handle_message( context->get_user_by_socket( clients.fd ),
-				                         std::string( buf, 0, bytes_recv ) );
+				                         received );
 
 				/* std::string response = welcome(); */
 				/* send( client_fds[i].fd, response.c_str(), response.length() + 1, 0 ); */
