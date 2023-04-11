@@ -120,7 +120,7 @@ void Application::launch_server()
 				std::cout << "Received: " << received;
 
 				// TODO : check for incomplete messages / read until \r\n
-				context->handle_message( context->get_user_by_socket( clients.fd ),
+				context->handle_message( context->get_user_by_socket( client_fds[i].fd ),
 				                         received );
 
 				/* std::string response = welcome(); */
