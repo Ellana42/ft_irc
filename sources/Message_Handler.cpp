@@ -99,7 +99,7 @@ bool Message_Handler::should_handle_message( User & sender, Message & message )
 {
 	std::string command = message.get_command();
 	if ( sender.is_fully_registered() == true || command == "USER"
-	        || command == "NICK" || command == "QUIT" )
+	        || command == "NICK" || command == "CAP" || command == "QUIT" )
 	{
 		return ( true );
 	}
@@ -108,6 +108,7 @@ bool Message_Handler::should_handle_message( User & sender, Message & message )
 void Message_Handler::initialize_message_handlers( void )
 {
 	handle.insert( pair_handler( "ADMIN", &Message_Handler::handle_admin ) );
+	handle.insert( pair_handler( "CAP", &Message_Handler::handle_cap ) );
 	handle.insert( pair_handler( "INFO", &Message_Handler::handle_info ) );
 	handle.insert( pair_handler( "JOIN", &Message_Handler::handle_join ) );
 	handle.insert( pair_handler( "KICK", &Message_Handler::handle_kick ) );
@@ -138,6 +139,12 @@ void Message_Handler::handle_admin( Message & message )
 	sender.send_reply( rpl::adminloc1( sender ) );
 	sender.send_reply( rpl::adminloc2( sender ) );
 	sender.send_reply( rpl::adminemail( sender ) );
+}
+
+void Message_Handler::handle_cap( Message & message )
+{
+	(void)message;
+	return ;
 }
 
 void Message_Handler::handle_info( Message & message )

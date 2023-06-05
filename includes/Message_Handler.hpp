@@ -21,6 +21,7 @@ class Message_Handler
 		void initialize_message_handlers( void );
 
 		void handle_admin( Message & message );
+		void handle_cap( Message & message );
 		void handle_info( Message & message );
 		void handle_join( Message & message );
 		void handle_kick( Message & message );
