@@ -126,7 +126,7 @@ void Application::read_message( int fd, int *num_clients )
 	while ( terminator == std::string::npos )
 	{
 		bytes_recv = recv( fd, buf, sizeof( buf ), 0 );
-		std::cerr << "- BUFFER contains: [" << buf << "]" << std::endl;
+		/* std::cerr << "- BUFFER contains: [" << buf << "]" << std::endl; */
 		if ( bytes_recv == -1 )
 		{
 			std::cerr << "There was a connection issue." << std::endl;
