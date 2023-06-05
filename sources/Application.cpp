@@ -174,15 +174,25 @@ void Application::read_message(int fd, int *num_clients)
 	}
 	if (terminator != std::string::npos)	
 	{
-		/* std::string received = std::string( buf, 0, bytes_recv ); */
+		size_t pos = 0;
+		while (terminator != std::string::npos)
+		{
+			std::string first_command = message_buffer.substr(pos, terminator + 2 );
+			/* std::string received = std::string( buf, 0, bytes_recv ); */
 
-		std::cout << "---------------------------------" << std::endl;
-		std::cout << "--- Received: [" << message_buffer << "]" << std::endl;
-		std::cout << "---------------------------------" << std::endl;
+			std::cout << "---------------------------------" << std::endl;
+			std::cout << "--- Received: [" << message_buffer << "]" << std::endl;
+			std::cout << "--- FIRST COMMAND: [" << first_command << "]" << std::endl;
 
-	// TODO : check for incomplete messages / read until \r\n
-		context->handle_message( context->get_user_by_socket( fd ),
-				                         message_buffer );
+			std::cout << "---------------------------------" << std::endl;
+
+			// TODO : check for incomplete messages / read until \r\n
+			context->handle_message( context->get_user_by_socket( fd ),
+				                         first_command );
+
+			pos = terminator + 2;
+			terminator = message_buffer.find("\r\n", pos);
+		}
 	}
 
 	/* std::string response = welcome(); */
