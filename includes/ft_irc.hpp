@@ -63,5 +63,8 @@ void delete_map( std::map<T, U> & map )
 	map.clear();
 }
 
+void examineString( std::string s );
+void examineChar( char c );
+void examineCharStar( char *cs );
 
 #endif /* FT_IRC_H */
