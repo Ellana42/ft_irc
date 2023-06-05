@@ -141,27 +141,26 @@ void Application::read_message( int fd, int *num_clients )
 			break;
 		}
 		message_buffer += std::string( buf );
-		std::cerr << "- STRING BUFFER contains: [";
-		examineString( message_buffer );
-		std::cerr << "]" << std::endl;
+		/* std::cerr << "- STRING BUFFER contains: ["; */
+		/* examineString( message_buffer ); */
+		/* std::cerr << "]" << std::endl; */
 		terminator = message_buffer.find( "\r\n", 0 );
-		std::cerr << "- TERMINATOR is pos :" << terminator << std::endl;
+		/* std::cerr << "- TERMINATOR is pos :" << terminator << std::endl; */
 	}
 	if ( terminator != std::string::npos )
 	{
 		size_t pos = 0;
 		while ( terminator != std::string::npos )
 		{
-			std::string first_command = message_buffer.substr( pos, terminator + 2 );
-			/* std::string received = std::string( buf, 0, bytes_recv ); */
+			std::string first_command = message_buffer.substr( pos, terminator + 2 - pos );
 
-			std::cout << "---------------------------------" << std::endl;
-			std::cout << "--- Received: [" << message_buffer << "]" << std::endl;
-			std::cout << "--- FIRST COMMAND: [";
-			examineString( first_command );
-			std::cout << "]" << std::endl;
+			/* std::cout << "---------------------------------" << std::endl; */
+			/* std::cout << "--- Received: [" << message_buffer << "]" << std::endl; */
+			/* std::cout << "--- FIRST COMMAND: ["; */
+			/* examineString( first_command ); */
+			/* std::cout << "]" << std::endl; */
 
-			std::cout << "---------------------------------" << std::endl;
+			/* std::cout << "---------------------------------" << std::endl; */
 
 			// TODO : check for incomplete messages / read until \r\n
 			context->handle_message( context->get_user_by_socket( fd ),
@@ -169,12 +168,12 @@ void Application::read_message( int fd, int *num_clients )
 
 			pos = terminator + 2;
 			terminator = message_buffer.find( "\r\n", pos );
-			std::cout << "position : " << pos << std::endl;
-			examineChar( message_buffer[pos] ) ;
-			std::cout << std::endl;
-			std::cout << "terminator : " << terminator << std::endl;
-			examineChar( message_buffer[terminator] ) ;
-			std::cout << std::endl;
+			/* std::cout << "position : " << pos << std::endl; */
+			/* examineChar( message_buffer[pos] ) ; */
+			/* std::cout << std::endl; */
+			/* std::cout << "terminator : " << terminator << std::endl; */
+			/* examineChar( message_buffer[terminator] ) ; */
+			/* std::cout << std::endl; */
 		}
 	}
 
