@@ -100,7 +100,7 @@ void Application::launch_server()
 		{
 			if ( client_fds[i].fd != -1 && client_fds[i].revents & POLLIN )
 			{
-				read_message(client_fds[i].fd, &num_clients);
+				read_message( client_fds[i].fd, &num_clients );
 			}
 			i++;
 		}
@@ -108,39 +108,62 @@ void Application::launch_server()
 	close( server.fd );
 }
 
-void examineChar(char c){
-    if(c=='\n')
-        std::cout<<"\\n";
-    else if(c=='\r')
-        std::cout<<"\\r";
-    else if(c=='\b')
-        std::cout<<"\\b";
-    else if(c=='\t')
-        std::cout<<"\\t";
-    else if(c=='\a')
-        std::cout<<"\\a";
-    else if(c=='\v')
-        std::cout<<"\\v";
-    else if(c=='\0')
-        std::cout<<"\\0";
-    else
-        std::cout<<c;
+void examineChar( char c )
+{
+	if( c == '\n' )
+	{
+		std::cout << "\\n";
+	}
+	else if( c == '\r' )
+	{
+		std::cout << "\\r";
+	}
+	else if( c == '\b' )
+	{
+		std::cout << "\\b";
+	}
+	else if( c == '\t' )
+	{
+		std::cout << "\\t";
+	}
+	else if( c == '\a' )
+	{
+		std::cout << "\\a";
+	}
+	else if( c == '\v' )
+	{
+		std::cout << "\\v";
+	}
+	else if( c == '\0' )
+	{
+		std::cout << "\\0";
+	}
+	else
+	{
+		std::cout << c;
+	}
 }
 
-void examineCharStar(char *cs){
-    size_t i;
-    for(i=0;i < std::strlen(cs);i++)
-        examineChar(cs[i]);
+void examineCharStar( char *cs )
+{
+	size_t i;
+	for( i = 0; i < std::strlen( cs ); i++ )
+	{
+		examineChar( cs[i] );
+	}
 }
 
-void examineString(std::string s){
-    size_t i;
-    if(s!="")
-        for(i=0;i<s.length();i++)
-            examineChar(s[i]);
+void examineString( std::string s )
+{
+	size_t i;
+	if( s != "" )
+		for( i = 0; i < s.length(); i++ )
+		{
+			examineChar( s[i] );
+		}
 }
 
-void Application::read_message(int fd, int *num_clients)
+void Application::read_message( int fd, int *num_clients )
 {
 	char buf[4096];
 	memset( buf, 0, sizeof( buf ) );
@@ -148,7 +171,7 @@ void Application::read_message(int fd, int *num_clients)
 	int bytes_recv = 0;
 
 	std::string message_buffer;
-	while (terminator == std::string::npos)
+	while ( terminator == std::string::npos )
 	{
 		bytes_recv = recv( fd, buf, sizeof( buf ), 0 );
 		std::cerr << "- BUFFER contains: [" << buf << "]" << std::endl;
@@ -162,36 +185,44 @@ void Application::read_message(int fd, int *num_clients)
 			std::cout << "The client disconnected" << std::endl;
 			close( fd );
 			fd = -1;
-			(*num_clients)--;
+			( *num_clients )--;
 			break;
 		}
-		message_buffer += std::string(buf);
+		message_buffer += std::string( buf );
 		std::cerr << "- STRING BUFFER contains: [";
-			examineString(message_buffer);
-			std::cerr << "]" << std::endl;
-		terminator = message_buffer.find("\r\n", 0);
+		examineString( message_buffer );
+		std::cerr << "]" << std::endl;
+		terminator = message_buffer.find( "\r\n", 0 );
 		std::cerr << "- TERMINATOR is pos :" << terminator << std::endl;
 	}
-	if (terminator != std::string::npos)	
+	if ( terminator != std::string::npos )
 	{
 		size_t pos = 0;
-		while (terminator != std::string::npos)
+		while ( terminator != std::string::npos )
 		{
-			std::string first_command = message_buffer.substr(pos, terminator + 2 );
+			std::string first_command = message_buffer.substr( pos, terminator + 2 );
 			/* std::string received = std::string( buf, 0, bytes_recv ); */
 
 			std::cout << "---------------------------------" << std::endl;
 			std::cout << "--- Received: [" << message_buffer << "]" << std::endl;
-			std::cout << "--- FIRST COMMAND: [" << first_command << "]" << std::endl;
+			std::cout << "--- FIRST COMMAND: [";
+			examineString( first_command );
+			std::cout << "]" << std::endl;
 
 			std::cout << "---------------------------------" << std::endl;
 
 			// TODO : check for incomplete messages / read until \r\n
 			context->handle_message( context->get_user_by_socket( fd ),
-				                         first_command );
+			                         first_command );
 
 			pos = terminator + 2;
-			terminator = message_buffer.find("\r\n", pos);
+			terminator = message_buffer.find( "\r\n", pos );
+			std::cout << "position : " << pos << std::endl;
+			examineChar( message_buffer[pos] ) ;
+			std::cout << std::endl;
+			std::cout << "terminator : " << terminator << std::endl;
+			examineChar( message_buffer[terminator] ) ;
+			std::cout << std::endl;
 		}
 	}
 
