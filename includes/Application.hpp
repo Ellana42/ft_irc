@@ -21,6 +21,7 @@ class Application
 
 		std::list<pthread_t> threads;
 		const static int max_clients = SOMAXCONN;
+		void read_message(int fd, int *num_clients);
 
 	public:
 		Application();

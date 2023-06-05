@@ -100,36 +100,59 @@ void Application::launch_server()
 		{
 			if ( client_fds[i].fd != -1 && client_fds[i].revents & POLLIN )
 			{
-				char buf[4096];
-				memset( buf, 0, sizeof( buf ) );
-				int bytes_recv = recv( client_fds[i].fd, buf, sizeof( buf ), 0 );
-				if ( bytes_recv == -1 )
-				{
-					std::cerr << "There was a connection issue." << std::endl;
-				}
-				if ( bytes_recv == 0 )
-				{
-					std::cout << "The client disconnected" << std::endl;
-					close( client_fds[i].fd );
-					client_fds[i].fd = -1;
-					num_clients--;
-				}
-
-				std::string received = std::string( buf, 0, bytes_recv );
-
-				std::cout << "Received: " << received;
-
-				// TODO : check for incomplete messages / read until \r\n
-				context->handle_message( context->get_user_by_socket( client_fds[i].fd ),
-				                         received );
-
-				/* std::string response = welcome(); */
-				/* send( client_fds[i].fd, response.c_str(), response.length() + 1, 0 ); */
+				read_message(client_fds[i].fd, &num_clients);
 			}
 			i++;
 		}
 	}
 	close( server.fd );
+}
+
+void Application::read_message(int fd, int *num_clients)
+{
+	char buf[4096];
+	memset( buf, 0, sizeof( buf ) );
+	size_t terminator = std::string::npos;
+	int bytes_recv = 0;
+
+	std::string message_buffer;
+	while (terminator == std::string::npos)
+	{
+		bytes_recv = recv( fd, buf, sizeof( buf ), 0 );
+		std::cerr << "- BUFFER contains: [" << buf << "]" << std::endl;
+		if ( bytes_recv == -1 )
+		{
+			std::cerr << "There was a connection issue." << std::endl;
+			break;
+		}
+		if ( bytes_recv == 0 )
+		{
+			std::cout << "The client disconnected" << std::endl;
+			close( fd );
+			fd = -1;
+			(*num_clients)--;
+			break;
+		}
+		message_buffer += std::string(buf);
+		std::cerr << "- STRING BUFFER contains: [" << message_buffer << "]" << std::endl;
+		terminator = message_buffer.find("\r\n", 0);
+		std::cerr << "- TERMINATOR is pos :" << terminator << std::endl;
+	}
+	if (terminator != std::string::npos)	
+	{
+		/* std::string received = std::string( buf, 0, bytes_recv ); */
+
+		std::cout << "---------------------------------" << std::endl;
+		std::cout << "--- Received: [" << message_buffer << "]" << std::endl;
+		std::cout << "---------------------------------" << std::endl;
+
+	// TODO : check for incomplete messages / read until \r\n
+		context->handle_message( context->get_user_by_socket( fd ),
+				                         message_buffer );
+	}
+
+	/* std::string response = welcome(); */
+	/* send( client_fds[i].fd, response.c_str(), response.length() + 1, 0 ); */
 }
 
 Application::~Application()
