@@ -2,6 +2,8 @@
 #include "../includes/ft_irc.hpp"
 #include <netinet/in.h>
 #include <poll.h>
+#include <iostream>
+#include <iterator>
 
 #define RPL_WELCOME "001"
 
@@ -31,16 +33,21 @@ Application::Application()
 
 	server.info.sin_family = AF_INET;
 	// TODO: try multiple ports
-	server.info.sin_port = htons( 6667 ); // TODO test other ports ?
+	int port = 6667;
+	server.info.sin_port = htons( port ); // TODO test other ports ?
 	server.info.sin_addr.s_addr = htonl( INADDR_ANY );
 
 	std::cout << "Binding socket to sockaddr..." << std::endl;
-	if ( bind( server.fd, ( struct sockaddr * ) &server.info,
-	           sizeof( server.info ) ) == -1 )
+	while ( bind( server.fd, ( struct sockaddr * ) &server.info,
+	              sizeof( server.info ) ) == -1 )
 	{
-		std::cerr << "Can't bind to IP/port";
-		throw std::runtime_error( "Can't bind to IP/port" );
+		/* std::cerr << "Can't bind to IP/port " << port << " - Trying next port." << */
+		/* std::endl; */
+		port++;
+		server.info.sin_port = htons( port );
+		/* throw std::runtime_error( "Can't bind to IP/port" ); */
 	}
+	std::cout << "Connected to port " << port << std::endl;
 	std::cout << "Mark the socket for listening..." << std::endl;
 	if ( listen( server.fd, SOMAXCONN ) == -1 )
 	{
