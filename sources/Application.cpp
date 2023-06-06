@@ -151,7 +151,9 @@ void Application::read_message( int fd, int *num_clients )
 
 
 			// TODO : check for incomplete messages / read until \r\n
-			std::cout << "Command : [" << first_command << "]" << std::endl;
+			std::cout << "Command : [";
+			examineString( first_command );
+			std::cout << "]" << std::endl;
 			context->handle_message( context->get_user_by_socket( fd ),
 			                         first_command );
 
