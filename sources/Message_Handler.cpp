@@ -143,7 +143,7 @@ void Message_Handler::handle_admin( Message & message )
 
 void Message_Handler::handle_cap( Message & message )
 {
-	(void)message;
+	( void )message;
 	return ;
 }
 
@@ -322,7 +322,6 @@ void Message_Handler::handle_mode( Message & message )
 							{
 								if ( message.has( "mode arguments" ) )
 								{
-									std::cout << "HERE" << std::endl;
 									sender.send_reply( rpl::err_nosuchnick( sender,
 									                                        message.get( "mode arguments" ) ) );
 								}
@@ -549,11 +548,9 @@ void Message_Handler::handle_user( Message & message )
 	try
 	{
 
-		std::cout << "HERE" << std::endl;
 		sender.set_username( message.get( "user" ) );
 		sender.set_hostname( message.get( "unused" ) );
 		sender.set_realname( message.get( "realname" ) );
-		std::cout << "THERE" << std::endl;
 		welcome_user( sender );
 		/* sender.set_mode( message.get( "mode" ) ); */
 	}
