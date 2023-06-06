@@ -1,9 +1,6 @@
-#include "../includes/Application.hpp"
-#include "../includes/ft_irc.hpp"
-#include <netinet/in.h>
-#include <poll.h>
-#include <iostream>
-#include <iterator>
+#include "Application.hpp"
+#include "ft_irc.hpp"
+#include "Password.hpp"
 
 #define RPL_WELCOME "001"
 
@@ -18,8 +15,9 @@ std::string const welcome()
 	return reply;
 }
 
-Application::Application()
+Application::Application( int port, std::string password ): port( port )
 {
+	passwords = new Password( password );
 	context = new Context();
 
 	std::cout << "Creating server socket..." << std::endl;
@@ -32,7 +30,10 @@ Application::Application()
 	}
 
 	server.info.sin_family = AF_INET;
-	int port = 6667;
+	if ( port < 6660 || port > 7000 )
+	{
+		throw ( std::runtime_error( "Invalid port: port must be between 6660 and 7000" ));
+	}
 	server.info.sin_port = htons( port );
 	server.info.sin_addr.s_addr = htonl( INADDR_ANY );
 
@@ -165,5 +166,6 @@ void Application::read_message( int fd, int *num_clients )
 
 Application::~Application()
 {
+	delete passwords;
 	delete context;
 }
