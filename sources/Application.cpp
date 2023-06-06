@@ -32,9 +32,8 @@ Application::Application()
 	}
 
 	server.info.sin_family = AF_INET;
-	// TODO: try multiple ports
 	int port = 6667;
-	server.info.sin_port = htons( port ); // TODO test other ports ?
+	server.info.sin_port = htons( port );
 	server.info.sin_addr.s_addr = htonl( INADDR_ANY );
 
 	std::cout << "Binding socket to sockaddr..." << std::endl;
@@ -141,11 +140,7 @@ void Application::read_message( int fd, int *num_clients )
 			break;
 		}
 		message_buffer += std::string( buf );
-		/* std::cerr << "- STRING BUFFER contains: ["; */
-		/* examineString( message_buffer ); */
-		/* std::cerr << "]" << std::endl; */
 		terminator = message_buffer.find( "\r\n", 0 );
-		/* std::cerr << "- TERMINATOR is pos :" << terminator << std::endl; */
 	}
 	if ( terminator != std::string::npos )
 	{
@@ -154,31 +149,16 @@ void Application::read_message( int fd, int *num_clients )
 		{
 			std::string first_command = message_buffer.substr( pos, terminator + 2 - pos );
 
-			/* std::cout << "---------------------------------" << std::endl; */
-			/* std::cout << "--- Received: [" << message_buffer << "]" << std::endl; */
-			/* std::cout << "--- FIRST COMMAND: ["; */
-			/* examineString( first_command ); */
-			/* std::cout << "]" << std::endl; */
-
-			/* std::cout << "---------------------------------" << std::endl; */
 
 			// TODO : check for incomplete messages / read until \r\n
+			std::cout << "Command : [" << first_command << "]" << std::endl;
 			context->handle_message( context->get_user_by_socket( fd ),
 			                         first_command );
 
 			pos = terminator + 2;
 			terminator = message_buffer.find( "\r\n", pos );
-			/* std::cout << "position : " << pos << std::endl; */
-			/* examineChar( message_buffer[pos] ) ; */
-			/* std::cout << std::endl; */
-			/* std::cout << "terminator : " << terminator << std::endl; */
-			/* examineChar( message_buffer[terminator] ) ; */
-			/* std::cout << std::endl; */
 		}
 	}
-
-	/* std::string response = welcome(); */
-	/* send( client_fds[i].fd, response.c_str(), response.length() + 1, 0 ); */
 }
 
 Application::~Application()
