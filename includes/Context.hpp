@@ -1,6 +1,7 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
+#include "Password.hpp"
 #include "ft_irc.hpp"
 #include "Message.hpp"
 #include "Message_Handler.hpp"
@@ -22,6 +23,7 @@ class Context
 		std::map<std::string, User *> registered_users;
 		std::map<std::string, Channel *> channels;
 
+		Password & password_handler;
 		Message_Handler * message_handler;
 
 		Context( const Context & src );
@@ -32,7 +34,7 @@ class Context
 		void create_channel( std::string name );
 
 	public:
-		Context();
+		Context( Password & password_handler );
 		virtual ~Context();
 
 		void create_unregistered_user( int socket );

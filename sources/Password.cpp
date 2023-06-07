@@ -5,6 +5,7 @@ Password::Password( std::string connection_password ) {
 	if ( connection_password.empty() )
 	{
 		connection_password_hash = DEFAULT_CONNECTION_PASSWORD;
+		return ;
 	}
 	connection_password_hash = create_sha256_hash( connection_password );
 }

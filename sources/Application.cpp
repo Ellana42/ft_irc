@@ -1,6 +1,8 @@
 #include "Application.hpp"
 #include "ft_irc.hpp"
 #include "Password.hpp"
+#include <exception>
+#include <stdexcept>
 
 #define RPL_WELCOME "001"
 
@@ -18,7 +20,7 @@ std::string const welcome()
 Application::Application( int port, std::string password ): port( port )
 {
 	passwords = new Password( password );
-	context = new Context();
+	context = new Context( *passwords );
 
 	std::cout << "Creating server socket..." << std::endl;
 	server.fd = socket( AF_INET, SOCK_STREAM, 0 );
@@ -38,15 +40,20 @@ Application::Application( int port, std::string password ): port( port )
 	server.info.sin_addr.s_addr = htonl( INADDR_ANY );
 
 	std::cout << "Binding socket to sockaddr..." << std::endl;
-	while ( bind( server.fd, ( struct sockaddr * ) &server.info,
-	              sizeof( server.info ) ) == -1 )
+	if ( bind( server.fd, ( struct sockaddr * ) &server.info,
+				sizeof( server.info ) ) == -1 )
 	{
-		/* std::cerr << "Can't bind to IP/port " << port << " - Trying next port." << */
-		/* std::endl; */
-		port++;
-		server.info.sin_port = htons( port );
-		/* throw std::runtime_error( "Can't bind to IP/port" ); */
+		throw ( std::runtime_error( "Can't connect to port: Port might be in use." ));
 	}
+	/* while ( bind( server.fd, ( struct sockaddr * ) &server.info, */
+	/*               sizeof( server.info ) ) == -1 ) */
+	/* { */
+	/* 	/1* std::cerr << "Can't bind to IP/port " << port << " - Trying next port." << *1/ */
+	/* 	/1* std::endl; *1/ */
+	/* 	port++; */
+	/* 	server.info.sin_port = htons( port ); */
+	/* 	/1* throw std::runtime_error( "Can't bind to IP/port" ); *1/ */
+	/* } */
 	std::cout << "Connected to port " << port << std::endl;
 	std::cout << "Mark the socket for listening..." << std::endl;
 	if ( listen( server.fd, SOMAXCONN ) == -1 )

@@ -2,9 +2,10 @@
 #include "Channel.hpp"
 #include <iterator>
 #include <stdexcept>
+#include "Password.hpp"
 #include "ft_irc.hpp"
 
-Context::Context() : message_handler( NULL )
+Context::Context( Password & password ) : password_handler( password ), message_handler( NULL ) 
 {
 	message_handler = new Message_Handler( *this );
 	create_channel( DEFAULT_CHAN );
