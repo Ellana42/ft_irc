@@ -33,11 +33,13 @@ void log_event::error( std::string msg )
 	std::cerr << ss.str() << std::endl;
 }
 
-void log_event::reply( int socket, std::string msg )
+void log_event::reply( int socket, std::string reply )
 {
 	std::stringstream ss;
+	std::string formatted_reply = get_formatted_command( reply );
 
-	ss << CYAN "[REPLY][Socket " << socket << "] " << msg << RESET;
+
+	ss << CYAN "[REPLY][Socket " << socket << "]: [" << formatted_reply << "]" << RESET;
 	std::cerr << ss.str() << std::endl;
 }
 
