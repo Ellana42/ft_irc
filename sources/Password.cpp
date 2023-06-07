@@ -1,9 +1,11 @@
 #include "Password.hpp"
 #include "ft_irc.hpp"
+#include "log_event.hpp"
 
 Password::Password( std::string connection_password ) {
 	if ( connection_password.empty() )
 	{
+		log_event::info( "Password: No password provided, using default password" );
 		connection_password_hash = DEFAULT_CONNECTION_PASSWORD;
 		return ;
 	}
@@ -23,7 +25,7 @@ std::string Password::create_sha256_hash( std::string password )
 	{
 		ss << std::hex << std::setw( 2 ) << std::setfill( '0' ) << static_cast<int>( hash[i] );
 	}
-	std::cout << "Created hash from [" << plain_text << "]: " << ss.str() << std::endl;
+	log_event::info( "Password: Created hash", ss.str() );
 	return ( ss.str() );
 }
 
@@ -34,10 +36,12 @@ void Password::save_password( std::string channel, std::string password )
 	std::map<std::string, std::string>::iterator it = passwords.find( channel );
 	if ( it != passwords.end() )
 	{
+		log_event::info( "Password: Changed password of chan", channel );
 		it->second = hash;
 	}
 	else
 	{
+		log_event::info( "Password: Saved password for chan", channel );
 		passwords.insert(std::pair<std::string, std::string>( channel, hash ));
 	}
 }
@@ -52,7 +56,7 @@ bool Password::validate_channel_password( std::string channel, std::string passw
 	std::map<std::string, std::string>::iterator it = passwords.find( channel );
 	if ( it == passwords.end() )
 	{
-		throw ( std::out_of_range( "Channel has no password" ));
+		throw ( std::out_of_range( "Password: Channel " + channel + " has no password" ));
 	}
 	return (validate_password( it->second, password ));
 }
@@ -63,12 +67,12 @@ bool Password::validate_password( std::string hash, std::string password )
 
 	if ( password_hash == hash )
 	{
-		std::cout << "Passwords match !" << std::endl;
+		log_event::info( "Password: Passwords match!" );
 		return ( true );
 	}
 	else
 	{
-		std::cout << "Incorrect password..." << std::endl;
+		log_event::info( "Password: Incorrect password..." );
 		return ( false );
 	}
 }

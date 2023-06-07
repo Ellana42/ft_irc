@@ -98,7 +98,7 @@ void User::set_registered( void )
 {
 	if ( this->fully_registered == true )
 	{
-		throw std::runtime_error( "Attempting to reset already set user registered flag !" );
+		throw std::runtime_error( "User: Attempting to reset already set user registered flag !" );
 	}
 	this->fully_registered = true;
 }
@@ -167,7 +167,7 @@ void User::read_from_socket( void )
 void User::send_reply( std::string reply )
 {
 	send( socket, reply.c_str(), reply.length(), 0 );
-	std::cout << "[" << socket << "] " << reply;
+	log_event::reply( socket, reply );
 }
 
 bool User::has_nickname( void )
