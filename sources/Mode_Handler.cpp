@@ -22,16 +22,19 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
 
 	handlers['i'][User_]["+"] = &Mode_Handler::handle_i_user_add;
 	handlers['i'][User_]["-"] = &Mode_Handler::handle_i_user_rm;
+	/* handlers['o'][User_]["+"] = &Mode_Handler::handle_o_user_add; */
+	/* handlers['o'][User_]["-"] = &Mode_Handler::handle_o_user_rm; */
+
 	handlers['i'][Channel_]["+"] = &Mode_Handler::handle_i_channel_add;
 	handlers['i'][Channel_]["-"] = &Mode_Handler::handle_i_channel_rm;
-	handlers['o'][User_]["+"] = &Mode_Handler::handle_o_user_add;
-	handlers['o'][User_]["-"] = &Mode_Handler::handle_o_user_rm;
+	handlers['t'][Channel_]["+"] = &Mode_Handler::handle_t_channel_add;
+	handlers['t'][Channel_]["-"] = &Mode_Handler::handle_t_channel_rm;
+	handlers['k'][Channel_]["+"] = &Mode_Handler::handle_k_channel_add;
+	handlers['k'][Channel_]["-"] = &Mode_Handler::handle_k_channel_rm;
 	handlers['o'][Channel_]["+"] = &Mode_Handler::handle_o_channel_add;
 	handlers['o'][Channel_]["-"] = &Mode_Handler::handle_o_channel_rm;
-	handlers['O'][User_]["+"] = &Mode_Handler::handle_O_user_add;
-	handlers['O'][User_]["-"] = &Mode_Handler::handle_O_user_rm;
-	handlers['O'][Channel_]["+"] = &Mode_Handler::handle_O_channel_add;
-	handlers['O'][Channel_]["-"] = &Mode_Handler::handle_O_channel_rm;
+	handlers['l'][Channel_]["+"] = &Mode_Handler::handle_l_channel_add;
+	handlers['l'][Channel_]["-"] = &Mode_Handler::handle_l_channel_rm;
 
 	set_type();
 	set_modestring();
@@ -117,12 +120,13 @@ void Mode_Handler::apply_modes()
 
 void Mode_Handler::handle_i_user_add()
 {
-	std::cout << "There is i" << std::endl;
+	// Compatibility with irssi
 	return;
 }
 
 void Mode_Handler::handle_i_user_rm()
 {
+	// Compatibility with irssi
 	return;
 }
 
@@ -136,16 +140,25 @@ void Mode_Handler::handle_i_channel_rm()
 	return;
 }
 
-void Mode_Handler::handle_o_user_add()
+void Mode_Handler::handle_t_channel_add()
 {
 	return;
 }
 
-void Mode_Handler::handle_o_user_rm()
+void Mode_Handler::handle_t_channel_rm()
 {
 	return;
 }
 
+void Mode_Handler::handle_k_channel_add()
+{
+	return;
+}
+
+void Mode_Handler::handle_k_channel_rm()
+{
+	return;
+}
 
 void Mode_Handler::handle_o_channel_add()
 {
@@ -157,23 +170,12 @@ void Mode_Handler::handle_o_channel_rm()
 	return;
 }
 
-void Mode_Handler::handle_O_user_add()
+void Mode_Handler::handle_l_channel_add()
 {
 	return;
 }
 
-void Mode_Handler::handle_O_user_rm()
-{
-	return;
-}
-
-
-void Mode_Handler::handle_O_channel_add()
-{
-	return;
-}
-
-void Mode_Handler::handle_O_channel_rm()
+void Mode_Handler::handle_l_channel_rm()
 {
 	return;
 }
