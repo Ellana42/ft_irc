@@ -30,6 +30,7 @@ class Message_Handler
 		void handle_nick( Message & message );
 		void handle_oper( Message & message );
 		void handle_part( Message & message );
+		void handle_pass( Message & message );
 		void handle_privmsg( Message & message );
 		void handle_quit( Message & message );
 		void handle_summon( Message & message );

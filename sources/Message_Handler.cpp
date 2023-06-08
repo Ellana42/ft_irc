@@ -119,6 +119,7 @@ void Message_Handler::initialize_message_handlers( void )
 	handle.insert( pair_handler( "NICK", &Message_Handler::handle_nick ) );
 	handle.insert( pair_handler( "OPER", &Message_Handler::handle_oper ) );
 	handle.insert( pair_handler( "PART", &Message_Handler::handle_part ) );
+	handle.insert( pair_handler( "PASS", &Message_Handler::handle_pass ) );
 	handle.insert( pair_handler( "PRIVMSG", &Message_Handler::handle_privmsg ) );
 	handle.insert( pair_handler( "QUIT", &Message_Handler::handle_quit ) );
 	handle.insert( pair_handler( "SUMMON", &Message_Handler::handle_summon ) );
@@ -369,7 +370,22 @@ void Message_Handler::handle_part( Message & message )
 			sender.send_reply( rpl::err_nosuchchannel( sender, *it ) );
 		}
 	}
+}
 
+void Message_Handler::handle_pass( Message & message )
+{
+	if ( !message.has("password") )
+	{
+		throw ( std::runtime_error( "Message Handler: PASS: no password provided!" ));
+	}
+	try
+	{
+		context.check_connection_password( message.get( "password" ) );
+	}
+	catch ( std::exception & e )
+	{
+		log_event::warn( "Message_Handler: PASS:", e.what() );
+	}
 }
 
 void Message_Handler::handle_privmsg( Message & message )
