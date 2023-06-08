@@ -1,6 +1,7 @@
 #include "Channel.hpp"
 #include "Context.hpp"
 #include "User.hpp"
+#include "log_event.hpp"
 #include <cctype>
 #include <stdexcept>
 
@@ -12,6 +13,7 @@ Channel::Channel( std::string name )
 		return ;
 	}
 	set_name( name );
+	log_event::info( "Channel: Created channel", this->name );
 }
 
 Channel::Channel( std::string name, User & creator )
@@ -19,6 +21,7 @@ Channel::Channel( std::string name, User & creator )
 	set_name( name );
 	set_creator( creator.get_nickname() );
 	add_user( creator );
+	log_event::info( "Channel: User " + this->creator_nick + " created channel", this->name );
 }
 
 Channel::~Channel() {}
@@ -152,7 +155,7 @@ void Channel::set_modes( User & user, std::string mode_string )
 {
 	if ( is_user_in_channel( user ) == false )
 	{
-		throw std::out_of_range( "Mode change: User not in channel!" );
+		throw std::out_of_range( "Channel: Mode change: User " + user.get_nickname() + " not in channel " + this->name + "!" );
 	}
 	std::string::iterator it = mode_string.begin();
 	std::string & modes = this->user_modes[user.get_nickname()];
@@ -170,7 +173,7 @@ void Channel::remove_modes( User & user, std::string mode_string )
 {
 	if ( is_user_in_channel( user ) == false )
 	{
-		throw std::out_of_range( "Mode change: User not in channel!" );
+		throw std::out_of_range( "Channel: Mode change: User " + user.get_nickname() + " not in channel " + this->name + "!" );
 	}
 	std::string::iterator it = mode_string.begin();
 	std::string & modes = this->user_modes[user.get_nickname()];
@@ -213,7 +216,7 @@ std::string const Channel::get_user_modes( User & user )
 	}
 	else
 	{
-		throw std::out_of_range( "User is not in channel" );
+		throw std::out_of_range( "Channel: User " + user.get_nickname() + " not in channel " + this->name + "!" );
 	}
 }
 

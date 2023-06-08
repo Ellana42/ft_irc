@@ -4,6 +4,7 @@
 #include "Context.hpp"
 #include "Channel.hpp"
 #include "Parsing.hpp"
+#include "log_event.hpp"
 #include <cctype>
 #include <exception>
 #include <list>
@@ -38,8 +39,8 @@ void Message_Handler::handle_message( User & sender, std::string raw_message )
 	}
 	catch ( std::exception & e )
 	{
-		std::cerr << "Message creation error: " << e.what()
-		          << " (Message was: [" << raw_message << "] )" << std::endl;
+		log_event::warn( "Message Handler: Message creation error: ", e.what() );
+		log_event::warn( "--> Message was", raw_message );
 		if ( message != NULL )
 		{
 			delete ( message );
@@ -167,7 +168,7 @@ void Message_Handler::handle_join( Message & message )
 	std::list<std::string> chan_names = message.get_list( "channel" );
 	if ( chan_names.empty() )
 	{
-		throw std::runtime_error( "JOIN: did not provide channels to join!" );
+		throw std::runtime_error( "Message Handler: JOIN: did not provide channels to join!" );
 	}
 	if ( chan_names.front() == "0" )
 	{
@@ -191,7 +192,9 @@ void Message_Handler::handle_join( Message & message )
 			sender.send_reply( rpl::namreply( sender, channel ) );
 			sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
 		}
-		catch ( Channel::AlreadyInChannelException & e ) {}
+		catch ( Channel::AlreadyInChannelException & e ) {
+			log_event::warn( "Message Handler: JOIN: User " + sender.get_nickname() + " is already in channel " + *it );
+		}
 		catch ( std::exception & e )
 		{
 			sender.send_reply( rpl::err_nosuchchannel( sender, *it ) );
@@ -278,7 +281,10 @@ void Message_Handler::handle_names( Message & message )
 			Channel & channel = context.get_channel_by_name( *it );
 			sender.send_reply( rpl::namreply( sender, channel ) );
 		}
-		catch( std::exception & e ) {}
+		catch( std::exception & e )
+		{
+			log_event::warn( "Message Handler: NAMES:", e.what() );
+		}
 		if ( show_default_chan == false && it == last )
 		{
 			sender.send_reply( rpl::endofnames( sender, *it ) );
@@ -429,10 +435,8 @@ void Message_Handler::handle_user( Message & message )
 		sender.send_reply( rpl::err_notregistered( sender ) );
 		return;
 	}
-
 	try
 	{
-
 		sender.set_username( message.get( "user" ) );
 		sender.set_hostname( message.get( "unused" ) );
 		sender.set_realname( message.get( "realname" ) );
@@ -445,7 +449,7 @@ void Message_Handler::handle_user( Message & message )
 	}
 	catch ( std::exception & e )
 	{
-		std::cout << "Another exception" << std::endl;
+		log_event::warn( "Message_Handler: USER:", e.what() );
 	}
 }
 
@@ -485,7 +489,6 @@ void Message_Handler::welcome_user( User & user )
 	}
 	catch ( std::exception & e )
 	{
-		std::cout << "Exception in welcome" << std::endl;
-		std::cout << e.what() << std::endl;
+		log_event::warn( "Message Handler: Welcome: ", e.what() );
 	}
 }

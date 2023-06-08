@@ -1,5 +1,5 @@
-#ifndef REPLY_HPP
-# define REPLY_HPP
+#ifndef REPLY_MACROS_HPP
+# define REPLY_MACROS_HPP
 
 /* NOTE: These codes are from the official rfc2812 documentation : */
 /* https://www.rfc-editor.org/rfc/rfc2812#section-5 */

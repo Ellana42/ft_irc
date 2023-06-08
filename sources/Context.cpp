@@ -7,12 +7,14 @@
 
 Context::Context( Password & password ) : password_handler( password ), message_handler( NULL ) 
 {
+	log_event::info( "Context: Creating context" );
 	message_handler = new Message_Handler( *this );
 	create_channel( DEFAULT_CHAN );
 }
 
 Context::~Context()
 {
+	log_event::info( "Context: Terminating context" );
 	delete ( message_handler );
 	delete_map( unregistered_users );
 	delete_map( registered_users );
@@ -115,7 +117,7 @@ void Context::remove_user_from_channel( User & user, std::string channel_name )
 {
 	if ( does_channel_exist( channel_name ) == false )
 	{
-		throw std::out_of_range( "Remove from channel: no such channel" );
+		throw std::out_of_range( "Conext: Remove from channel: no such channel" );
 	}
 	else
 	{
@@ -182,7 +184,7 @@ User & Context::get_user_by_socket( int socket )
 			return ( *r_it->second );
 		}
 	}
-	throw std::out_of_range( "Could not find user by socket" );
+	throw std::out_of_range( "Context: Could not find user by socket" );
 }
 
 User & Context::get_user_by_nick( std::string nickname )
@@ -192,7 +194,7 @@ User & Context::get_user_by_nick( std::string nickname )
 	{
 		return ( *registered_users[nickname] );
 	}
-	throw std::out_of_range( "Could not find user by nickname" );
+	throw std::out_of_range( "Context: Could not find user " + nickname + " by nickname" );
 }
 
 void Context::update_user_nick( User & user, std::string new_nick )
@@ -229,7 +231,7 @@ Channel & Context::get_channel_by_name( std::string name )
 {
 	if ( name == DEFAULT_CHAN )
 	{
-		throw std::out_of_range( "Could not find channel by name" );
+		throw std::out_of_range( "Context: Could not find channel " + name + " by name" );
 	}
 	std::string chan_name = string_to_lowercase( name );
 	std::map<std::string, Channel *>::iterator it = channels.find( chan_name );
@@ -237,7 +239,7 @@ Channel & Context::get_channel_by_name( std::string name )
 	{
 		return ( *channels[chan_name] );
 	}
-	throw std::out_of_range( "Could not find channel by name" );
+	throw std::out_of_range( "Context: Could not find channel " + name + " by name" );
 }
 
 Channel & Context::get_default_channel( void )
@@ -308,7 +310,7 @@ void Context::debug_print_unregistered_users( void ) const
 {
 	std::map<int, User *>::const_iterator it = unregistered_users.begin();
 	std::map<int, User *>::const_iterator it_end = unregistered_users.end();
-	std::cout << "Unregistered users :" << std::endl;
+	std::cout << "[INFO] Context: Unregistered users :" << std::endl;
 	for ( ; it != it_end; it++ )
 	{
 		std::cout << "\t[" << it->second->get_socket() << "] "
@@ -320,7 +322,7 @@ void Context::debug_print_registered_users( void ) const
 {
 	std::map<std::string, User *>::const_iterator it = registered_users.begin();
 	std::map<std::string, User *>::const_iterator it_end = registered_users.end();
-	std::cout << "Registered users :" << std::endl;
+	std::cout << "[INFO] Context: Registered users :" << std::endl;
 	for ( ; it != it_end; it++ )
 	{
 		std::cout << "\t[" << it->second->get_socket() << "] "
@@ -332,7 +334,7 @@ void Context::debug_print_channels( void ) const
 {
 	std::map<std::string, Channel *>::const_iterator it = channels.begin();
 	std::map<std::string, Channel *>::const_iterator it_end = channels.end();
-	std::cout << "Channels :" << std::endl;
+	std::cout << "[INFO] Context: Channels :" << std::endl;
 	for ( ; it != it_end; it++ )
 	{
 		std::cout << "\t[" << it->second->get_name() << "] ";

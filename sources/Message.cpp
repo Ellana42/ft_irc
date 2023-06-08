@@ -7,16 +7,16 @@ Message::Message( User & sender, std::string raw_message ) : sender( sender ),
 {
 	if ( raw_message.size() > MAX_SIZE )
 	{
-		throw std::invalid_argument( "Message too long" );
+		throw std::invalid_argument( "Message: Message too long" );
 	}
 	if ( raw_message.size() < MIN_SIZE )
 	{
-		throw std::invalid_argument( "Message too short" );
+		throw std::invalid_argument( "Message: Message too short" );
 	}
 	if ( !( raw_message[raw_message.size() - 2] == '\r'
 	        && raw_message[raw_message.size() - 1] == '\n' ) )
 	{
-		throw std::invalid_argument( "Invalid message end" );
+		throw std::invalid_argument( "Message: Invalid message end" );
 	}
 	raw_message.resize( raw_message.size() - 2 );
 
@@ -51,7 +51,7 @@ std::string Message::get( std::string arg_name )
 	}
 	else
 	{
-		throw std::out_of_range( arg_name + ": This argument does not exist" );
+		throw std::out_of_range( "Message: argument [" + arg_name + "] does not exist" );
 	}
 }
 
@@ -63,7 +63,7 @@ std::list<std::string> Message::get_list( std::string arg_name )
 	}
 	else
 	{
-		throw std::out_of_range( arg_name + ": This argument does not exist" );
+		throw std::out_of_range( "Message: argument [" + arg_name + "] does not exist" );
 	}
 }
 

@@ -27,6 +27,7 @@
 #include <utility>
 #include <vector>
 #include "Colors.h"
+#include "log_event.hpp"
 
 # define SERVER_PREFIX ":ircserv.42.fr"
 # define SERVER_NAME "ircserv"

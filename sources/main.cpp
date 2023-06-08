@@ -20,7 +20,7 @@ int main( int ac, char **av )
 	}
 	catch ( std::exception & e )
 	{
-		std::cerr << e.what() << std::endl;
+		log_event::error( e.what() );
 		return ( 1 );
 	}
 	return ( 0 );

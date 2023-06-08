@@ -1,65 +1,42 @@
 #include "Application.hpp"
 #include "ft_irc.hpp"
 #include "Password.hpp"
+#include "log_event.hpp"
 #include <exception>
 #include <stdexcept>
-
-#define RPL_WELCOME "001"
-
-std::string const welcome()
-{
-	std::string reply = "127.0.0.1 ";
-	reply += RPL_WELCOME " ";
-	reply += "alice";
-	reply += " :Welcome to the Internet Relay Network ";
-	reply += "alice!alice@alicehost";
-	reply += "\r\n";
-	return reply;
-}
 
 Application::Application( int port, std::string password ): port( port )
 {
 	passwords = new Password( password );
 	context = new Context( *passwords );
 
-	std::cout << "Creating server socket..." << std::endl;
+	log_event::info( "Application: Creating server socket..." );
 	server.fd = socket( AF_INET, SOCK_STREAM, 0 );
 
 	if ( server.fd == -1 )
 	{
-		std::cerr << "Can't create a socket!";
-		throw std::runtime_error( "Can't create a socket!" );
+		throw std::runtime_error( "Application: Can't create a socket!" );
 	}
 
 	server.info.sin_family = AF_INET;
 	if ( port < 6660 || port > 7000 )
 	{
-		throw ( std::runtime_error( "Invalid port: port must be between 6660 and 7000" ));
+		throw ( std::runtime_error( "Application: Invalid port: port must be between 6660 and 7000" ));
 	}
 	server.info.sin_port = htons( port );
 	server.info.sin_addr.s_addr = htonl( INADDR_ANY );
 
-	std::cout << "Binding socket to sockaddr..." << std::endl;
+	log_event::info( "Application: Binding socket to sockaddr..." );
 	if ( bind( server.fd, ( struct sockaddr * ) &server.info,
 				sizeof( server.info ) ) == -1 )
 	{
-		throw ( std::runtime_error( "Can't connect to port: Port might be in use." ));
+		throw ( std::runtime_error( "Application: Can't bind port: Port might be in use." ));
 	}
-	/* while ( bind( server.fd, ( struct sockaddr * ) &server.info, */
-	/*               sizeof( server.info ) ) == -1 ) */
-	/* { */
-	/* 	/1* std::cerr << "Can't bind to IP/port " << port << " - Trying next port." << *1/ */
-	/* 	/1* std::endl; *1/ */
-	/* 	port++; */
-	/* 	server.info.sin_port = htons( port ); */
-	/* 	/1* throw std::runtime_error( "Can't bind to IP/port" ); *1/ */
-	/* } */
-	std::cout << "Connected to port " << port << std::endl;
-	std::cout << "Mark the socket for listening..." << std::endl;
+	log_event::info( "Application: Connected to port", port );
+	log_event::info( "Application: Mark the socket for listening..." );
 	if ( listen( server.fd, SOMAXCONN ) == -1 )
 	{
-		std::cerr << "Can't listen !";
-		throw std::runtime_error( "Can't listen !" );
+		throw std::runtime_error( "Application: Can't listen !" );
 	}
 }
 
@@ -70,36 +47,34 @@ void Application::launch_server()
 	client_fds[0].events = POLLIN;
 
 	int num_clients = 0;  // keep track of number of connected clients
+	log_event::info( "Application: Launching server..." );
 
 	while ( true )
 	{
 		int num_ready = poll( client_fds.data(), num_clients + 1, -1 );
 		if ( num_ready == -1 )
 		{
-			std::cerr << "Error in poll()";
-			throw std::runtime_error( "Error in poll()" );
+			throw std::runtime_error( "Application: Poll error" );
 		}
 
 		if ( client_fds[0].revents & POLLIN )
 		{
 			socklen_t clientSize = sizeof( clients.info );
-
-			std::cout << "Accept client call..." << std::endl;
+			
+			log_event::info( "Application: Accepting client call..." );
 			clients.fd = accept( server.fd, ( struct sockaddr * ) &clients.info,
 			                     &clientSize );
 
-			std::cout << "Received call..." << std::endl;
+			log_event::info( "Application: Received client call..." );
 			if ( clients.fd == -1 )
 			{
-				std::cerr << "Problem with client connecting!";
-				throw std::runtime_error( "Problem with client connecting!" );
+				throw std::runtime_error( "Application: Client cannot connect!" );
 			}
 
 			// add new client to the list of file descriptors to monitor
 			if ( num_clients == max_clients )
 			{
-				std::cerr << "Too many clients!";
-				throw std::runtime_error( "Too many clients!" );
+				throw std::runtime_error( "Application: Too many clients!" );
 			}
 			client_fds[num_clients + 1].fd = clients.fd;
 			client_fds[num_clients + 1].events = POLLIN;
@@ -133,15 +108,14 @@ void Application::read_message( int fd, int *num_clients )
 	while ( terminator == std::string::npos )
 	{
 		bytes_recv = recv( fd, buf, sizeof( buf ), 0 );
-		/* std::cerr << "- BUFFER contains: [" << buf << "]" << std::endl; */
 		if ( bytes_recv == -1 )
 		{
-			std::cerr << "There was a connection issue." << std::endl;
+			log_event::warn( "Application: Connection issue while receiving message" );
 			break;
 		}
 		if ( bytes_recv == 0 )
 		{
-			std::cout << "The client disconnected" << std::endl;
+			log_event::info( "Application: Client disconnected" );
 			close( fd );
 			fd = -1;
 			( *num_clients )--;
@@ -157,11 +131,7 @@ void Application::read_message( int fd, int *num_clients )
 		{
 			std::string first_command = message_buffer.substr( pos, terminator + 2 - pos );
 
-
-			// TODO : check for incomplete messages / read until \r\n
-			std::cout << "Command : [";
-			examineString( first_command );
-			std::cout << "]" << std::endl;
+			log_event::command( fd, first_command );
 			context->handle_message( context->get_user_by_socket( fd ),
 			                         first_command );
 
@@ -173,6 +143,7 @@ void Application::read_message( int fd, int *num_clients )
 
 Application::~Application()
 {
+	log_event::info( "Application: Terminating application" );
 	delete passwords;
 	delete context;
 }
