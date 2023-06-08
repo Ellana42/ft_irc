@@ -18,8 +18,13 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
 {
 	target = message.get( "target" );
 
-	handlers["iu"] = &Mode_Handler::handle_i_user;
-	handlers["ic"] = &Mode_Handler::handle_i_channel;
+	handlers["i"][User_] = &Mode_Handler::handle_i_user;
+	handlers["i"][Channel_] = &Mode_Handler::handle_i_channel;
+	handlers["o"][User_] = &Mode_Handler::handle_i_user;
+	handlers["o"][Channel_] = &Mode_Handler::handle_i_channel;
+	handlers["O"][User_] = &Mode_Handler::handle_i_user;
+	handlers["O"][Channel_] = &Mode_Handler::handle_i_channel;
+
 	set_type();
 	set_modestring();
 	apply_modes();

@@ -20,7 +20,8 @@ class Mode_Handler
 		User & sender;
 		Message & message;
 
-		std::map<std::string, void ( Mode_Handler::* )( void )> handlers;
+		std::map<std::string, std::map<TypeTarget, void ( Mode_Handler::* )( void ) > >
+		handlers;
 
 		std::string target;
 		std::string added_modes;
@@ -37,6 +38,8 @@ class Mode_Handler
 		void set_modestring();
 		bool has_unknown_modes( std::string modes );
 		void apply_modes();
+
+		// Handlers
 		void handle_i_user();
 		void handle_i_channel();
 		void handle_o_user();
