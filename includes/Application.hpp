@@ -1,6 +1,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
+#include "Password.hpp"
 #include "ft_irc.hpp"
 
 #include "Context.hpp"
@@ -14,6 +15,8 @@ struct s_socket
 class Application
 {
 	private:
+		int	port;
+		Password * passwords;
 		Context * context;
 
 		s_socket server;
@@ -24,7 +27,7 @@ class Application
 		void read_message(int fd, int *num_clients);
 
 	public:
-		Application();
+		Application( int port, std::string password );
 		Application( const Application & src );
 		Application & operator=( const Application & rhs );
 		virtual ~Application();

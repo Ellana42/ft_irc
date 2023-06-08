@@ -1,5 +1,6 @@
 #include "test.hpp"
 #include "Context.hpp"
+#include "Password.hpp"
 
 #define SOCKET_A 1
 #define SOCKET_B 2
@@ -15,7 +16,8 @@ void run_test_suite( void )
 	          std::endl << std::endl;
 
 	std::cout << CYAN "-- Creating context" RESET << std::endl;
-	Context & context = *( new Context() );
+	Password * passwords = new Password( "test" );
+	Context & context = *( new Context( *passwords ) );
 
 	create_new_user( context, SOCKET_A );
 	create_new_user( context, SOCKET_B );

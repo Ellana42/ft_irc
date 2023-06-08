@@ -13,8 +13,11 @@ INC			= -I $(INC_PATH)
 
 SRC_PATH	= ./sources/
 SRC			= $(wildcard $(SRC_PATH)*.cpp)
+
 OBJ_PATH	= ./objects/
 OBJ			= $(SRC:$(SRC_PATH)%.cpp=$(OBJ_PATH)%.o)
+
+LIB			= -lssl -lcrypto
 
 # Build rule
 all: $(OBJ_PATH) $(NAME)
@@ -24,11 +27,11 @@ $(OBJ_PATH):
 	mkdir -p $(OBJ_PATH)
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.cpp
-	$(CC) $(CFLAGS) -c $< -o $@ $(INC)
+	$(CC) $(CFLAGS) -c $< -o $@ $(INC) $(LIB)
 
 # Program-building rule
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $@ $(INC)
+	$(CC) $(CFLAGS) $(OBJ) -o $@ $(INC) $(LIB)
 
 # Cleaning rules
 clean:

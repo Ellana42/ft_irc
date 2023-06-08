@@ -1,27 +1,31 @@
 #ifndef FT_IRC_H
 #define FT_IRC_H
 
-#include <list>
-#include <map>
-#include <vector>
+#include <arpa/inet.h>
+#include <cstdlib>
+#include <cstring>
+#include <fcntl.h>
+#include <exception>
 #include <iomanip>
 #include <iostream>
-#include <sys/socket.h>
-#include <arpa/inet.h>
+#include <iterator>
+#include <list>
+#include <map>
+#include <netinet/in.h>
 #include <netdb.h>
+#include <new>
+#include <openssl/sha.h>
+#include <poll.h>
+#include <signal.h>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <sys/socket.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <string>
-#include <signal.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdexcept>
-#include <map>
 #include <utility>
-#include <cstring>
-#include <exception>
-#include <new>
-#include <stdexcept>
+#include <vector>
 #include "Colors.h"
 
 # define SERVER_PREFIX ":ircserv.42.fr"
