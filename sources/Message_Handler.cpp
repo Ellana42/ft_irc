@@ -100,7 +100,7 @@ bool Message_Handler::should_handle_message( User & sender, Message & message )
 {
 	std::string command = message.get_command();
 	if ( sender.is_fully_registered() == true || command == "USER"
-	        || command == "NICK" || command == "CAP" || command == "QUIT" )
+	        || command == "NICK" || command == "CAP" || command == "PASS" || command == "QUIT" )
 	{
 		return ( true );
 	}
@@ -385,6 +385,7 @@ void Message_Handler::handle_pass( Message & message )
 	catch ( std::exception & e )
 	{
 		log_event::warn( "Message_Handler: PASS:", e.what() );
+		context.remove_user( message.get_sender() );
 	}
 }
 

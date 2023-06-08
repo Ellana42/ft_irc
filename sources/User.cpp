@@ -1,5 +1,6 @@
 #include "User.hpp"
 #include "Context.hpp"
+#include "log_event.hpp"
 #include <cstddef>
 
 /* User::User() {} */
@@ -11,7 +12,11 @@ User::User( Context & context, int socket ) : nickname( "*" ), username( "*" ),
 	update_identifier();
 }
 
-User::~User() {}
+User::~User()
+{
+	log_event::info( "User: closing socket for user" + this->nickname + ": socket ", this->socket );
+	close( this->socket );
+}
 
 std::string const & User::get_nickname( void ) const
 {
