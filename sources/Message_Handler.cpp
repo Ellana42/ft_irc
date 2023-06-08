@@ -1,4 +1,5 @@
 #include "Message_Handler.hpp"
+#include "Mode_Handler.hpp"
 #include "Mode_Parsing.hpp"
 #include "Context.hpp"
 #include "Channel.hpp"
@@ -23,7 +24,6 @@ void Message_Handler::handle_message( User & sender, std::string raw_message )
 	try
 	{
 		message = create_message( sender, raw_message );
-
 		check_message_validity( sender, *message );
 		if ( should_handle_message( sender, *message ) )
 		{
@@ -246,127 +246,100 @@ bool has_unknown_modes( std::string modes, std::string accepted_modes )
 
 void Message_Handler::handle_mode( Message & message )
 {
+
 	User & sender = message.get_sender();
+	// TODO: Call mode handler
 
-	const std::string accepted_modes = "oO";
-	std::string target = message.get( "target" );
-	TypeTarget type_target = Channel_;
-	User * target_user;
-	Channel * target_channel;
+	Mode_Handler handler( context, sender, message );
 
-	if ( is_channel( target ) )
-	{
-		if ( !context.does_channel_exist( target ) )
-		{
-			sender.send_reply( rpl::err_nosuchchannel( sender, target ) );
-			return;
-		}
-		target_channel = &context.get_channel_by_name( target );
-	}
-	else
-	{
-		if ( !context.does_user_with_nick_exist( target ) )
-		{
-			sender.send_reply( rpl::err_nosuchnick( sender, target ) );
-			return;
-		}
-		type_target = User_;
-		target_user = &context.get_user_by_nick( target );
-		if ( target != sender.get_nickname() )
-		{
-			sender.send_reply( rpl::err_usersdontmatch( sender ) );
-			return;
-		}
-	}
+	/* if ( message.has( "modestring" ) ) */
+	/* { */
+	/* 	ModeParsing parsing( message.get( "modestring" ) ); */
+	/* 	try */
+	/* 	{ */
+	/* 		parsing.parse(); */
+	/* 		std::string added_modes = parsing.get_added_modes(); */
+	/* 		std::string removed_modes = parsing.get_removed_modes(); */
+	/* 		if ( has_unknown_modes( added_modes, accepted_modes ) */
+	/* 		        || has_unknown_modes( removed_modes, accepted_modes ) ) */
+	/* 		{ */
+	/* 			sender.send_reply( rpl::err_umodeunknownflag( sender ) ); */
+	/* 		} */
 
-	if ( message.has( "modestring" ) )
-	{
-		ModeParsing parsing( message.get( "modestring" ) );
-		try
-		{
-			parsing.parse();
-			std::string added_modes = parsing.get_added_modes();
-			std::string removed_modes = parsing.get_removed_modes();
-			if ( has_unknown_modes( added_modes, accepted_modes )
-			        || has_unknown_modes( removed_modes, accepted_modes ) )
-			{
-				sender.send_reply( rpl::err_umodeunknownflag( sender ) );
-			}
+	/* 		if ( is_in( 'o', added_modes ) || is_in( 'o', removed_modes ) */
+	/* 		        || is_in( 'O', added_modes ) || is_in( 'o', removed_modes ) ) */
+	/* 		{ */
+	/* 			if ( type_target == User_ ) */
+	/* 			{ */
+	/* 				target_user->remove_modes( */
+	/* 				    removed_modes ); */
+	/* 			} */
+	/* 			else */
+	/* 			{ */
+	/* 				if ( target_channel->is_operator( sender ) ) */
+	/* 				{ */
+	/* 					if ( message.has( "mode arguments" ) ) */
+	/* 					{ */
+	/* 						try */
+	/* 						{ */
+	/* 							User target_user = context.get_user_by_nick( */
+	/* 							                       message.get( "mode arguments" ) ); */
 
-			if ( is_in( 'o', added_modes ) || is_in( 'o', removed_modes )
-			        || is_in( 'O', added_modes ) || is_in( 'o', removed_modes ) )
-			{
-				if ( type_target == User_ )
-				{
-					target_user->remove_modes(
-					    removed_modes );
-				}
-				else
-				{
-					if ( target_channel->is_operator( sender ) )
-					{
-						if ( message.has( "mode arguments" ) )
-						{
-							try
-							{
-								User target_user = context.get_user_by_nick(
-								                       message.get( "mode arguments" ) );
-
-								if ( is_in( 'o', added_modes ) )
-								{
-									target_channel->set_modes( target_user, "o" );
-								}
-								target_channel->remove_modes( target_user, removed_modes );
-							}
-							catch ( std::out_of_range & e )
-							{
-								if ( message.has( "mode arguments" ) )
-								{
-									sender.send_reply( rpl::err_nosuchnick( sender,
-									                                        message.get( "mode arguments" ) ) );
-								}
-								else
-								{
-									sender.send_reply( rpl::err_nosuchnick( sender, "" ) );
-								}
-							}
-						}
-						else
-						{
-							if ( message.has( "mode arguments" ) )
-							{
-								sender.send_reply( rpl::err_nosuchnick( sender,
-								                                        message.get( "mode arguments" ) ) );
-							}
-							else
-							{
-								sender.send_reply( rpl::err_nosuchnick( sender,
-								                                        "" ) );
-							}
-						}
-					}
-					else
-					{
-						sender.send_reply( rpl::err_chanoprivsneeded( sender,
-						                   target_channel->get_name() ) );
-					}
-				}
-			}
-		}
-		catch ( ModeParsing::InvalidModestringException & e )
-		{
-			sender.send_reply( rpl::err_invalidmodestring() );
-		}
-	}
-	else
-	{
-		// TODO: implement rpl umodeis
-		return;
-	}
-	if ( message.has( "mode arguments" ) )
-	{
-		// TODO: implement
-	}
+	/* 							if ( is_in( 'o', added_modes ) ) */
+	/* 							{ */
+	/* 								target_channel->set_modes( target_user, "o" ); */
+	/* 							} */
+	/* 							target_channel->remove_modes( target_user, removed_modes ); */
+	/* 						} */
+	/* 						catch ( std::out_of_range & e ) */
+	/* 						{ */
+	/* 							if ( message.has( "mode arguments" ) ) */
+	/* 							{ */
+	/* 								sender.send_reply( rpl::err_nosuchnick( sender, */
+	/* 								                                        message.get( "mode arguments" ) ) ); */
+	/* 							} */
+	/* 							else */
+	/* 							{ */
+	/* 								sender.send_reply( rpl::err_nosuchnick( sender, "" ) ); */
+	/* 							} */
+	/* 						} */
+	/* 					} */
+	/* 					else */
+	/* 					{ */
+	/* 						if ( message.has( "mode arguments" ) ) */
+	/* 						{ */
+	/* 							sender.send_reply( rpl::err_nosuchnick( sender, */
+	/* 							                                        message.get( "mode arguments" ) ) ); */
+	/* 						} */
+	/* 						else */
+	/* 						{ */
+	/* 							sender.send_reply( rpl::err_nosuchnick( sender, */
+	/* 							                                        "" ) ); */
+	/* 						} */
+	/* 					} */
+	/* 				} */
+	/* 				else */
+	/* 				{ */
+	/* 					sender.send_reply( rpl::err_chanoprivsneeded( sender, */
+	/* 					                   target_channel->get_name() ) ); */
+	/* 				} */
+	/* 			} */
+	/* 		} */
+	/* 	} */
+	/* 	catch ( ModeParsing::InvalidModestringException & e ) */
+	/* 	{ */
+	/* 		sender.send_reply( rpl::err_invalidmodestring() ); */
+	/* 	} */
+	/* } */
+	/* else */
+	/* { */
+	/* 	// TODO: implement rpl umodeis */
+	/* 	return; */
+	/* } */
+	/* if ( message.has( "mode arguments" ) ) */
+	/* { */
+	/* 	// TODO: implement */
+	/* } */
 }
 
 void Message_Handler::handle_names( Message & message )

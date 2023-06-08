@@ -4,10 +4,9 @@
 # include "ft_irc.hpp"
 # include "Message.hpp"
 # include "reply.hpp"
+# include "Mode_Handler.hpp"
 
 class Context;
-
-enum TypeTarget {Channel_, User_};
 
 class Message_Handler
 {
