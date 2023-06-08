@@ -63,6 +63,32 @@ void delete_map( std::map<T, U> & map )
 	map.clear();
 }
 
+template<typename T>
+bool is_in_array( T value, T array[], unsigned int size_array )
+{
+	for ( unsigned int i = 0; i < size_array; i++ )
+	{
+		if ( value == array[i] )
+		{
+			return ( true );
+		}
+	}
+	return ( false );
+}
+
+template<typename T>
+unsigned int get_array_index( T value, T array[], unsigned int size_array )
+{
+	for ( unsigned int i = 0; i < size_array; i++ )
+	{
+		if ( value == array[i] )
+		{
+			return ( i );
+		}
+	}
+	return ( -1 );
+}
+
 void examineString( std::string s );
 void examineChar( char c );
 void examineCharStar( char *cs );
