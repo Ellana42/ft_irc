@@ -21,6 +21,13 @@ class Channel
 
 		std::set<std::string> operators;
 
+		bool topic_restricted;
+		bool invite_only;
+		bool has_password;
+		bool has_user_limit;
+
+		int user_limit;
+
 	public:
 		Channel( std::string name );
 		Channel( std::string name, User & creator );

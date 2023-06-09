@@ -5,7 +5,8 @@
 #include <cctype>
 #include <stdexcept>
 
-Channel::Channel( std::string name )
+Channel::Channel( std::string name ) : topic_restricted( false ),
+	invite_only( false ), has_password( false ), has_user_limit( false )
 {
 	if ( name == DEFAULT_CHAN )
 	{
@@ -16,7 +17,9 @@ Channel::Channel( std::string name )
 	log_event::info( "Channel: Created channel", this->name );
 }
 
-Channel::Channel( std::string name, User & creator )
+Channel::Channel( std::string name,
+                  User & creator ) : topic_restricted( false ), invite_only( false ),
+	has_password( false ), has_user_limit( false )
 {
 	set_name( name );
 	set_creator( creator.get_nickname() );
