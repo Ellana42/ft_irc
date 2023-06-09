@@ -182,6 +182,25 @@ bool Channel::is_creator( User & user )
 	return ( false );
 }
 
+void Channel::add_operator( std::string nickname )
+{
+	operators.insert( nickname );
+}
+
+bool Channel::is_operator( std::string nickname )
+{
+	return ( operators.count( nickname ) || is_creator( nickname ) );
+}
+
+bool Channel::is_creator( std::string nickname )
+{
+	if ( nickname == this->creator_nick )
+	{
+		return ( true );
+	}
+	return ( false );
+}
+
 
 void Channel::send_reply( std::string reply )
 {
@@ -238,6 +257,10 @@ std::string Channel::get_user_list_string( void )
 		if ( it != users.begin() )
 		{
 			user_list += " ";
+		}
+		if ( is_operator( it->first ) )
+		{
+			user_list += "@";
 		}
 		user_list += it->first;
 	}
