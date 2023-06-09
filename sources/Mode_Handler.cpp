@@ -44,6 +44,7 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
 	{
 		return;
 	}
+	set_arguments();
 	apply_modes();
 }
 
@@ -127,9 +128,10 @@ bool Mode_Handler::set_modestring()
 
 void Mode_Handler::set_arguments()
 {
-	if ( message.has( "arguments" ) )
+	if ( message.has( "mode arguments" ) )
 	{
-		arguments = message.get( "arguments" );
+		arguments = message.get( "mode arguments" );
+		return;
 	}
 	arguments = "";
 }
