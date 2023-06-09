@@ -27,6 +27,7 @@ class Channel
 		bool has_user_limit;
 
 		int user_limit;
+		std::string channel_password;
 
 	public:
 		Channel( std::string name );
@@ -41,6 +42,17 @@ class Channel
 		void set_modes( std::string modes_to_add, std::string modes_to_remove );
 		void add_modes( std::string mode_string );
 		void remove_modes( std::string mode_string );
+
+		void set_topic_restricted( bool setting );
+		bool is_topic_restricted() const;
+		void set_invite_only( bool setting );
+		bool is_invite_only() const;
+		void set_password( std::string password );
+		bool is_password_protected() const;
+		bool check_password( std::string password ) const;
+		void set_user_limit( int limit );
+		void remove_user_limit( );
+		bool has_user_limitation() const;
 
 		bool has_mode( char c );
 		bool is_operator( User & user );

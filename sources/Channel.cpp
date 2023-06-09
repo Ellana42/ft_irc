@@ -281,6 +281,65 @@ std::string Channel::get_user_list_string( void )
 	return ( user_list );
 }
 
+void Channel::set_topic_restricted( bool setting )
+{
+	topic_restricted = setting;
+}
+
+bool Channel::is_topic_restricted() const
+{
+	return topic_restricted;
+}
+
+void Channel::set_invite_only( bool setting )
+{
+	invite_only = setting;
+}
+
+bool Channel::is_invite_only() const
+{
+	return invite_only;
+}
+
+void Channel::set_password( std::string password )
+{
+	channel_password = password;
+}
+
+bool Channel::is_password_protected() const
+{
+	return has_password;
+}
+
+bool Channel::check_password( std::string password ) const
+{
+	if ( !has_password )
+	{
+		return true;
+	}
+	if ( password == channel_password )
+	{
+		return true;
+	}
+	return false;
+}
+
+void Channel::set_user_limit( int limit )
+{
+	user_limit = limit;
+	has_user_limit = true;
+}
+
+void Channel::remove_user_limit(  )
+{
+	has_user_limit = false;
+}
+
+bool Channel::has_user_limitation() const
+{
+	return has_user_limit;
+}
+
 const char* Channel::AlreadyInChannelException::what() const throw()
 {
 	return ( "Channel: user already in channel" );

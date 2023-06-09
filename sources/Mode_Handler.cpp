@@ -20,8 +20,6 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
 
 	handlers['i'][User_]["+"] = &Mode_Handler::handle_i_user_add;
 	handlers['i'][User_]["-"] = &Mode_Handler::handle_i_user_rm;
-	/* handlers['o'][User_]["+"] = &Mode_Handler::handle_o_user_add; */
-	/* handlers['o'][User_]["-"] = &Mode_Handler::handle_o_user_rm; */
 
 	handlers['i'][Channel_]["+"] = &Mode_Handler::handle_i_channel_add;
 	handlers['i'][Channel_]["-"] = &Mode_Handler::handle_i_channel_rm;
