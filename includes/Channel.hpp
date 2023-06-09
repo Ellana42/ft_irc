@@ -3,6 +3,7 @@
 
 #include "User.hpp"
 #include "ft_irc.hpp"
+#include <set>
 
 #define MAX_CHAN_NAME_LENGTH 50
 
@@ -14,9 +15,18 @@ class Channel
 
 		std::string name;
 		std::map<std::string, User *> users;
-		std::map<std::string, std::string> user_modes;
+
 		std::string mode;
 		std::string creator_nick;
+
+		std::set<std::string> operators;
+
+		bool topic_restricted;
+		bool invite_only;
+		bool has_password;
+		bool has_user_limit;
+
+		int user_limit;
 
 	public:
 		Channel( std::string name );
@@ -31,13 +41,16 @@ class Channel
 		void set_modes( std::string modes_to_add, std::string modes_to_remove );
 		void add_modes( std::string mode_string );
 		void remove_modes( std::string mode_string );
-		void set_modes( User & user, std::string mode_string );
-		void remove_modes( User & user, std::string mode_string );
+
 		bool has_mode( char c );
-		bool has_mode( User & user, char c );
-		std::string const get_user_modes( User & user ) ;
 		bool is_operator( User & user );
 		bool is_creator( User & user );
+		void add_operator( User & user );
+		void remove_operator( User & user );
+		bool is_operator( std::string nick );
+		bool is_creator( std::string nick );
+		void add_operator( std::string nick );
+		void remove_operator( std::string nick );
 
 		void add_user( User & user );
 		void remove_user( User & user );

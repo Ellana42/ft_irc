@@ -5,7 +5,8 @@
 #include <cctype>
 #include <stdexcept>
 
-Channel::Channel( std::string name )
+Channel::Channel( std::string name ) : topic_restricted( false ),
+	invite_only( false ), has_password( false ), has_user_limit( false )
 {
 	if ( name == DEFAULT_CHAN )
 	{
@@ -16,12 +17,15 @@ Channel::Channel( std::string name )
 	log_event::info( "Channel: Created channel", this->name );
 }
 
-Channel::Channel( std::string name, User & creator )
+Channel::Channel( std::string name,
+                  User & creator ) : topic_restricted( false ), invite_only( false ),
+	has_password( false ), has_user_limit( false )
 {
 	set_name( name );
 	set_creator( creator.get_nickname() );
 	add_user( creator );
-	log_event::info( "Channel: User " + this->creator_nick + " created channel", this->name );
+	log_event::info( "Channel: User " + this->creator_nick + " created channel",
+	                 this->name );
 }
 
 Channel::~Channel() {}
@@ -85,10 +89,9 @@ void Channel::add_user( User & user )
 		throw Channel::AlreadyInChannelException();
 	}
 	users.insert( pair_nick_user( user.get_nickname(), &user ) );
-	user_modes.insert( pair_nick_mode( user.get_nickname(), "" ) );
 	if ( user.get_nickname() == this->creator_nick )
 	{
-		set_modes( user, "Oo" );
+		add_operator( user );
 	}
 }
 
@@ -97,25 +100,26 @@ void Channel::remove_user( User & user )
 	/* std::cout << "CHAN [" << name << "] : removing user \"" << user.get_nickname() */
 	/*           << "\"" << std::endl; */
 	users.erase( user.get_nickname() );
-	user_modes.erase( user.get_nickname() );
+	operators.erase( user.get_nickname() );
 }
 
 void Channel::update_user_nick( User & user, std::string new_nick )
 {
 	std::map<std::string, User *>::iterator it = users.find( user.get_nickname() );
-	std::map<std::string, std::string>::iterator mit = user_modes.find(
-	            user.get_nickname() );
 	bool is_chan_creator = is_creator( user );
-	if ( it != users.end() && mit != user_modes.end() )
+	if ( it != users.end() )
 	{
-		user_modes.insert( pair_nick_mode( new_nick, mit->second ) );
-		user_modes.erase( user.get_nickname() );
 		users.insert( pair_nick_user( new_nick, &user ) );
 		users.erase( user.get_nickname() );
 		if ( is_chan_creator == true )
 		{
 			set_creator( new_nick );
 		}
+	}
+	int is_op = operators.erase( user.get_nickname() );
+	if ( is_op )
+	{
+		operators.insert( new_nick );
 	}
 }
 
@@ -151,41 +155,6 @@ void Channel::remove_modes( std::string mode_string )
 	}
 }
 
-void Channel::set_modes( User & user, std::string mode_string )
-{
-	if ( is_user_in_channel( user ) == false )
-	{
-		throw std::out_of_range( "Channel: Mode change: User " + user.get_nickname() + " not in channel " + this->name + "!" );
-	}
-	std::string::iterator it = mode_string.begin();
-	std::string & modes = this->user_modes[user.get_nickname()];
-	for ( ; it != mode_string.end(); it++ )
-	{
-		size_t pos = modes.find( *it, 0 );
-		if ( pos == std::string::npos )
-		{
-			modes += *it;
-		}
-	}
-}
-
-void Channel::remove_modes( User & user, std::string mode_string )
-{
-	if ( is_user_in_channel( user ) == false )
-	{
-		throw std::out_of_range( "Channel: Mode change: User " + user.get_nickname() + " not in channel " + this->name + "!" );
-	}
-	std::string::iterator it = mode_string.begin();
-	std::string & modes = this->user_modes[user.get_nickname()];
-	for ( ; it != mode_string.end(); it++ )
-	{
-		size_t pos = modes.find( *it, 0 );
-		if ( pos != std::string::npos )
-		{
-			modes.erase( pos, 1 );
-		}
-	}
-}
 
 bool Channel::has_mode( char c )
 {
@@ -197,37 +166,49 @@ bool Channel::has_mode( char c )
 	return ( false );
 }
 
-bool Channel::has_mode( User & user, char c )
+void Channel::add_operator( User & user )
 {
-	std::string & modes = this->user_modes[user.get_nickname()];
-	size_t pos = modes.find( c, 0 );
-	if ( pos != std::string::npos )
+	operators.insert( user.get_nickname() );
+}
+
+void Channel::remove_operator( User & user )
+{
+	operators.erase( user.get_nickname() );
+}
+
+void Channel::remove_operator( std::string nick )
+{
+	operators.erase( nick );
+}
+
+
+bool Channel::is_operator( User & user )
+{
+	return ( operators.count( user.get_nickname() ) || is_creator( user ) );
+}
+
+bool Channel::is_creator( User & user )
+{
+	if ( user.get_nickname() == this->creator_nick )
 	{
 		return ( true );
 	}
 	return ( false );
 }
 
-std::string const Channel::get_user_modes( User & user )
+void Channel::add_operator( std::string nickname )
 {
-	if ( is_user_in_channel( user ) )
-	{
-		return ( user_modes[user.get_nickname()] );
-	}
-	else
-	{
-		throw std::out_of_range( "Channel: User " + user.get_nickname() + " not in channel " + this->name + "!" );
-	}
+	operators.insert( nickname );
 }
 
-bool Channel::is_operator( User & user )
+bool Channel::is_operator( std::string nickname )
 {
-	return ( has_mode( user, 'o' ) || is_creator( user ) );
+	return ( operators.count( nickname ) || is_creator( nickname ) );
 }
 
-bool Channel::is_creator( User & user )
+bool Channel::is_creator( std::string nickname )
 {
-	if ( user.get_nickname() == this->creator_nick || has_mode( user, 'O' ) )
+	if ( nickname == this->creator_nick )
 	{
 		return ( true );
 	}
@@ -290,6 +271,10 @@ std::string Channel::get_user_list_string( void )
 		if ( it != users.begin() )
 		{
 			user_list += " ";
+		}
+		if ( is_operator( it->first ) )
+		{
+			user_list += "@";
 		}
 		user_list += it->first;
 	}

@@ -5,7 +5,8 @@
 #include "Password.hpp"
 #include "ft_irc.hpp"
 
-Context::Context( Password & password ) : password_handler( password ), message_handler( NULL ) 
+Context::Context( Password & password ) : password_handler( password ),
+	message_handler( NULL )
 {
 	log_event::info( "Context: Creating context" );
 	message_handler = new Message_Handler( *this );
@@ -86,7 +87,7 @@ void Context::create_channel( User & user, std::string name )
 	Channel * new_chan = new Channel( name, user );
 	std::string chan_name = string_to_lowercase( new_chan->get_name() );
 	channels.insert( pair_string_chan( chan_name, new_chan ) );
-	new_chan->set_modes( user, "oO" );
+	new_chan->add_operator( user );
 }
 
 void Context::add_user_to_channel( User & user, std::string channel_name )
@@ -194,7 +195,8 @@ User & Context::get_user_by_nick( std::string nickname )
 	{
 		return ( *registered_users[nickname] );
 	}
-	throw std::out_of_range( "Context: Could not find user " + nickname + " by nickname" );
+	throw std::out_of_range( "Context: Could not find user " + nickname +
+	                         " by nickname" );
 }
 
 void Context::update_user_nick( User & user, std::string new_nick )
@@ -231,7 +233,8 @@ Channel & Context::get_channel_by_name( std::string name )
 {
 	if ( name == DEFAULT_CHAN )
 	{
-		throw std::out_of_range( "Context: Could not find channel " + name + " by name" );
+		throw std::out_of_range( "Context: Could not find channel " + name +
+		                         " by name" );
 	}
 	std::string chan_name = string_to_lowercase( name );
 	std::map<std::string, Channel *>::iterator it = channels.find( chan_name );
@@ -239,7 +242,8 @@ Channel & Context::get_channel_by_name( std::string name )
 	{
 		return ( *channels[chan_name] );
 	}
-	throw std::out_of_range( "Context: Could not find channel " + name + " by name" );
+	throw std::out_of_range( "Context: Could not find channel " + name +
+	                         " by name" );
 }
 
 Channel & Context::get_default_channel( void )

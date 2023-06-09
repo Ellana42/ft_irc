@@ -11,8 +11,6 @@
 #include <stdexcept>
 #include <string>
 
-// TODO: Maybe implement mode arguments
-
 const std::string Mode_Handler::accepted_modes = "ioO";
 
 Mode_Handler::Mode_Handler( Context & context, User & sender,
@@ -22,33 +20,44 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
 
 	handlers['i'][User_]["+"] = &Mode_Handler::handle_i_user_add;
 	handlers['i'][User_]["-"] = &Mode_Handler::handle_i_user_rm;
+	/* handlers['o'][User_]["+"] = &Mode_Handler::handle_o_user_add; */
+	/* handlers['o'][User_]["-"] = &Mode_Handler::handle_o_user_rm; */
+
 	handlers['i'][Channel_]["+"] = &Mode_Handler::handle_i_channel_add;
 	handlers['i'][Channel_]["-"] = &Mode_Handler::handle_i_channel_rm;
-	handlers['o'][User_]["+"] = &Mode_Handler::handle_o_user_add;
-	handlers['o'][User_]["-"] = &Mode_Handler::handle_o_user_rm;
+	handlers['t'][Channel_]["+"] = &Mode_Handler::handle_t_channel_add;
+	handlers['t'][Channel_]["-"] = &Mode_Handler::handle_t_channel_rm;
+	handlers['k'][Channel_]["+"] = &Mode_Handler::handle_k_channel_add;
+	handlers['k'][Channel_]["-"] = &Mode_Handler::handle_k_channel_rm;
 	handlers['o'][Channel_]["+"] = &Mode_Handler::handle_o_channel_add;
 	handlers['o'][Channel_]["-"] = &Mode_Handler::handle_o_channel_rm;
-	handlers['O'][User_]["+"] = &Mode_Handler::handle_O_user_add;
-	handlers['O'][User_]["-"] = &Mode_Handler::handle_O_user_rm;
-	handlers['O'][Channel_]["+"] = &Mode_Handler::handle_O_channel_add;
-	handlers['O'][Channel_]["-"] = &Mode_Handler::handle_O_channel_rm;
+	handlers['l'][Channel_]["+"] = &Mode_Handler::handle_l_channel_add;
+	handlers['l'][Channel_]["-"] = &Mode_Handler::handle_l_channel_rm;
 
-	set_type();
-	set_modestring();
+	if ( set_type() )
+	{
+		return ;
+	}
+	if ( set_modestring() )
+	{
+		return;
+	}
+	set_arguments();
 	apply_modes();
 }
 
 Mode_Handler::~Mode_Handler() {}
 
-void Mode_Handler::set_type()
+bool Mode_Handler::set_type()
 {
 
 	if ( is_channel( target ) )
 	{
+		type_target = Channel_;
 		if ( !context.does_channel_exist( target ) )
 		{
 			sender.send_reply( rpl::err_nosuchchannel( sender, target ) );
-			return;
+			return 1;
 		}
 		target_channel = &context.get_channel_by_name( target );
 	}
@@ -57,20 +66,22 @@ void Mode_Handler::set_type()
 		if ( !context.does_user_with_nick_exist( target ) )
 		{
 			sender.send_reply( rpl::err_nosuchnick( sender, target ) );
-			return;
+			return 1;
 		}
 		type_target = User_;
 		target_user = &context.get_user_by_nick( target );
 		if ( target != sender.get_nickname() )
 		{
 			sender.send_reply( rpl::err_usersdontmatch( sender ) );
-			return;
+			return 1;
 		}
 	}
+	return 0;
 }
 
 bool Mode_Handler::has_unknown_modes( std::string modes )
 {
+	// TODO : change using mode dict
 	for ( unsigned int i = 0; i < modes.size(); i++ )
 	{
 		if ( !is_in( modes[i], accepted_modes ) )
@@ -82,12 +93,17 @@ bool Mode_Handler::has_unknown_modes( std::string modes )
 }
 
 
-void Mode_Handler::set_modestring()
+bool Mode_Handler::set_modestring()
 {
 	if ( !message.has( "modestring" ) )
 	{
-		// TODO: implment rpl umodeis
-		return;
+		if ( type_target == User_ )
+		{
+			// TODO: implment rpl umodeis ?
+			return 1;
+		}
+		// TODO: Implement rpl channelmodeis ?
+		return 1;
 	}
 	ModeParsing parsing( message.get( "modestring" ) );
 	try
@@ -103,7 +119,19 @@ void Mode_Handler::set_modestring()
 	catch ( ModeParsing::InvalidModestringException & e )
 	{
 		sender.send_reply( rpl::err_invalidmodestring() );
+		return 1;
 	}
+	return 0;
+}
+
+void Mode_Handler::set_arguments()
+{
+	if ( message.has( "mode arguments" ) )
+	{
+		arguments = message.get( "mode arguments" );
+		return;
+	}
+	arguments = "";
 }
 
 void Mode_Handler::apply_modes()
@@ -113,16 +141,22 @@ void Mode_Handler::apply_modes()
 	{
 		( ( this )->*( handlers[ *it ][type_target]["+"] ) )();
 	}
+	std::string::iterator itr = removed_modes.begin();
+	for ( ; itr != removed_modes.end(); itr++ )
+	{
+		( ( this )->*( handlers[ *itr ][type_target]["-"] ) )();
+	}
 }
 
 void Mode_Handler::handle_i_user_add()
 {
-	std::cout << "There is i" << std::endl;
+	// Compatibility with irssi
 	return;
 }
 
 void Mode_Handler::handle_i_user_rm()
 {
+	// Compatibility with irssi
 	return;
 }
 
@@ -136,105 +170,77 @@ void Mode_Handler::handle_i_channel_rm()
 	return;
 }
 
-void Mode_Handler::handle_o_user_add()
+void Mode_Handler::handle_t_channel_add()
 {
 	return;
 }
 
-void Mode_Handler::handle_o_user_rm()
+void Mode_Handler::handle_t_channel_rm()
 {
 	return;
 }
 
+void Mode_Handler::handle_k_channel_add()
+{
+	return;
+}
+
+void Mode_Handler::handle_k_channel_rm()
+{
+	return;
+}
 
 void Mode_Handler::handle_o_channel_add()
 {
-	return;
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		return;
+	}
+	if ( arguments == "" )
+	{
+		return;
+	}
+	try
+	{
+		User new_operator = context.get_user_by_nick( arguments );
+		target_channel->add_operator( new_operator );
+	}
+	catch ( std::out_of_range & e )
+	{
+		return;
+	}
 }
 
 void Mode_Handler::handle_o_channel_rm()
 {
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		return;
+	}
+	if ( arguments == "" )
+	{
+		return;
+	}
+	try
+	{
+		User new_operator = context.get_user_by_nick( arguments );
+		target_channel->remove_operator( new_operator );
+	}
+	catch ( std::out_of_range & e )
+	{
+		return;
+	}
 	return;
 }
 
-void Mode_Handler::handle_O_user_add()
+void Mode_Handler::handle_l_channel_add()
 {
 	return;
 }
 
-void Mode_Handler::handle_O_user_rm()
+void Mode_Handler::handle_l_channel_rm()
 {
 	return;
 }
-
-
-void Mode_Handler::handle_O_channel_add()
-{
-	return;
-}
-
-void Mode_Handler::handle_O_channel_rm()
-{
-	return;
-}
-
-// OLD IMPLEM for o and O modes
-/* if ( is_in( 'o', added_modes ) || is_in( 'o', removed_modes ) */
-/*         || is_in( 'O', added_modes ) || is_in( 'o', removed_modes ) ) */
-/* { */
-/* 	if ( type_target == User_ ) */
-/* 	{ */
-/* 		target_user->remove_modes( */
-/* 		    removed_modes ); */
-/* 	} */
-/* 	else */
-/* 	{ */
-/* 		if ( target_channel->is_operator( sender ) ) */
-/* 		{ */
-/* 			if ( message.has( "mode arguments" ) ) */
-/* 			{ */
-/* 				try */
-/* 				{ */
-/* 					User target_user = context.get_user_by_nick( */
-/* 					                       message.get( "mode arguments" ) ); */
-
-/* 					if ( is_in( 'o', added_modes ) ) */
-/* 					{ */
-/* 						target_channel->set_modes( target_user, "o" ); */
-/* 					} */
-/* 					target_channel->remove_modes( target_user, removed_modes ); */
-/* 				} */
-/* 				catch ( std::out_of_range & e ) */
-/* 				{ */
-/* 					if ( message.has( "mode arguments" ) ) */
-/* 					{ */
-/* 						sender.send_reply( rpl::err_nosuchnick( sender, */
-/* 						                                        message.get( "mode arguments" ) ) ); */
-/* 					} */
-/* 					else */
-/* 					{ */
-/* 						sender.send_reply( rpl::err_nosuchnick( sender, "" ) ); */
-/* 					} */
-/* 				} */
-/* 			} */
-/* 			else */
-/* 			{ */
-/* 				if ( message.has( "mode arguments" ) ) */
-/* 				{ */
-/* 					sender.send_reply( rpl::err_nosuchnick( sender, */
-/* 					                                        message.get( "mode arguments" ) ) ); */
-/* 				} */
-/* 				else */
-/* 				{ */
-/* 					sender.send_reply( rpl::err_nosuchnick( sender, */
-/* 					                                        "" ) ); */
-/* 				} */
-/* 			} */
-/* 		} */
-/* 		else */
-/* 		{ */
-/* 			sender.send_reply( rpl::err_chanoprivsneeded( sender, */
-/* 			                   target_channel->get_name() ) ); */
-/* 		} */
-/* 	} */
-/* } */
