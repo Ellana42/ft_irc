@@ -54,6 +54,7 @@ bool Mode_Handler::set_type()
 
 	if ( is_channel( target ) )
 	{
+		type_target = Channel_;
 		if ( !context.does_channel_exist( target ) )
 		{
 			sender.send_reply( rpl::err_nosuchchannel( sender, target ) );
