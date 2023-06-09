@@ -27,6 +27,7 @@ class Mode_Handler
 		handlers;
 
 		std::string target;
+		std::string arguments;
 		std::string added_modes;
 		std::string removed_modes;
 
@@ -37,8 +38,9 @@ class Mode_Handler
 		User * target_user;
 		Channel * target_channel;
 
-		void set_type();
-		void set_modestring();
+		bool set_type();
+		bool set_modestring();
+		void set_arguments();
 		bool has_unknown_modes( std::string modes );
 		void apply_modes();
 

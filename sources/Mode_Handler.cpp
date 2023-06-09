@@ -36,14 +36,20 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
 	handlers['l'][Channel_]["+"] = &Mode_Handler::handle_l_channel_add;
 	handlers['l'][Channel_]["-"] = &Mode_Handler::handle_l_channel_rm;
 
-	set_type();
-	set_modestring();
+	if ( set_type() )
+	{
+		return ;
+	}
+	if ( set_modestring() )
+	{
+		return;
+	}
 	apply_modes();
 }
 
 Mode_Handler::~Mode_Handler() {}
 
-void Mode_Handler::set_type()
+bool Mode_Handler::set_type()
 {
 
 	if ( is_channel( target ) )
@@ -51,7 +57,7 @@ void Mode_Handler::set_type()
 		if ( !context.does_channel_exist( target ) )
 		{
 			sender.send_reply( rpl::err_nosuchchannel( sender, target ) );
-			return;
+			return 1;
 		}
 		target_channel = &context.get_channel_by_name( target );
 	}
@@ -60,20 +66,22 @@ void Mode_Handler::set_type()
 		if ( !context.does_user_with_nick_exist( target ) )
 		{
 			sender.send_reply( rpl::err_nosuchnick( sender, target ) );
-			return;
+			return 1;
 		}
 		type_target = User_;
 		target_user = &context.get_user_by_nick( target );
 		if ( target != sender.get_nickname() )
 		{
 			sender.send_reply( rpl::err_usersdontmatch( sender ) );
-			return;
+			return 1;
 		}
 	}
+	return 0;
 }
 
 bool Mode_Handler::has_unknown_modes( std::string modes )
 {
+	// TODO : change using mode dict
 	for ( unsigned int i = 0; i < modes.size(); i++ )
 	{
 		if ( !is_in( modes[i], accepted_modes ) )
@@ -85,12 +93,17 @@ bool Mode_Handler::has_unknown_modes( std::string modes )
 }
 
 
-void Mode_Handler::set_modestring()
+bool Mode_Handler::set_modestring()
 {
 	if ( !message.has( "modestring" ) )
 	{
-		// TODO: implment rpl umodeis
-		return;
+		if ( type_target == User_ )
+		{
+			// TODO: implment rpl umodeis ?
+			return 1;
+		}
+		// TODO: Implement rpl channelmodeis ?
+		return 1;
 	}
 	ModeParsing parsing( message.get( "modestring" ) );
 	try
@@ -106,7 +119,18 @@ void Mode_Handler::set_modestring()
 	catch ( ModeParsing::InvalidModestringException & e )
 	{
 		sender.send_reply( rpl::err_invalidmodestring() );
+		return 1;
 	}
+	return 0;
+}
+
+void Mode_Handler::set_arguments()
+{
+	if ( message.has( "arguments" ) )
+	{
+		arguments = message.get( "arguments" );
+	}
+	arguments = "";
 }
 
 void Mode_Handler::apply_modes()
@@ -162,7 +186,24 @@ void Mode_Handler::handle_k_channel_rm()
 
 void Mode_Handler::handle_o_channel_add()
 {
-	return;
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		rpl::err_chanoprivsneeded( sender, target );
+		return;
+	}
+	if ( arguments == "" )
+	{
+		return;
+	}
+	try
+	{
+		User new_operator = context.get_user_by_nick( arguments );
+		target_channel->add_operator( new_operator );
+	}
+	catch ( std::out_of_range & e )
+	{
+		return;
+	}
 }
 
 void Mode_Handler::handle_o_channel_rm()

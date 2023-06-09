@@ -192,8 +192,10 @@ void Message_Handler::handle_join( Message & message )
 			sender.send_reply( rpl::namreply( sender, channel ) );
 			sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
 		}
-		catch ( Channel::AlreadyInChannelException & e ) {
-			log_event::warn( "Message Handler: JOIN: User " + sender.get_nickname() + " is already in channel " + *it );
+		catch ( Channel::AlreadyInChannelException & e )
+		{
+			log_event::warn( "Message Handler: JOIN: User " + sender.get_nickname() +
+			                 " is already in channel " + *it );
 		}
 		catch ( std::exception & e )
 		{
@@ -233,18 +235,6 @@ void Message_Handler::handle_list( Message & message )
 		}
 	}
 	sender.send_reply( rpl::listend( sender ) );
-}
-
-bool has_unknown_modes( std::string modes, std::string accepted_modes )
-{
-	for ( unsigned int i = 0; i < modes.size(); i++ )
-	{
-		if ( !is_in( modes[i], accepted_modes ) )
-		{
-			return ( true );
-		}
-	}
-	return ( false );
 }
 
 void Message_Handler::handle_mode( Message & message )
