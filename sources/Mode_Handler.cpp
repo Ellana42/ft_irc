@@ -191,7 +191,7 @@ void Mode_Handler::handle_o_channel_add()
 {
 	if ( ! target_channel->is_operator( sender ) )
 	{
-		rpl::err_chanoprivsneeded( sender, target );
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
 	if ( arguments == "" )
