@@ -27,7 +27,7 @@ $(OBJ_PATH):
 	mkdir -p $(OBJ_PATH)
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.cpp
-	$(CC) $(CFLAGS) -c $< -o $@ $(INC) $(LIB)
+	$(CC) $(CFLAGS) -c $< -o $@ $(INC)
 
 # Program-building rule
 $(NAME): $(OBJ)
