@@ -39,9 +39,11 @@ class Channel
 		bool is_operator( User & user );
 		bool is_creator( User & user );
 		void add_operator( User & user );
+		void remove_operator( User & user );
 		bool is_operator( std::string nick );
 		bool is_creator( std::string nick );
 		void add_operator( std::string nick );
+		void remove_operator( std::string nick );
 
 		void add_user( User & user );
 		void remove_user( User & user );

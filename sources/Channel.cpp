@@ -168,6 +168,17 @@ void Channel::add_operator( User & user )
 	operators.insert( user.get_nickname() );
 }
 
+void Channel::remove_operator( User & user )
+{
+	operators.erase( user.get_nickname() );
+}
+
+void Channel::remove_operator( std::string nick )
+{
+	operators.erase( nick );
+}
+
+
 bool Channel::is_operator( User & user )
 {
 	return ( operators.count( user.get_nickname() ) || is_creator( user ) );

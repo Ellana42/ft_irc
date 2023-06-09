@@ -11,8 +11,6 @@
 #include <stdexcept>
 #include <string>
 
-// TODO: Maybe implement mode arguments
-
 const std::string Mode_Handler::accepted_modes = "ioO";
 
 Mode_Handler::Mode_Handler( Context & context, User & sender,
@@ -143,6 +141,11 @@ void Mode_Handler::apply_modes()
 	{
 		( ( this )->*( handlers[ *it ][type_target]["+"] ) )();
 	}
+	std::string::iterator itr = removed_modes.begin();
+	for ( ; itr != removed_modes.end(); itr++ )
+	{
+		( ( this )->*( handlers[ *itr ][type_target]["-"] ) )();
+	}
 }
 
 void Mode_Handler::handle_i_user_add()
@@ -211,6 +214,24 @@ void Mode_Handler::handle_o_channel_add()
 
 void Mode_Handler::handle_o_channel_rm()
 {
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		return;
+	}
+	if ( arguments == "" )
+	{
+		return;
+	}
+	try
+	{
+		User new_operator = context.get_user_by_nick( arguments );
+		target_channel->remove_operator( new_operator );
+	}
+	catch ( std::out_of_range & e )
+	{
+		return;
+	}
 	return;
 }
 
