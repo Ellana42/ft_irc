@@ -63,6 +63,8 @@ class Context
 		std::list<Channel *> get_user_channels( User & user );
 		std::list<User *> get_users_in_same_channels( User & user );
 
+		void check_connection_password( std::string password );
+		
 		void debug_print_unregistered_users( void ) const;
 		void debug_print_registered_users( void ) const;
 		void debug_print_channels( void ) const;

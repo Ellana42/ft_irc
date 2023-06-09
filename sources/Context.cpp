@@ -341,3 +341,11 @@ void Context::debug_print_channels( void ) const
 	}
 	std::cout << std::endl;
 }
+
+void Context::check_connection_password( std::string password )
+{
+	if ( !password_handler.validate_connection_password( password ) )
+	{
+		throw ( std::out_of_range( "Context: Invalid connection password!" ));
+	}
+}
