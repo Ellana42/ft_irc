@@ -160,11 +160,24 @@ void Mode_Handler::handle_i_user_rm()
 
 void Mode_Handler::handle_i_channel_add()
 {
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		return;
+	}
+	target_channel->set_invite_only( true );
+	// TODO: maybe flush the invites from the channel
 	return;
 }
 
 void Mode_Handler::handle_i_channel_rm()
 {
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		return;
+	}
+	target_channel->set_invite_only( false );
 	return;
 }
 

@@ -100,7 +100,8 @@ bool Message_Handler::should_handle_message( User & sender, Message & message )
 {
 	std::string command = message.get_command();
 	if ( sender.is_fully_registered() == true || command == "USER"
-	        || command == "NICK" || command == "CAP" || command == "PASS" || command == "QUIT" )
+	        || command == "NICK" || command == "CAP" || command == "PASS"
+	        || command == "QUIT" )
 	{
 		return ( true );
 	}
@@ -187,11 +188,27 @@ void Message_Handler::handle_join( Message & message )
 	{
 		try
 		{
-			context.add_user_to_channel( sender, *it );
+			if ( !context.does_channel_exist( *it ) )
+			{
+				context.add_user_to_channel( sender, *it );
+				Channel & channel = context.get_channel_by_name( *it );
+				channel.send_reply( rpl::join_channel( sender, channel ) );
+				sender.send_reply( rpl::namreply( sender, channel ) );
+				sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
+				return;
+			}
 			Channel & channel = context.get_channel_by_name( *it );
-			channel.send_reply( rpl::join_channel( sender, channel ) );
-			sender.send_reply( rpl::namreply( sender, channel ) );
-			sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
+			if ( channel.is_invite_only() && !channel.is_invited( sender ) )
+			{
+				sender.send_reply( rpl::err_inviteonlychan( sender, channel.get_name() ) );
+			}
+			else
+			{
+				context.add_user_to_channel( sender, *it );
+				channel.send_reply( rpl::join_channel( sender, channel ) );
+				sender.send_reply( rpl::namreply( sender, channel ) );
+				sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
+			}
 		}
 		catch ( Channel::AlreadyInChannelException & e )
 		{
@@ -364,7 +381,7 @@ void Message_Handler::handle_part( Message & message )
 
 void Message_Handler::handle_pass( Message & message )
 {
-/* TODO: DON'T FORGET TO UNCOMMENT THIS !!!! */
+	/* TODO: DON'T FORGET TO UNCOMMENT THIS !!!! */
 
 	/* if ( !message.has("password") ) */
 	/* { */
@@ -379,7 +396,7 @@ void Message_Handler::handle_pass( Message & message )
 	/* 	log_event::warn( "Message_Handler: PASS:", e.what() ); */
 	/* 	context.remove_user( message.get_sender() ); */
 	/* } */
-	(void)message;
+	( void )message;
 }
 
 void Message_Handler::handle_privmsg( Message & message )
