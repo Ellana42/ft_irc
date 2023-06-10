@@ -183,11 +183,23 @@ void Mode_Handler::handle_i_channel_rm()
 
 void Mode_Handler::handle_t_channel_add()
 {
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		return;
+	}
+	target_channel->set_topic_restricted( true );
 	return;
 }
 
 void Mode_Handler::handle_t_channel_rm()
 {
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		return;
+	}
+	target_channel->set_topic_restricted( false );
 	return;
 }
 
