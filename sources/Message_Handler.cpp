@@ -129,6 +129,8 @@ void Message_Handler::initialize_message_handlers( void )
 	handle.insert( pair_handler( "USERS", &Message_Handler::handle_users ) );
 	handle.insert( pair_handler( "VERSION", &Message_Handler::handle_version ) );
 	handle.insert( pair_handler( "WHO", &Message_Handler::handle_who ) );
+	handle.insert( pair_handler( "INVITE", &Message_Handler::handle_invite ) );
+	handle.insert( pair_handler( "TOPIC", &Message_Handler::handle_topic ) );
 }
 
 void Message_Handler::handle_admin( Message & message )
@@ -143,6 +145,15 @@ void Message_Handler::handle_admin( Message & message )
 	sender.send_reply( rpl::adminloc1( sender ) );
 	sender.send_reply( rpl::adminloc2( sender ) );
 	sender.send_reply( rpl::adminemail( sender ) );
+}
+
+void Message_Handler::handle_invite( Message & message )
+{
+
+}
+void Message_Handler::handle_topic( Message & message )
+{
+
 }
 
 void Message_Handler::handle_cap( Message & message )
@@ -244,8 +255,53 @@ void Message_Handler::handle_join( Message & message )
 
 void Message_Handler::handle_kick( Message & message )
 {
-	/* TODO: implement function */
-	( void )message;
+	User & sender = message.get_sender();
+	std::string channel_name = message.get( "channel" );
+	std::list<std::string> users = message.get_list( "user" );
+
+	if ( ! context.does_channel_exist( channel_name ) )
+	{
+		sender.send_reply( rpl::err_nosuchchannel( sender, channel_name ) );
+		return;
+	}
+	Channel channel = context.get_channel_by_name( channel_name );
+	if ( !channel.is_user_in_channel( sender ) )
+	{
+		sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
+		return;
+	}
+	if ( !channel.is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, channel_name ) );
+		return;
+	}
+	std::list<std::string>::iterator it = users.begin();
+	for ( ; it != users.end(); it++ )
+	{
+		if ( !context.does_user_with_nick_exist( *it ) )
+		{
+			sender.send_reply( rpl::err_nosuchnick( sender, *it ) );
+			return;
+		}
+		User user = context.get_user_by_nick( *it );
+		if ( !channel.is_user_in_channel( user ) )
+		{
+
+			sender.send_reply( rpl::err_usernotinchannel( sender, *it,
+			                   channel.get_name() ) );
+			return;
+		}
+		channel.remove_user( user );
+		if ( message.has( "comment" ) )
+		{
+			// TODO: Actual kick message ?
+			user.send_reply( message.get( "comment" ) );
+		}
+		else
+		{
+			user.send_reply( "You are kicked" );
+		}
+	}
 }
 
 void Message_Handler::handle_list( Message & message )

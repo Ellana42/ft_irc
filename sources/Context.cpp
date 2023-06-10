@@ -350,6 +350,6 @@ void Context::check_connection_password( std::string password )
 {
 	if ( !password_handler.validate_connection_password( password ) )
 	{
-		throw ( std::out_of_range( "Context: Invalid connection password!" ));
+		throw ( std::out_of_range( "Context: Invalid connection password!" ) );
 	}
 }
