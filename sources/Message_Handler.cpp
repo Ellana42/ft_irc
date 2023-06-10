@@ -218,6 +218,10 @@ void Message_Handler::handle_join( Message & message )
 			{
 				sender.send_reply( rpl::err_badchannelkey( sender, channel.get_name() ) );
 			}
+			else if ( channel.is_at_limit() )
+			{
+				sender.send_reply( rpl::err_channelisfull( sender, channel.get_name() ) );
+			}
 			else
 			{
 				context.add_user_to_channel( sender, *chans );

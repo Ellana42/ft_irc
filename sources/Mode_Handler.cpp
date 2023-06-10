@@ -278,10 +278,26 @@ void Mode_Handler::handle_o_channel_rm()
 
 void Mode_Handler::handle_l_channel_add()
 {
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		return;
+	}
+	if ( arguments ==  "" )
+	{
+		return;
+	}
+	target_channel->set_user_limit( std::atoi( arguments.c_str() ) );
 	return;
 }
 
 void Mode_Handler::handle_l_channel_rm()
 {
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		return;
+	}
+	target_channel->remove_user_limit();
 	return;
 }

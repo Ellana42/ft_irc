@@ -347,6 +347,16 @@ bool Channel::has_user_limitation() const
 	return has_user_limit;
 }
 
+bool Channel::is_at_limit() const
+{
+	if ( has_user_limit && users.size() >= user_limit )
+	{
+		return ( true );
+	}
+	return ( false );
+}
+
+
 bool Channel::is_invited( User & user ) const
 {
 	return invited_users.count( user.get_nickname() );

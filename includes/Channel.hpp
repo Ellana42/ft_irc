@@ -26,7 +26,7 @@ class Channel
 		bool has_password;
 		bool has_user_limit;
 
-		int user_limit;
+		size_t user_limit;
 		std::string channel_password;
 
 		std::set<std::string> invited_users;
@@ -56,6 +56,7 @@ class Channel
 		void set_user_limit( int limit );
 		void remove_user_limit( );
 		bool has_user_limitation() const;
+		bool is_at_limit() const;
 
 		bool is_invited( User & user ) const;
 		bool is_invited( std::string nickname ) const;
