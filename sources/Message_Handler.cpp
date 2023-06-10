@@ -5,6 +5,7 @@
 #include "Channel.hpp"
 #include "Parsing.hpp"
 #include "log_event.hpp"
+#include "reply.hpp"
 #include <cctype>
 #include <exception>
 #include <list>
@@ -183,28 +184,43 @@ void Message_Handler::handle_join( Message & message )
 		return ;
 	}
 	/* TODO: add security so you can't JOIN "*" */
-	std::list<std::string>::iterator it = chan_names.begin();
-	for ( ; it != chan_names.end(); it++ )
+	std::list<std::string> keys;
+	for ( size_t i = 0; i < chan_names.size(); i++ )
+	{
+		keys.push_back( "" );
+	}
+	if ( message.has_list( "key" ) )
+	{
+		keys = message.get_list( "key" );
+	}
+	std::list<std::string>::iterator chans = chan_names.begin();
+	std::list<std::string>::iterator passes = keys.begin();
+	for ( ; chans != chan_names.end(); chans++, passes++ )
 	{
 		try
 		{
-			if ( !context.does_channel_exist( *it ) )
+			if ( !context.does_channel_exist( *chans ) )
 			{
-				context.add_user_to_channel( sender, *it );
-				Channel & channel = context.get_channel_by_name( *it );
+				context.add_user_to_channel( sender, *chans );
+				Channel & channel = context.get_channel_by_name( *chans );
 				channel.send_reply( rpl::join_channel( sender, channel ) );
 				sender.send_reply( rpl::namreply( sender, channel ) );
 				sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
 				return;
 			}
-			Channel & channel = context.get_channel_by_name( *it );
+			Channel & channel = context.get_channel_by_name( *chans );
 			if ( channel.is_invite_only() && !channel.is_invited( sender ) )
 			{
 				sender.send_reply( rpl::err_inviteonlychan( sender, channel.get_name() ) );
 			}
+			else if ( channel.is_password_protected()
+			          &&  !channel.check_password( *passes ) )
+			{
+				sender.send_reply( rpl::err_badchannelkey( sender, channel.get_name() ) );
+			}
 			else
 			{
-				context.add_user_to_channel( sender, *it );
+				context.add_user_to_channel( sender, *chans );
 				channel.send_reply( rpl::join_channel( sender, channel ) );
 				sender.send_reply( rpl::namreply( sender, channel ) );
 				sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
@@ -213,11 +229,11 @@ void Message_Handler::handle_join( Message & message )
 		catch ( Channel::AlreadyInChannelException & e )
 		{
 			log_event::warn( "Message Handler: JOIN: User " + sender.get_nickname() +
-			                 " is already in channel " + *it );
+			                 " is already in channel " + *chans );
 		}
 		catch ( std::exception & e )
 		{
-			sender.send_reply( rpl::err_nosuchchannel( sender, *it ) );
+			sender.send_reply( rpl::err_nosuchchannel( sender, *chans ) );
 		}
 	}
 }

@@ -11,8 +11,6 @@
 #include <stdexcept>
 #include <string>
 
-const std::string Mode_Handler::accepted_modes = "ioO";
-
 Mode_Handler::Mode_Handler( Context & context, User & sender,
                             Message & message ) : context( context ), sender( sender ), message( message )
 {
@@ -82,7 +80,7 @@ bool Mode_Handler::has_unknown_modes( std::string modes )
 	// TODO : change using mode dict
 	for ( unsigned int i = 0; i < modes.size(); i++ )
 	{
-		if ( !is_in( modes[i], accepted_modes ) )
+		if ( !handlers.count( modes[i] ) )
 		{
 			return ( true );
 		}
@@ -205,11 +203,31 @@ void Mode_Handler::handle_t_channel_rm()
 
 void Mode_Handler::handle_k_channel_add()
 {
+	// TODO: check multiple arguments and refuse
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		return;
+	}
+	if ( arguments == ""
+	        || arguments.find( ' ' ) !=
+	        std::string::npos ) // Dont accept spaces as key char
+	{
+		// TODO: implement rpl::invalidmodeparam
+		return;
+	}
+	target_channel->set_password( arguments );
 	return;
 }
 
 void Mode_Handler::handle_k_channel_rm()
 {
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		return;
+	}
+	target_channel->remove_password();
 	return;
 }
 

@@ -304,6 +304,13 @@ bool Channel::is_invite_only() const
 void Channel::set_password( std::string password )
 {
 	channel_password = password;
+	has_password = true;
+}
+
+void Channel::remove_password()
+{
+	channel_password = "";
+	has_password = false;
 }
 
 bool Channel::is_password_protected() const

@@ -18,7 +18,6 @@ typedef  void ( Mode_Handler::*handler )( void );
 class Mode_Handler
 {
 	private:
-		static const std::string accepted_modes;
 		Context & context;
 		User & sender;
 		Message & message;

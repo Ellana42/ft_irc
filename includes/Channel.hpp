@@ -49,6 +49,7 @@ class Channel
 		bool is_topic_restricted() const;
 		void set_invite_only( bool setting );
 		bool is_invite_only() const;
+		void remove_password();
 		void set_password( std::string password );
 		bool is_password_protected() const;
 		bool check_password( std::string password ) const;
