@@ -149,11 +149,11 @@ void Message_Handler::handle_admin( Message & message )
 
 void Message_Handler::handle_invite( Message & message )
 {
-
+	( void ) message;
 }
 void Message_Handler::handle_topic( Message & message )
 {
-
+	( void ) message;
 }
 
 void Message_Handler::handle_cap( Message & message )
