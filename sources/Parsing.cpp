@@ -11,7 +11,7 @@
 std::string commands[NUMBER_CMD] = {"ADMIN", "INFO", "VERSION", "USERS", "NICK", "OPER", "PRIVMSG", "USER", "QUIT", "JOIN", "LIST", "NAMES", "SUMMON", "WHO", "KICK", "PART", "MODE", "CAP", "PASS", "KICK", "INVITE", "TOPIC"};
 std::string params[NUMBER_CMD][10] = {{"target"}, {"target"}, {}, {}, {"nickname"}, {"name", "password"}, {"msgtarget", "text to be sent"}, {"user", "mode", "unused", "realname"}, {"Quit Message"}, {"channel", "key"}, {"channel"}, {"channel", "target"}, {"user", "target", "channel"}, {"mask", "o"}, {"channel", "user", "comment"}, {"channel", "Part Message"}, {"target", "modestring", "mode arguments"}, {"a"}, {"password"}, {"channel", "user", "comment"}, {"nickname", "channel"}, {"channel", "topic"}};
 
-mode params_states[NUMBER_CMD][10] = {{Optional}, {Optional}, {}, {}, {Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory, Mandatory, Mandatory}, {Optional}, {List, ListOptional}, {ListOptional}, {ListOptional, Optional}, {Mandatory, Optional, Optional}, {Optional, Optional}, {Mandatory, List, Optional}, {List, Optional}, {Mandatory, Optional, Optional}, {Optional}, {Mandatory}, {Mandatory, List, Optional}, {Mandatory, Optional}};
+mode params_states[NUMBER_CMD][10] = {{Optional}, {Optional}, {}, {}, {Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory}, {Mandatory, Mandatory, Mandatory, Mandatory}, {Optional}, {List, ListOptional}, {ListOptional}, {ListOptional, Optional}, {Mandatory, Optional, Optional}, {Optional, Optional}, {Mandatory, List, Optional}, {List, Optional}, {Mandatory, Optional, Optional}, {Optional}, {Mandatory}, {Mandatory, List, Optional}, {Mandatory, Mandatory}, {Mandatory, Optional}};
 
 
 Parsing::Parsing( std::string raw_content ) : tokenizer( Tokenizer(
