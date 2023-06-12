@@ -351,7 +351,6 @@ std::string const rpl::notopic( Message & message, Channel & channel )
 {
 	std::string reply = SERVER_PREFIX " ";
 	reply += RPL_NOTOPIC " ";
-	reply += " ";
 	reply += message.get_sender().get_nickname();
 	reply += " ";
 	reply += channel.get_name();
@@ -364,7 +363,6 @@ std::string const rpl::topic( Message & message, Channel & channel )
 {
 	std::string reply = SERVER_PREFIX " ";
 	reply += RPL_TOPIC " ";
-	reply += " ";
 	reply += message.get_sender().get_nickname();
 	reply += " ";
 	reply += channel.get_name();
