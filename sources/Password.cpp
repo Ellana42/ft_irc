@@ -29,41 +29,19 @@ std::string Password::create_sha256_hash( std::string password )
 	return ( ss.str() );
 }
 
-void Password::save_password( std::string channel, std::string password )
+std::string Password::get_hash( std::string plain_text )
 {
-	std::string hash = create_sha256_hash( password );
-	
-	std::map<std::string, std::string>::iterator it = passwords.find( channel );
-	if ( it != passwords.end() )
-	{
-		log_event::info( "Password: Changed password of chan", channel );
-		it->second = hash;
-	}
-	else
-	{
-		log_event::info( "Password: Saved password for chan", channel );
-		passwords.insert(std::pair<std::string, std::string>( channel, hash ));
-	}
+	return ( create_sha256_hash( plain_text ) );
 }
 
 bool Password::validate_connection_password( std::string password )
 {
-	return (validate_password(connection_password_hash, password ));
+	return ( validate_password( connection_password_hash, password ) );
 }
 
-bool Password::validate_channel_password( std::string channel, std::string password )
+bool Password::validate_password( std::string hash, std::string plain_text )
 {
-	std::map<std::string, std::string>::iterator it = passwords.find( channel );
-	if ( it == passwords.end() )
-	{
-		throw ( std::out_of_range( "Password: Channel " + channel + " has no password" ));
-	}
-	return (validate_password( it->second, password ));
-}
-
-bool Password::validate_password( std::string hash, std::string password )
-{
-	std::string password_hash = create_sha256_hash( password );
+	std::string password_hash = create_sha256_hash( plain_text );
 
 	if ( password_hash == hash )
 	{

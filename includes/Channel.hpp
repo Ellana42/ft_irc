@@ -3,6 +3,7 @@
 
 #include "User.hpp"
 #include "ft_irc.hpp"
+#include "Password.hpp"
 #include <set>
 
 #define MAX_CHAN_NAME_LENGTH 50
@@ -29,13 +30,14 @@ class Channel
 		bool has_user_limit;
 
 		size_t user_limit;
+		Password & password_handler;
 		std::string channel_password;
 
 		std::set<std::string> invited_users;
 
 	public:
-		Channel( std::string name );
-		Channel( std::string name, User & creator );
+		Channel( std::string name, Password & password_handler );
+		Channel( std::string name, User & creator, Password & password_handler );
 		virtual ~Channel();
 
 		void set_name( std::string name );

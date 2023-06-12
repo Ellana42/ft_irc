@@ -10,7 +10,6 @@ class Password
 {
 	private:
 		std::string connection_password_hash;
-		std::map<std::string, std::string> passwords;
 
 		std::string create_sha256_hash( std::string plain_text );
 
@@ -18,9 +17,8 @@ class Password
 		Password( std::string connection_password );
 		virtual ~Password();
 
-		void save_password( std::string channel, std::string password );
+		std::string get_hash( std::string plain_text );
 		bool validate_connection_password( std::string password );
-		bool validate_channel_password( std::string channel, std::string password );
 		bool validate_password( std::string hash, std::string password );
 };
 
