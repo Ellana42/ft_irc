@@ -19,6 +19,8 @@ class Channel
 		std::string mode;
 		std::string creator_nick;
 
+		std::string topic;
+
 		std::set<std::string> operators;
 
 		bool topic_restricted;
@@ -39,6 +41,8 @@ class Channel
 		void set_name( std::string name );
 		std::string const & get_name( void ) const;
 		void set_creator( std::string nick );
+		void set_topic( std::string new_topic );
+		std::string get_topic( void ) const;
 		std::string const & get_creator( void ) const;
 		std::string const & get_mode( void ) const;
 		void set_modes( std::string modes_to_add, std::string modes_to_remove );

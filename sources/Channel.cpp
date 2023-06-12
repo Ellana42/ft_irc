@@ -30,6 +30,16 @@ Channel::Channel( std::string name,
 
 Channel::~Channel() {}
 
+void Channel::set_topic( std::string new_topic )
+{
+	topic = new_topic;
+}
+
+std::string Channel::get_topic( void ) const
+{
+	return ( topic );
+}
+
 bool is_chan_name_valid( std::string name )
 {
 	if ( name.length() > MAX_CHAN_NAME_LENGTH )

@@ -1,4 +1,5 @@
 #include "reply.hpp"
+#include "Message.hpp"
 #include "ft_irc.hpp"
 #include "reply_macros.hpp"
 #include "reply_macros_error.hpp"
@@ -306,7 +307,7 @@ std::string const rpl::quit( User & user, Message & message )
 std::string const rpl::inviting( User & user, Message & message )
 {
 	std::string reply = SERVER_PREFIX " ";
-	reply +=  "341 ";
+	reply += RPL_INVITING " ";
 	reply += user.get_identifier();
 	reply += " ";
 	reply += message.get( "nickname" );
@@ -342,6 +343,41 @@ std::string const rpl::kick( User & sender, User & user, Channel & channel,
 	reply += user.get_nickname();
 	reply += " :";
 	reply += comment;
+	reply += "\r\n";
+	return ( reply );
+}
+
+std::string const rpl::notopic( Message & message )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_NOTOPIC " ";
+	reply += " ";
+	reply += message.get( "channel" );
+	reply += " :No topic is set";
+	return ( reply );
+}
+
+std::string const rpl::topic( Message & message, Channel & channel )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_TOPIC " ";
+	reply += " ";
+	reply += message.get( "channel" );
+	reply += " ";
+	reply += channel.get_topic();
+	return ( reply );
+}
+
+std::string const rpl::newtopic( User & sender, Message & message )
+{
+	std::string reply = ":";
+	reply += sender.get_identifier();
+	reply += " ";
+	reply += "TOPIC";
+	reply += " ";
+	reply += message.get( "channel" );
+	reply += " ";
+	reply += message.get( "topic" );
 	reply += "\r\n";
 	return ( reply );
 }

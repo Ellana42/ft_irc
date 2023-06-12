@@ -104,6 +104,9 @@ std::string const kick( User & sender, User & user, Channel & channel,
                         std::string comment );
 std::string const inviting( User & user, Message & message );
 std::string const invite( User & sender, Message & message );
+std::string const notopic( Message & message );
+std::string const topic( Message & message, Channel & channel );
+std::string const newtopic( User & sender, Message & message );
 }
 
 #endif

@@ -185,7 +185,41 @@ void Message_Handler::handle_invite( Message & message )
 
 void Message_Handler::handle_topic( Message & message )
 {
-	( void ) message;
+	User & sender = message.get_sender();
+	std::string channel_name = message.get( "channel" );
+
+	if ( !context.does_channel_exist( channel_name ) )
+	{
+		sender.send_reply( rpl::err_nosuchchannel( sender, channel_name ) );
+		return;
+	}
+	Channel & channel = context.get_channel_by_name( channel_name );
+	if ( !channel.is_user_in_channel( sender ) )
+	{
+		sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
+		return;
+	}
+	if ( !message.has( "topic" ) )
+	{
+		if ( channel.get_topic() == "" )
+		{
+			sender.send_reply( rpl::notopic( message ) );
+			return;
+		}
+		else
+		{
+			sender.send_reply( rpl::topic( message, channel ) );
+			return;
+		}
+	}
+	std::string new_topic = message.get( "topic" );
+	if ( channel.is_topic_restricted() && !channel.is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, channel.get_name() ) );
+		return;
+	}
+	channel.set_topic( new_topic );
+	channel.send_reply( rpl::newtopic( sender, message ) );
 }
 
 void Message_Handler::handle_cap( Message & message )
