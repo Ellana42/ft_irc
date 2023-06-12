@@ -38,6 +38,8 @@ class Message_Handler
 		void handle_users( Message & message );
 		void handle_version( Message & message );
 		void handle_who( Message & message );
+		void handle_invite( Message & message );
+		void handle_topic( Message & message );
 
 		bool should_handle_message( User & sender, Message & message );
 		Message * create_message( User & sender, std::string raw_message );

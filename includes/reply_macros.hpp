@@ -402,5 +402,4 @@
 # define RPL_STATSBLINE "247"
 # define RPL_STATSDLINE "250"
 
-
 #endif

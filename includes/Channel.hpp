@@ -19,6 +19,8 @@ class Channel
 		std::string mode;
 		std::string creator_nick;
 
+		std::string topic;
+
 		std::set<std::string> operators;
 
 		bool topic_restricted;
@@ -39,11 +41,14 @@ class Channel
 		void set_name( std::string name );
 		std::string const & get_name( void ) const;
 		void set_creator( std::string nick );
+		void set_topic( std::string new_topic );
+		std::string get_topic( void ) const;
 		std::string const & get_creator( void ) const;
 		std::string const & get_mode( void ) const;
 		void set_modes( std::string modes_to_add, std::string modes_to_remove );
 		void add_modes( std::string mode_string );
 		void remove_modes( std::string mode_string );
+		void add_invited_user( std::string nick );
 
 		void set_topic_restricted( bool setting );
 		bool is_topic_restricted() const;
@@ -80,6 +85,7 @@ class Channel
 		unsigned int get_nbr_users( void );
 		std::string get_user_list_string( void );
 		bool is_user_in_channel( User & user );
+		bool is_user_in_channel( std::string nickname );
 		bool is_empty( void );
 
 		class AlreadyInChannelException: public std::exception

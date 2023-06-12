@@ -244,7 +244,7 @@ void Mode_Handler::handle_o_channel_add()
 	}
 	try
 	{
-		User new_operator = context.get_user_by_nick( arguments );
+		User & new_operator = context.get_user_by_nick( arguments );
 		target_channel->add_operator( new_operator );
 	}
 	catch ( std::out_of_range & e )
@@ -266,7 +266,7 @@ void Mode_Handler::handle_o_channel_rm()
 	}
 	try
 	{
-		User new_operator = context.get_user_by_nick( arguments );
+		User & new_operator = context.get_user_by_nick( arguments );
 		target_channel->remove_operator( new_operator );
 	}
 	catch ( std::out_of_range & e )

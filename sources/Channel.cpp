@@ -30,6 +30,16 @@ Channel::Channel( std::string name,
 
 Channel::~Channel() {}
 
+void Channel::set_topic( std::string new_topic )
+{
+	topic = new_topic;
+}
+
+std::string Channel::get_topic( void ) const
+{
+	return ( topic );
+}
+
 bool is_chan_name_valid( std::string name )
 {
 	if ( name.length() > MAX_CHAN_NAME_LENGTH )
@@ -201,6 +211,11 @@ void Channel::add_operator( std::string nickname )
 	operators.insert( nickname );
 }
 
+void Channel::add_invited_user( std::string nick )
+{
+	invited_users.insert( nick );
+}
+
 bool Channel::is_operator( std::string nickname )
 {
 	return ( operators.count( nickname ) || is_creator( nickname ) );
@@ -223,6 +238,16 @@ void Channel::send_reply( std::string reply )
 	{
 		it->second->send_reply( reply );
 	}
+}
+
+bool Channel::is_user_in_channel( std::string nickname )
+{
+	std::map<std::string, User *>::iterator it = users.find( nickname );
+	if ( it != users.end() )
+	{
+		return ( true );
+	}
+	return ( false );
 }
 
 bool Channel::is_user_in_channel( User & user )

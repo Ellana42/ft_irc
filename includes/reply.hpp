@@ -100,6 +100,13 @@ std::string const err_invalidmodestring( void );
 std::string const liststart( User & user );
 std::string const list( User & user, Channel & channel );
 std::string const listend( User & user );
+std::string const kick( User & sender, User & user, Channel & channel,
+                        std::string comment );
+std::string const inviting( User & user, Message & message );
+std::string const invite( User & sender, Message & message );
+std::string const notopic( Message & message );
+std::string const topic( Message & message, Channel & channel );
+std::string const newtopic( User & sender, Message & message );
 }
 
 #endif
