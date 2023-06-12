@@ -291,16 +291,16 @@ void Message_Handler::handle_kick( Message & message )
 			                   channel.get_name() ) );
 			return;
 		}
-		channel.remove_user( user );
-		if ( message.has( "comment" ) )
+		if ( message.get( "comment" ) == "" )
 		{
-			// TODO: Actual kick message ?
-			user.send_reply( message.get( "comment" ) );
+			channel.send_reply( rpl::kick( sender, user, channel, "You are kicked" ) );
 		}
 		else
 		{
-			user.send_reply( "You are kicked" );
+			channel.send_reply( rpl::kick( sender, user, channel,
+			                               message.get( "comment" ) ) );
 		}
+		channel.remove_user( user );
 	}
 }
 

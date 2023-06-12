@@ -100,6 +100,8 @@ std::string const err_invalidmodestring( void );
 std::string const liststart( User & user );
 std::string const list( User & user, Channel & channel );
 std::string const listend( User & user );
+std::string const kick( User & sender, User & user, Channel & channel,
+                        std::string comment );
 }
 
 #endif

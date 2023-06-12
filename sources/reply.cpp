@@ -302,3 +302,20 @@ std::string const rpl::quit( User & user, Message & message )
 	reply += "\r\n";
 	return ( reply );
 }
+
+std::string const rpl::kick( User & sender, User & user, Channel & channel,
+                             std::string comment )
+{
+	std::string reply = ":";
+	reply += sender.get_identifier();
+	reply += " ";
+	reply += "KICK";
+	reply += " ";
+	reply += channel.get_name();
+	reply += " ";
+	reply += user.get_nickname();
+	reply += " :";
+	reply += comment;
+	reply += "\r\n";
+	return ( reply );
+}
