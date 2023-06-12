@@ -260,7 +260,6 @@ void Message_Handler::handle_join( Message & message )
 		}
 		return ;
 	}
-	/* TODO: add security so you can't JOIN "*" */
 	std::list<std::string> keys;
 	for ( size_t i = 0; i < chan_names.size(); i++ )
 	{
@@ -303,6 +302,7 @@ void Message_Handler::handle_join( Message & message )
 			{
 				context.add_user_to_channel( sender, *chans );
 				channel.send_reply( rpl::join_channel( sender, channel ) );
+				sender.send_reply( rpl::topic( message, channel ) );
 				sender.send_reply( rpl::namreply( sender, channel ) );
 				sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
 			}
@@ -314,6 +314,7 @@ void Message_Handler::handle_join( Message & message )
 		}
 		catch ( std::exception & e )
 		{
+			log_event::warn( "Message Handler: JOIN: ", e.what() );
 			sender.send_reply( rpl::err_nosuchchannel( sender, *chans ) );
 		}
 	}
