@@ -264,7 +264,7 @@ void Message_Handler::handle_kick( Message & message )
 		sender.send_reply( rpl::err_nosuchchannel( sender, channel_name ) );
 		return;
 	}
-	Channel channel = context.get_channel_by_name( channel_name );
+	Channel & channel = context.get_channel_by_name( channel_name );
 	if ( !channel.is_user_in_channel( sender ) )
 	{
 		sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
@@ -283,7 +283,7 @@ void Message_Handler::handle_kick( Message & message )
 			sender.send_reply( rpl::err_nosuchnick( sender, *it ) );
 			return;
 		}
-		User user = context.get_user_by_nick( *it );
+		User & user = context.get_user_by_nick( *it );
 		if ( !channel.is_user_in_channel( user ) )
 		{
 
