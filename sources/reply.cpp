@@ -306,13 +306,16 @@ std::string const rpl::quit( User & user, Message & message )
 
 std::string const rpl::inviting( User & user, Message & message )
 {
-	std::string reply = SERVER_PREFIX " ";
-	reply += RPL_INVITING " ";
+	std::string reply = ":";
 	reply += user.get_identifier();
+	reply += " ";
+	reply += RPL_INVITING " ";
+	reply += message.get_sender().get_nickname();
 	reply += " ";
 	reply += message.get( "nickname" );
 	reply += " ";
 	reply += message.get( "channel" );
+	reply += "\r\n";
 	return ( reply );
 }
 

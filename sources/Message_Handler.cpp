@@ -174,12 +174,16 @@ void Message_Handler::handle_invite( Message & message )
 		sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
 		return;
 	}
-	sender.send_reply( rpl::inviting( sender, message ) );
 	if ( context.does_user_with_nick_exist( user_nickname ) )
 	{
 		User & user = context.get_user_by_nick( user_nickname );
+		sender.send_reply( rpl::inviting( user, message ) );
 		user.send_reply( rpl::invite( sender, message ) );
 		channel.add_invited_user( user_nickname );
+	}
+	else
+	{
+		sender.send_reply( rpl::err_nosuchnick( sender, user_nickname ));
 	}
 }
 
