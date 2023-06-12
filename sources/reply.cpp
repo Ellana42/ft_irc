@@ -347,12 +347,14 @@ std::string const rpl::kick( User & sender, User & user, Channel & channel,
 	return ( reply );
 }
 
-std::string const rpl::notopic( Message & message )
+std::string const rpl::notopic( Message & message, Channel & channel )
 {
 	std::string reply = SERVER_PREFIX " ";
 	reply += RPL_NOTOPIC " ";
 	reply += " ";
-	reply += message.get( "channel" );
+	reply += message.get_sender().get_nickname();
+	reply += " ";
+	reply += channel.get_name();
 	reply += " :No topic is set";
 	reply += "\r\n";
 	return ( reply );

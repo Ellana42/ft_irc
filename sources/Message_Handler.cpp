@@ -203,7 +203,7 @@ void Message_Handler::handle_topic( Message & message )
 	{
 		if ( channel.get_topic() == "" )
 		{
-			sender.send_reply( rpl::notopic( message ) );
+			sender.send_reply( rpl::notopic( message, channel ) );
 			return;
 		}
 		else
