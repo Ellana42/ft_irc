@@ -149,8 +149,40 @@ void Message_Handler::handle_admin( Message & message )
 
 void Message_Handler::handle_invite( Message & message )
 {
-	( void ) message;
+	User & sender = message.get_sender();
+	std::string channel_name = message.get( "channel" );
+	std::string user_nickname = message.get( "nickname" );
+
+	if ( ! context.does_channel_exist( channel_name ) )
+	{
+		sender.send_reply( rpl::err_nosuchchannel( sender, channel_name ) );
+		return;
+	}
+	Channel & channel = context.get_channel_by_name( channel_name );
+	if ( !channel.is_user_in_channel( sender ) )
+	{
+		sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
+		return;
+	}
+	if ( !channel.is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender, channel_name ) );
+		return;
+	}
+	if ( channel.is_user_in_channel( user_nickname ) )
+	{
+		sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
+		return;
+	}
+	sender.send_reply( rpl::inviting( sender, message ) );
+	if ( context.does_user_with_nick_exist( user_nickname ) )
+	{
+		User & user = context.get_user_by_nick( user_nickname );
+		user.send_reply( rpl::invite( sender, message ) );
+		channel.add_invited_user( user_nickname );
+	}
 }
+
 void Message_Handler::handle_topic( Message & message )
 {
 	( void ) message;

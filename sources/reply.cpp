@@ -303,6 +303,32 @@ std::string const rpl::quit( User & user, Message & message )
 	return ( reply );
 }
 
+std::string const rpl::inviting( User & user, Message & message )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply +=  "341 ";
+	reply += user.get_identifier();
+	reply += " ";
+	reply += message.get( "nickname" );
+	reply += " ";
+	reply += message.get( "channel" );
+	return ( reply );
+}
+
+std::string const rpl::invite( User & sender, Message & message )
+{
+	std::string reply = ":";
+	reply += sender.get_identifier();
+	reply += " ";
+	reply += "INVITE";
+	reply += " ";
+	reply += message.get( "nickname" );
+	reply += " ";
+	reply += message.get( "channel" );
+	reply += "\r\n";
+	return ( reply );
+}
+
 std::string const rpl::kick( User & sender, User & user, Channel & channel,
                              std::string comment )
 {
