@@ -354,6 +354,7 @@ std::string const rpl::notopic( Message & message )
 	reply += " ";
 	reply += message.get( "channel" );
 	reply += " :No topic is set";
+	reply += "\r\n";
 	return ( reply );
 }
 
@@ -362,9 +363,12 @@ std::string const rpl::topic( Message & message, Channel & channel )
 	std::string reply = SERVER_PREFIX " ";
 	reply += RPL_TOPIC " ";
 	reply += " ";
-	reply += message.get( "channel" );
+	reply += message.get_sender().get_nickname();
 	reply += " ";
+	reply += channel.get_name();
+	reply += " :";
 	reply += channel.get_topic();
+	reply += "\r\n";
 	return ( reply );
 }
 
@@ -376,7 +380,7 @@ std::string const rpl::newtopic( User & sender, Message & message )
 	reply += "TOPIC";
 	reply += " ";
 	reply += message.get( "channel" );
-	reply += " ";
+	reply += " :";
 	reply += message.get( "topic" );
 	reply += "\r\n";
 	return ( reply );
