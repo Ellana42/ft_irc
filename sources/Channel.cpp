@@ -82,8 +82,7 @@ std::string const & Channel::get_mode( void ) const
 
 void Channel::add_user( User & user )
 {
-	/* std::cout << "CHAN [" << name << "] : Adding user \"" << user.get_nickname() << */
-	/*           "\"" << std::endl; */
+	log_event::info( "Channel " + this->name + ": Adding user \"" + user.get_nickname() + "\"" );
 	if ( is_user_in_channel( user ) == true )
 	{
 		throw Channel::AlreadyInChannelException();
@@ -97,8 +96,7 @@ void Channel::add_user( User & user )
 
 void Channel::remove_user( User & user )
 {
-	/* std::cout << "CHAN [" << name << "] : removing user \"" << user.get_nickname() */
-	/*           << "\"" << std::endl; */
+	log_event::info( "Channel " + this->name + ": Removing user \"" + user.get_nickname() + "\"" );
 	users.erase( user.get_nickname() );
 	operators.erase( user.get_nickname() );
 }
@@ -283,7 +281,7 @@ std::string Channel::get_user_list_string( void )
 
 const char* Channel::AlreadyInChannelException::what() const throw()
 {
-	return ( "Channel: user already in channel" );
+	return ( "Channel: user already in channel " );
 }
 
 const char* Channel::InvalidChannelNameException::what() const throw()

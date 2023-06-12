@@ -101,10 +101,6 @@ void Context::create_channel( User & user, std::string name )
 
 void Context::add_user_to_channel( User & user, std::string channel_name )
 {
-	/* if ( channel_name == DEFAULT_CHAN ) */
-	/* { */
-	/* 	throw std::out_of_range( "Channel: Attempting to add user to default channel!" ); */
-	/* } */
 	if ( does_channel_exist( channel_name ) == false )
 	{
 		create_channel( user, channel_name );
@@ -112,12 +108,11 @@ void Context::add_user_to_channel( User & user, std::string channel_name )
 	else
 	{
 		std::string chan_name = string_to_lowercase( channel_name );
+		log_event::info( "Context: Adding user \"" + user.get_nickname() + "\" to channel " + chan_name );
 		channels[chan_name]->add_user( user );
 		if ( channel_name != DEFAULT_CHAN
 		        && channels[DEFAULT_CHAN]->is_user_in_channel( user ) )
 		{
-			/* std::cout << "Removing user " << user.get_nickname() << " from default chan" << */
-			/*           std::endl; */
 			channels[DEFAULT_CHAN]->remove_user( user );
 		}
 	}
@@ -132,9 +127,11 @@ void Context::remove_user_from_channel( User & user, std::string channel_name )
 	else
 	{
 		std::string chan_name = string_to_lowercase( channel_name );
+		log_event::info( "Context: Removing user \"" + user.get_nickname() + "\" from channel " + chan_name );
 		channels[chan_name]->remove_user( user );
-		if ( is_user_in_any_channel( user ) == false )
+		if ( is_user_in_any_channel( user ) == false && chan_name != DEFAULT_CHAN )
 		{
+			log_event::info( "Context: Adding user \"" + user.get_nickname() + "\" to channel *, because user is no longer in any channel" );
 			channels[DEFAULT_CHAN]->add_user( user );
 		}
 	}
