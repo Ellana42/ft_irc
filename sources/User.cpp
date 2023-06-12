@@ -14,7 +14,7 @@ User::User( Context & context, int socket ) : nickname( "*" ), username( "*" ),
 
 User::~User()
 {
-	log_event::info( "User: closing socket for user" + this->nickname + ": socket ", this->socket );
+	log_event::info( "User: closing socket for user \"" + this->nickname + "\": socket", this->socket );
 	close( this->socket );
 }
 

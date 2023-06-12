@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include "Password.hpp"
 #include "ft_irc.hpp"
+#include "log_event.hpp"
 
 Context::Context( Password & password ) : password_handler( password ),
 	message_handler( NULL )
@@ -51,9 +52,16 @@ void Context::remove_user( User & user )
 		this->remove_unregistered_user( user );
 	}
 }
+	
+void Context::remove_user( int socket )
+{
+	User user = get_user_by_socket( socket );
+	remove_user( user );
+}
 
 void Context::remove_registered_user( User & user )
 {
+	log_event::info( "Context: Removing registered user" );
 	std::map<std::string, User *>::iterator it = registered_users.find(
 	            user.get_nickname() );
 	if ( it != registered_users.end() )
@@ -66,6 +74,7 @@ void Context::remove_registered_user( User & user )
 
 void Context::remove_unregistered_user( User & user )
 {
+	log_event::info( "Context: Removing unregistered user" );
 	std::map<int, User *>::iterator it = unregistered_users.find(
 	        user.get_socket() );
 	if ( it != unregistered_users.end() )

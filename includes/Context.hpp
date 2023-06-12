@@ -40,6 +40,7 @@ class Context
 		void create_unregistered_user( int socket );
 		void register_user( User & user );
 		void remove_user( User & user );
+		void remove_user( int socket );
 		void create_channel( User & user, std::string name );
 		void remove_channel( Channel & channel );
 		void update_user_nick( User & user, std::string new_nick );

@@ -110,13 +110,14 @@ void Application::read_message( int fd, int *num_clients )
 		bytes_recv = recv( fd, buf, sizeof( buf ), 0 );
 		if ( bytes_recv == -1 )
 		{
-			log_event::warn( "Application: Connection issue while receiving message" );
+			log_event::warn( "Application: Connection issue while receiving message from socket", fd );
 			break;
 		}
 		if ( bytes_recv == 0 )
 		{
-			log_event::info( "Application: Client disconnected" );
-			close( fd );
+			log_event::info( "Application: Client disconnected from socket", fd );
+			context->remove_user( fd );
+			/* close( fd ); */
 			fd = -1;
 			( *num_clients )--;
 			break;
