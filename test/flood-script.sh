@@ -25,10 +25,15 @@ fi
 
 PORT=$1
 PORT_STATUS=$(nc -w5 -z -v localhost $PORT 2>&1)
-echo "Port status: ${PORT_STATUS}"
 
-if [[ ${PORT_STATUS} != *"open"* ]]
+if [[ ${PORT} -lt 6660 ]] || [[ ${PORT} -gt 7000 ]]
 then
+	echo "Invalid port: port must be between 6660 and 7000"
+	echo "Usage: ./test-flood-script.sh <port> <number_of_clients>"
+	exit 1
+elif [[ ${PORT_STATUS} != *"open"* ]]
+then
+	echo "Port status: ${PORT_STATUS}"
 	exit 1
 fi
 
