@@ -7,19 +7,11 @@ YELLOW='\033[00;33m'
 BLUE='\033[00;34m'
 PURPLE='\033[00;35m'
 CYAN='\033[00;36m'
-LIGHTGRAY='\033[00;37m'
-
-LRED='\033[01;31m'
-LGREEN='\033[01;32m'
-LYELLOW='\033[01;33m'
-LBLUE='\033[01;34m'
-LPURPLE='\033[01;35m'
-LCYAN='\033[01;36m'
-WHITE='\033[01;37m'
 
 if [ -z $1 ]
 then
-	echo "Please specify a port between 6660 and 7000: ./test-flood-script.sh <port>"
+	echo "Please specify a port between 6660 and 7000"
+	echo "Usage: ./test-flood-script.sh <port>"
 	exit 1
 fi
 
@@ -29,7 +21,7 @@ PORT_STATUS=$(nc -w5 -z -v localhost $PORT 2>&1)
 if [[ ${PORT} -lt 6660 ]] || [[ ${PORT} -gt 7000 ]]
 then
 	echo "Invalid port: port must be between 6660 and 7000"
-	echo "Usage: ./test-flood-script.sh <port> <number_of_clients>"
+	echo "Usage: ./test-flood-script.sh <port>"
 	exit 1
 elif [[ ${PORT_STATUS} != *"open"* ]]
 then
