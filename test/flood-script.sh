@@ -36,19 +36,26 @@ echo "Flooding port $PORT"
 RESULT=""
 while [[ ${PORT_STATUS} == *"open"* ]]
 do
-	echo "-- Connecting to port ${PORT} and registering an IRC user"
+	echo "-- Connecting to port ${PORT}"
+	echo -n "-- Registering IRC client: " 
 	RESULT=$(perl -e 'print "USER a a a a\r\n" . "NICK nick\r\n" . "QUIT\r\n"' | nc localhost $PORT)
 	if [[ ${RESULT} == *"Welcome"* ]]
 		then
 			echo -e "${GREEN}OK: Got expected \"Welcome\" reply${RESET}"
-			echo "${RESULT}"
+			echo -e "${CYAN}${RESULT}${RESET}"
 		else
 			echo -e "${RED}ERROR: Got unexpected reply:${RESET}"
 			echo "Reply: [${RESULT}]"
 	fi
 	echo "-- Closed connection to port ${PORT}"
 	PORT_STATUS=$(nc -w5 -z -v localhost $PORT 2>&1)
-	echo "-- Checking port ${PORT} status"
+	echo -n "-- Checking port ${PORT} status: "
+	if [[ ${PORT_STATUS} == *"open"* ]]
+		then
+			echo -e "${GREEN}OK${RESET}"
+		else
+			echo -e "${RED}KO${RESET}"
+	fi
 	echo
 done
 
