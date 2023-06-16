@@ -388,3 +388,18 @@ std::string const rpl::newtopic( User & sender, Message & message )
 	reply += "\r\n";
 	return ( reply );
 }
+
+std::string const rpl::pong( User & sender, Message & message )
+{
+	std::string reply = ":";
+	reply += sender.get_identifier();
+	reply += " ";
+	reply += "PONG";
+	reply += " ";
+	reply += SERVER_NAME;
+	reply += " ";
+	reply += message.get( "token" );
+	reply += "\r\n";
+	return ( reply );
+}
+

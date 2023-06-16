@@ -685,7 +685,7 @@ void Message_Handler::handle_ping( Message & message )
 		sender.send_reply( rpl::err_needmoreparams( sender, "PING" ) );
 		return;
 	}
-	// TODO: implement pong reply
+	sender.send_reply( rpl::pong( sender, message ) );
 }
 
 void Message_Handler::handle_pong( Message & message )
