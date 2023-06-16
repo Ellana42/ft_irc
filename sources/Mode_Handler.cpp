@@ -5,6 +5,7 @@
 #include "Channel.hpp"
 #include "Mode_Parsing.hpp"
 #include "Parsing.hpp"
+#include "reply.hpp"
 #include <cctype>
 #include <exception>
 #include <list>
@@ -95,7 +96,7 @@ bool Mode_Handler::set_modestring()
 	{
 		if ( type_target == User_ )
 		{
-			// TODO: implment rpl umodeis ?
+			sender.send_reply( rpl::umodeis( message ) );
 			return 1;
 		}
 		// TODO: Implement rpl channelmodeis ?
