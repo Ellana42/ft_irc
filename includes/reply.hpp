@@ -108,6 +108,7 @@ std::string const pong( User & sender, Message & message );
 std::string const notopic( Message & message, Channel & channel );
 std::string const topic( Message & message, Channel & channel );
 std::string const newtopic( User & sender, Message & message );
+std::string const ping( std::string token );
 }
 
 #endif

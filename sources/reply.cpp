@@ -403,3 +403,12 @@ std::string const rpl::pong( User & sender, Message & message )
 	return ( reply );
 }
 
+std::string const rpl::ping( std::string token )
+{
+	std::string reply = "";
+	reply += "PING";
+	reply += " ";
+	reply += token;
+	reply += "\r\n";
+	return ( reply );
+}
