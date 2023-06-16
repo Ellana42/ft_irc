@@ -678,7 +678,14 @@ void Message_Handler::welcome_user( User & user )
 
 void Message_Handler::handle_ping( Message & message )
 {
-	( void ) message;
+	User & sender = message.get_sender();
+
+	if ( message.get( "token" ) == "" )
+	{
+		sender.send_reply( rpl::err_needmoreparams( sender, "PING" ) );
+		return;
+	}
+	// TODO: implement pong reply
 }
 
 void Message_Handler::handle_pong( Message & message )
