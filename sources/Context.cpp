@@ -86,14 +86,14 @@ void Context::remove_unregistered_user( User & user )
 
 void Context::create_channel( std::string name )
 {
-	Channel * new_chan = new Channel( name );
+	Channel * new_chan = new Channel( name, password_handler );
 	std::string chan_name = string_to_lowercase( new_chan->get_name() );
 	channels.insert( pair_string_chan( chan_name, new_chan ) );
 }
 
 void Context::create_channel( User & user, std::string name )
 {
-	Channel * new_chan = new Channel( name, user );
+	Channel * new_chan = new Channel( name, user, password_handler );
 	std::string chan_name = string_to_lowercase( new_chan->get_name() );
 	channels.insert( pair_string_chan( chan_name, new_chan ) );
 	new_chan->add_operator( user );
@@ -359,3 +359,4 @@ void Context::check_connection_password( std::string password )
 		throw ( std::out_of_range( "Context: Invalid connection password!" ) );
 	}
 }
+

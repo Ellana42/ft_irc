@@ -1,12 +1,13 @@
 #include "Channel.hpp"
 #include "Context.hpp"
+#include "Password.hpp"
 #include "User.hpp"
 #include "log_event.hpp"
 #include <cctype>
 #include <stdexcept>
 
-Channel::Channel( std::string name ) : topic_restricted( false ),
-	invite_only( false ), has_password( false ), has_user_limit( false )
+Channel::Channel( std::string name, Password & password_handler ) : topic_restricted( false ),
+	invite_only( false ), has_password( false ), has_user_limit( false ), password_handler( password_handler )
 {
 	if ( name == DEFAULT_CHAN )
 	{
@@ -18,8 +19,8 @@ Channel::Channel( std::string name ) : topic_restricted( false ),
 }
 
 Channel::Channel( std::string name,
-                  User & creator ) : topic_restricted( false ), invite_only( false ),
-	has_password( false ), has_user_limit( false )
+                  User & creator, Password & password_handler ) : topic_restricted( false ), invite_only( false ),
+	has_password( false ), has_user_limit( false ), password_handler( password_handler )
 {
 	set_name( name );
 	set_creator( creator.get_nickname() );
@@ -326,7 +327,7 @@ bool Channel::is_invite_only() const
 
 void Channel::set_password( std::string password )
 {
-	channel_password = password;
+	channel_password = password_handler.get_hash( password );
 	has_password = true;
 }
 
@@ -347,11 +348,7 @@ bool Channel::check_password( std::string password ) const
 	{
 		return true;
 	}
-	if ( password == channel_password )
-	{
-		return true;
-	}
-	return false;
+	return ( password_handler.validate_password( channel_password, password ) );
 }
 
 void Channel::set_user_limit( int limit )
