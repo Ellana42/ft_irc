@@ -96,10 +96,10 @@ bool Mode_Handler::set_modestring()
 	{
 		if ( type_target == User_ )
 		{
-			sender.send_reply( rpl::umodeis( message ) );
+			sender.send_reply( rpl::umodeis( message, *target_user ) );
 			return 1;
 		}
-		// TODO: Implement rpl channelmodeis ?
+		sender.send_reply( rpl::channelmodeis( message, *target_channel ) );
 		return 1;
 	}
 	ModeParsing parsing( message.get( "modestring" ) );

@@ -92,7 +92,8 @@ std::string const & Channel::get_mode( void ) const
 
 void Channel::add_user( User & user )
 {
-	log_event::info( "Channel " + this->name + ": Adding user \"" + user.get_nickname() + "\"" );
+	log_event::info( "Channel " + this->name + ": Adding user \"" +
+	                 user.get_nickname() + "\"" );
 	if ( is_user_in_channel( user ) == true )
 	{
 		throw Channel::AlreadyInChannelException();
@@ -106,7 +107,8 @@ void Channel::add_user( User & user )
 
 void Channel::remove_user( User & user )
 {
-	log_event::info( "Channel " + this->name + ": Removing user \"" + user.get_nickname() + "\"" );
+	log_event::info( "Channel " + this->name + ": Removing user \"" +
+	                 user.get_nickname() + "\"" );
 	users.erase( user.get_nickname() );
 	operators.erase( user.get_nickname() );
 }
@@ -398,4 +400,27 @@ const char* Channel::AlreadyInChannelException::what() const throw()
 const char* Channel::InvalidChannelNameException::what() const throw()
 {
 	return ( "Channel: invalid channel name" );
+}
+
+std::string Channel::get_modestring( void ) const
+{
+	std::string modestring = "+";
+
+	if ( has_user_limit )
+	{
+		modestring += "l";
+	}
+	if ( invite_only )
+	{
+		modestring += "i";
+	}
+	if ( has_password )
+	{
+		modestring += "k";
+	}
+	if ( topic_restricted )
+	{
+		modestring += "t";
+	}
+	return modestring;
 }

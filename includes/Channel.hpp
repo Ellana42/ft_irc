@@ -49,6 +49,7 @@ class Channel
 		void add_modes( std::string mode_string );
 		void remove_modes( std::string mode_string );
 		void add_invited_user( std::string nick );
+		std::string get_modestring( void ) const;
 
 		void set_topic_restricted( bool setting );
 		bool is_topic_restricted() const;
