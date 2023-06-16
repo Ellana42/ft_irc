@@ -131,6 +131,8 @@ void Message_Handler::initialize_message_handlers( void )
 	handle.insert( pair_handler( "WHO", &Message_Handler::handle_who ) );
 	handle.insert( pair_handler( "INVITE", &Message_Handler::handle_invite ) );
 	handle.insert( pair_handler( "TOPIC", &Message_Handler::handle_topic ) );
+	handle.insert( pair_handler( "PING", &Message_Handler::handle_ping ) );
+	handle.insert( pair_handler( "PONG", &Message_Handler::handle_pong ) );
 }
 
 void Message_Handler::handle_admin( Message & message )
@@ -183,7 +185,7 @@ void Message_Handler::handle_invite( Message & message )
 	}
 	else
 	{
-		sender.send_reply( rpl::err_nosuchnick( sender, user_nickname ));
+		sender.send_reply( rpl::err_nosuchnick( sender, user_nickname ) );
 	}
 }
 
@@ -672,4 +674,14 @@ void Message_Handler::welcome_user( User & user )
 	{
 		log_event::warn( "Message Handler: Welcome: ", e.what() );
 	}
+}
+
+void Message_Handler::handle_ping( Message & message )
+{
+	( void ) message;
+}
+
+void Message_Handler::handle_pong( Message & message )
+{
+	( void ) message;
 }
