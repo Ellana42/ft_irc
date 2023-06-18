@@ -229,13 +229,24 @@ bool Channel::is_creator( std::string nickname )
 	return ( false );
 }
 
-
 void Channel::send_reply( std::string reply )
 {
 	std::map<std::string, User *>::iterator it = users.begin();
 	for ( ; it != users.end(); it++ )
 	{
 		it->second->send_reply( reply );
+	}
+}
+
+void Channel::send_reply( std::string reply, User & user_to_ignore )
+{
+	std::map<std::string, User *>::iterator it = users.begin();
+	for ( ; it != users.end(); it++ )
+	{
+		if (it->first != user_to_ignore.get_nickname() )
+		{
+			it->second->send_reply( reply );
+		}
 	}
 }
 

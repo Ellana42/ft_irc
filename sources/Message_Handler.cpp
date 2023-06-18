@@ -567,7 +567,7 @@ void Message_Handler::handle_privmsg( Message & message )
 		Channel & dest_chan = context.get_channel_by_name( dest_nick );
 		if ( dest_chan.is_user_in_channel( sender ) )
 		{
-			dest_chan.send_reply( rpl::forward( sender, message ) );
+			dest_chan.send_reply( rpl::forward( sender, message ), sender );
 		}
 		else
 		{
