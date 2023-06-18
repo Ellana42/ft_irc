@@ -40,6 +40,8 @@ class Message_Handler
 		void handle_who( Message & message );
 		void handle_invite( Message & message );
 		void handle_topic( Message & message );
+		void handle_ping( Message & message );
+		void handle_pong( Message & message );
 
 		bool should_handle_message( User & sender, Message & message );
 		Message * create_message( User & sender, std::string raw_message );
