@@ -557,6 +557,7 @@ void Message_Handler::handle_privmsg( Message & message )
 	User & sender = message.get_sender();
 	std::string dest_nick = message.get( "msgtarget" );
 	std::string text = "";
+	// TODO: double check that 1) an empty string is a valid message 2) the errtext not sent is non blocking
 	if ( message.has( "text to be sent" ) )
 	{
 		text = message.get( "text to be sent" );
