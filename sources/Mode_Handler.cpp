@@ -78,7 +78,6 @@ bool Mode_Handler::set_type()
 
 bool Mode_Handler::has_unknown_modes( std::string modes )
 {
-	// TODO : change using mode dict
 	for ( unsigned int i = 0; i < modes.size(); i++ )
 	{
 		if ( !handlers.count( modes[i] ) )
@@ -111,6 +110,7 @@ bool Mode_Handler::set_modestring()
 		if ( has_unknown_modes( added_modes ) || has_unknown_modes( removed_modes ) )
 		{
 			sender.send_reply( rpl::err_umodeunknownflag( sender ) );
+			return 1;
 		}
 	}
 	catch ( ModeParsing::InvalidModestringException & e )
