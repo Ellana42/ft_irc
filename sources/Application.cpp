@@ -7,6 +7,7 @@
 #include <exception>
 #include <stdexcept>
 #include <fcntl.h> // Include for fcntl function
+#include <errno.h>
 
 Application::Application( int port, std::string password ) : port( port )
 {
