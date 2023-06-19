@@ -556,8 +556,12 @@ void Message_Handler::handle_privmsg( Message & message )
 {
 	User & sender = message.get_sender();
 	std::string dest_nick = message.get( "msgtarget" );
-	std::string text = message.get( "text to be sent" );
-	if ( text.empty() )
+	std::string text = "";
+	if ( message.has( "text to be sent" ) )
+	{
+		text = message.get( "text to be sent" );
+	}
+	else
 	{
 		sender.send_reply( rpl::err_notexttosend( sender ) );
 	}
