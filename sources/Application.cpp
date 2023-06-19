@@ -78,19 +78,8 @@ void Application::launch_server( void )
 		try
 		{
 			wait_for_socket_event();
-			if ( client_fds[0].revents & POLLIN )
-			{
-				connect_new_client();
-			}
-			int i = 1;
-			while ( i <= num_connections && sig::stopServer == false )
-			{
-				if ( client_fds[i].fd != -1 && client_fds[i].revents & POLLIN )
-				{
-					read_message( client_fds[i].fd );
-				}
-				i++;
-			}
+			connect_new_client();
+			read_client_sockets();
 		}
 		catch ( Application::StopServerException & e )
 		{
@@ -99,6 +88,20 @@ void Application::launch_server( void )
 		}
 	}
 	log_event::info( "Application: Terminating server loop" );
+}
+
+void Application::read_client_sockets( void )
+{
+	std::vector<pollfd> & client_fds = *poll_fds;
+	int i = 1;
+	while ( i <= num_connections && sig::stopServer == false )
+	{
+		if ( client_fds[i].fd != -1 && client_fds[i].revents & POLLIN )
+		{
+			read_message( client_fds[i].fd );
+		}
+		i++;
+	}
 }
 
 void Application::wait_for_socket_event( void )
@@ -118,6 +121,11 @@ void Application::wait_for_socket_event( void )
 
 void Application::connect_new_client( void )
 {
+	std::vector<pollfd> & client_fds = *poll_fds;
+	if ( ! ( client_fds[0].revents & POLLIN ) )
+	{
+		return ;
+	}
 	socklen_t clientSize = sizeof( clients.info );
 
 	log_event::info( "Application: Accepting client call..." );
@@ -139,13 +147,20 @@ void Application::connect_new_client( void )
 	{
 		throw std::runtime_error( "Application: Too many clients!" );
 	}
-	std::vector<pollfd> & client_fds = *poll_fds;
 	client_fds[num_connections + 1].fd = clients.fd;
 	client_fds[num_connections + 1].events = POLLIN;
 
 	// Creating new user for client
 	context->create_unregistered_user( clients.fd );
 	num_connections++;
+}
+
+void Application::disconnect_client( int fd )
+{
+	log_event::info( "Application: Client disconnected from socket", fd );
+	context->remove_user( fd );
+	fd = -1;
+	num_connections--;
 }
 
 void Application::read_message( int fd )
@@ -174,11 +189,7 @@ void Application::read_message( int fd )
 		}
 		if ( bytes_recv == 0 )
 		{
-			log_event::info( "Application: Client disconnected from socket", fd );
-			context->remove_user( fd );
-			/* close( fd ); */
-			fd = -1;
-			( num_connections )--;
+			disconnect_client( fd );
 			break;
 		}
 		message_buffer += std::string( buf );

@@ -31,6 +31,8 @@ class Application
 		void initialize_server( void );
 		void wait_for_socket_event( void );
 		void connect_new_client( void );
+		void disconnect_client( int fd );
+		void read_client_sockets( void );
 		void read_message( int fd );
 
 		class StopServerException : public std::exception {};
