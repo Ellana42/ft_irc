@@ -82,6 +82,7 @@ class Channel
 		void remove_user( User & user );
 		void update_user_nick( User & user, std::string new_nick );
 		void send_reply( std::string reply );
+		void send_reply( std::string reply, User & user_to_ignore );
 
 		std::list<User *> get_user_list( void );
 		unsigned int get_nbr_users( void );
