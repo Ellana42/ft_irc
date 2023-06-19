@@ -520,6 +520,10 @@ void Message_Handler::handle_part( Message & message )
 			context.remove_user_from_channel( sender, *it );
 			channel.send_reply( rpl::part( sender, channel, message ) );
 			sender.send_reply( rpl::part( sender, channel, message ) );
+			if ( channel.is_empty() && channel.get_name() != DEFAULT_CHAN )
+			{
+				context.remove_channel( channel );
+			}
 		}
 		catch( std::exception & e )
 		{
