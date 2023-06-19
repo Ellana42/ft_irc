@@ -135,7 +135,12 @@ void Application::read_message( int fd, int *num_clients, std::vector<pollfd>& c
 			else
 			{
 				log_event::warn( "Application: Connection issue while receiving message from socket", fd );
-				break;
+				context->remove_user( fd );
+				/* close( fd ); */
+				close ( fd );
+				fd = -1;
+				( *num_clients )--;
+				return;
 			}
 		}
 		if ( bytes_recv == 0 )
