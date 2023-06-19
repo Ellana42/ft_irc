@@ -1,0 +1,344 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/Application.o",
+      "sources/Application.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/Application.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/Application.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/Channel.o",
+      "sources/Channel.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/Channel.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/Channel.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/Context.o",
+      "sources/Context.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/Context.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/Context.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/log_event.o",
+      "sources/log_event.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/log_event.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/log_event.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/main.o",
+      "sources/main.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/main.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/Message.o",
+      "sources/Message.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/Message.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/Message.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/Message_Handler.o",
+      "sources/Message_Handler.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/Message_Handler.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/Message_Handler.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/Mode_Handler.o",
+      "sources/Mode_Handler.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/Mode_Handler.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/Mode_Handler.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/Mode_Parsing.o",
+      "sources/Mode_Parsing.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/Mode_Parsing.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/Mode_Parsing.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/Parsing.o",
+      "sources/Parsing.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/Parsing.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/Parsing.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/Password.o",
+      "sources/Password.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/Password.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/Password.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/reply.o",
+      "sources/reply.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/reply.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/reply.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/reply_error.o",
+      "sources/reply_error.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/reply_error.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/reply_error.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/signal.o",
+      "sources/signal.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/signal.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/signal.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/test.o",
+      "sources/test.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/test.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/test.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/Tokenizer.o",
+      "sources/Tokenizer.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/Tokenizer.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/Tokenizer.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/User.o",
+      "sources/User.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/User.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/User.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/c++",
+      "-Werror",
+      "-Wextra",
+      "-Wall",
+      "-g3",
+      "-std=c++98",
+      "-c",
+      "-I",
+      "./includes/",
+      "-o",
+      "objects/utils.o",
+      "sources/utils.cpp"
+    ],
+    "directory": "/home/mia/Documents/projects/42/ft_irc",
+    "file": "/home/mia/Documents/projects/42/ft_irc/sources/utils.cpp",
+    "output": "/home/mia/Documents/projects/42/ft_irc/objects/utils.o"
+  }
+]

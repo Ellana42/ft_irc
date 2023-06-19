@@ -2,6 +2,8 @@
 #include "ft_irc.hpp"
 #include "Password.hpp"
 #include "log_event.hpp"
+#include "signal.hpp"
+#include <csignal>
 #include <exception>
 #include <stdexcept>
 
@@ -48,11 +50,17 @@ void Application::launch_server()
 
 	int num_clients = 0;  // keep track of number of connected clients
 	log_event::info( "Application: Launching server..." );
+	signal( SIGINT, sig::signalHandler );
 
-	while ( true )
+	while ( sig::stopServer == false )
 	{
 		int num_ready = poll( client_fds.data(), num_clients + 1, -1 );
-		if ( num_ready == -1 )
+		if ( num_ready == -1 && sig::stopServer == true )
+		{
+			log_event::warn( "Application: Poll error because of intercepted signal" );
+			break ;
+		}
+		else if ( num_ready == -1 && sig::stopServer == true )
 		{
 			throw std::runtime_error( "Application: Poll error" );
 		}
@@ -85,7 +93,7 @@ void Application::launch_server()
 			num_clients++;
 		}
 		int i = 1;
-		while ( i <= num_clients )
+		while ( i <= num_clients && sig::stopServer == false )
 		{
 			if ( client_fds[i].fd != -1 && client_fds[i].revents & POLLIN )
 			{
@@ -94,6 +102,7 @@ void Application::launch_server()
 			i++;
 		}
 	}
+	log_event::info( "Application: Terminating server loop" );
 	close( server.fd );
 }
 
@@ -105,7 +114,7 @@ void Application::read_message( int fd, int *num_clients )
 	int bytes_recv = 0;
 
 	std::string message_buffer;
-	while ( terminator == std::string::npos )
+	while ( terminator == std::string::npos && sig::stopServer == false)
 	{
 		bytes_recv = recv( fd, buf, sizeof( buf ), 0 );
 		if ( bytes_recv == -1 )
@@ -145,6 +154,7 @@ void Application::read_message( int fd, int *num_clients )
 Application::~Application()
 {
 	log_event::info( "Application: Terminating application" );
+	log_event::info( "Application: stopServer var = ", sig::stopServer );
 	delete passwords;
 	delete context;
 }
