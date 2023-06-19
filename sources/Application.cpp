@@ -6,8 +6,9 @@
 #include <csignal>
 #include <exception>
 #include <stdexcept>
+#include <fcntl.h> // Include for fcntl function
 
-Application::Application( int port, std::string password ): port( port )
+Application::Application( int port, std::string password ) : port( port )
 {
 	passwords = new Password( password );
 	context = new Context( *passwords );
@@ -20,19 +21,22 @@ Application::Application( int port, std::string password ): port( port )
 		throw std::runtime_error( "Application: Can't create a socket!" );
 	}
 
+	// Set the server socket to non-blocking
+	int flags = fcntl( server.fd, F_GETFL, 0 );
+	fcntl( server.fd, F_SETFL, flags | O_NONBLOCK );
+
 	server.info.sin_family = AF_INET;
 	if ( port < 6660 || port > 7000 )
 	{
-		throw ( std::runtime_error( "Application: Invalid port: port must be between 6660 and 7000" ));
+		throw ( std::runtime_error( "Application: Invalid port: port must be between 6660 and 7000" ) );
 	}
 	server.info.sin_port = htons( port );
 	server.info.sin_addr.s_addr = htonl( INADDR_ANY );
 
 	log_event::info( "Application: Binding socket to sockaddr..." );
-	if ( bind( server.fd, ( struct sockaddr * ) &server.info,
-				sizeof( server.info ) ) == -1 )
+	if ( bind( server.fd, ( struct sockaddr * )&server.info, sizeof( server.info ) ) == -1 )
 	{
-		throw ( std::runtime_error( "Application: Can't bind port: Port might be in use." ));
+		throw ( std::runtime_error( "Application: Can't bind port: Port might be in use." ) );
 	}
 	log_event::info( "Application: Connected to port", port );
 	log_event::info( "Application: Mark the socket for listening..." );
@@ -48,7 +52,7 @@ void Application::launch_server()
 	client_fds[0].fd = server.fd;
 	client_fds[0].events = POLLIN;
 
-	int num_clients = 0;  // keep track of number of connected clients
+	int num_clients = 0; // keep track of number of connected clients
 	log_event::info( "Application: Launching server..." );
 	signal( SIGINT, sig::signalHandler );
 
@@ -68,16 +72,20 @@ void Application::launch_server()
 		if ( client_fds[0].revents & POLLIN )
 		{
 			socklen_t clientSize = sizeof( clients.info );
-			
+
 			log_event::info( "Application: Accepting client call..." );
-			clients.fd = accept( server.fd, ( struct sockaddr * ) &clients.info,
-			                     &clientSize );
+			clients.fd = accept( server.fd, ( struct sockaddr * )&clients.info,
+								&clientSize );
 
 			log_event::info( "Application: Received client call..." );
 			if ( clients.fd == -1 )
 			{
 				throw std::runtime_error( "Application: Client cannot connect!" );
 			}
+
+			// Set the client socket to non-blocking
+			int flags = fcntl( clients.fd, F_GETFL, 0 );
+			fcntl( clients.fd, F_SETFL, flags | O_NONBLOCK );
 
 			// add new client to the list of file descriptors to monitor
 			if ( num_clients == max_clients )
@@ -89,7 +97,6 @@ void Application::launch_server()
 
 			// Creating new user for client
 			context->create_unregistered_user( clients.fd );
-
 			num_clients++;
 		}
 		int i = 1;
@@ -119,8 +126,16 @@ void Application::read_message( int fd, int *num_clients )
 		bytes_recv = recv( fd, buf, sizeof( buf ), 0 );
 		if ( bytes_recv == -1 )
 		{
-			log_event::warn( "Application: Connection issue while receiving message from socket", fd );
-			break;
+			if ( errno == EWOULDBLOCK || errno == EAGAIN )
+			{
+				// No more data to read, exit the loop
+				break;
+			}
+			else
+			{
+				log_event::warn( "Application: Connection issue while receiving message from socket", fd );
+				break;
+			}
 		}
 		if ( bytes_recv == 0 )
 		{
@@ -143,7 +158,7 @@ void Application::read_message( int fd, int *num_clients )
 
 			log_event::command( fd, first_command );
 			context->handle_message( context->get_user_by_socket( fd ),
-			                         first_command );
+									first_command );
 
 			pos = terminator + 2;
 			terminator = message_buffer.find( "\r\n", pos );
@@ -158,3 +173,4 @@ Application::~Application()
 	delete passwords;
 	delete context;
 }
+
