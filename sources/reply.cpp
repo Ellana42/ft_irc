@@ -375,6 +375,31 @@ std::string const rpl::topic( Message & message, Channel & channel )
 	return ( reply );
 }
 
+std::string const rpl::umodeis( Message & message, User & user )
+{
+	( void ) message;
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_UMODEIS " ";
+	reply += user.get_nickname();
+	reply += " ";
+	reply += user.get_mode();
+	reply += "\r\n";
+	return ( reply );
+}
+
+std::string const rpl::channelmodeis( Message & message, Channel & channel )
+{
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_CHANNELMODEIS " ";
+	reply += message.get_sender().get_nickname();
+	reply += " ";
+	reply += channel.get_name();
+	reply += " ";
+	reply += channel.get_modestring();
+	reply += "\r\n";
+	return ( reply );
+}
+
 std::string const rpl::newtopic( User & sender, Message & message )
 {
 	std::string reply = ":";
