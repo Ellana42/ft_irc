@@ -129,10 +129,6 @@ void Context::remove_user_from_channel( User & user, std::string channel_name )
 		std::string chan_name = string_to_lowercase( channel_name );
 		log_event::info( "Context: Removing user \"" + user.get_nickname() + "\" from channel " + chan_name );
 		channels[chan_name]->remove_user( user );
-		if ( channels[chan_name]->is_empty() && chan_name != DEFAULT_CHAN )
-		{
-			remove_channel( *channels[chan_name] );
-		}
 		if ( is_user_in_any_channel( user ) == false && chan_name != DEFAULT_CHAN )
 		{
 			log_event::info( "Context: Adding user \"" + user.get_nickname() + "\" to channel *, because user is no longer in any channel" );
