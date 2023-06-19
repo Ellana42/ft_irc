@@ -11,9 +11,6 @@
 
 Application::Application( int port, std::string password ) : port( port )
 {
-	passwords = new Password( password );
-	context = new Context( *passwords );
-
 	log_event::info( "Application: Creating server socket..." );
 	server.fd = socket( AF_INET, SOCK_STREAM, 0 );
 
@@ -45,6 +42,9 @@ Application::Application( int port, std::string password ) : port( port )
 	{
 		throw std::runtime_error( "Application: Can't listen !" );
 	}
+
+	passwords = new Password( password );
+	context = new Context( *passwords );
 }
 
 void Application::launch_server()
