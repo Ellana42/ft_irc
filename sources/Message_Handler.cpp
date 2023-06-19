@@ -476,7 +476,7 @@ void Message_Handler::handle_nick( Message & message )
 		{
 			sender.send_reply( rpl::confirmation( old_id, message ) );
 		}
-		else if ( !user_is_already_registered )
+		else
 		{
 			welcome_user( sender );
 		}
