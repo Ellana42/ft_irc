@@ -24,7 +24,7 @@ class Application
 
 		std::list<pthread_t> threads;
 		const static int max_clients = SOMAXCONN;
-		void read_message(int fd, int *num_clients);
+		void read_message(int fd, int *num_clients, std::vector<pollfd>& client_fds);
 
 	public:
 		Application( int port, std::string password );

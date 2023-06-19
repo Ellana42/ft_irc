@@ -105,7 +105,7 @@ void Application::launch_server()
 		{
 			if ( client_fds[i].fd != -1 && client_fds[i].revents & POLLIN )
 			{
-				read_message( client_fds[i].fd, &num_clients );
+				read_message( client_fds[i].fd, &num_clients, client_fds );
 			}
 			i++;
 		}
@@ -114,7 +114,7 @@ void Application::launch_server()
 	close( server.fd );
 }
 
-void Application::read_message( int fd, int *num_clients )
+void Application::read_message( int fd, int *num_clients, std::vector<pollfd>& client_fds )
 {
 	char buf[4096];
 	memset( buf, 0, sizeof( buf ) );
@@ -143,9 +143,20 @@ void Application::read_message( int fd, int *num_clients )
 			log_event::info( "Application: Client disconnected from socket", fd );
 			context->remove_user( fd );
 			/* close( fd ); */
+			close ( fd );
 			fd = -1;
 			( *num_clients )--;
-			break;
+
+			for ( int i = 1; i <= *num_clients; i++ )
+			{
+				if ( client_fds[i].fd == fd )
+				{
+					client_fds[i].fd = -1;
+					break;
+				}
+			}
+
+        break;
 		}
 		message_buffer += std::string( buf );
 		terminator = message_buffer.find( "\r\n", 0 );
