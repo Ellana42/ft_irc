@@ -93,14 +93,12 @@ void Application::launch_server( void )
 void Application::read_client_sockets( void )
 {
 	std::vector<pollfd> & client_fds = *poll_fds;
-	int i = 1;
-	while ( i <= num_connections && sig::stopServer == false )
+	for (int i = 1; i <= num_connections && sig::stopServer == false; i++ )
 	{
 		if ( client_fds[i].fd != -1 && client_fds[i].revents & POLLIN )
 		{
 			read_message( client_fds[i].fd );
 		}
-		i++;
 	}
 }
 
@@ -165,6 +163,7 @@ void Application::disconnect_client( int fd )
 
 void Application::read_message( int fd )
 {
+
 	char buf[4096];
 	memset( buf, 0, sizeof( buf ) );
 	size_t terminator = std::string::npos;
@@ -184,6 +183,7 @@ void Application::read_message( int fd )
 			else
 			{
 				log_event::warn( "Application: Connection issue while receiving message from socket", fd );
+				disconnect_client( fd );
 				break;
 			}
 		}
