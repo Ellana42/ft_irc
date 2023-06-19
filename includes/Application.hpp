@@ -21,6 +21,7 @@ class Application
 
 		std::list<pthread_t> threads;
 		const static int max_clients = SOMAXCONN;
+
 		int num_connections;
 		
 		std::vector<pollfd> * poll_fds;
