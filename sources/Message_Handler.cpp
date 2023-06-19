@@ -520,6 +520,10 @@ void Message_Handler::handle_part( Message & message )
 			context.remove_user_from_channel( sender, *it );
 			channel.send_reply( rpl::part( sender, channel, message ) );
 			sender.send_reply( rpl::part( sender, channel, message ) );
+			if ( channel.is_empty() && channel.get_name() != DEFAULT_CHAN )
+			{
+				context.remove_channel( channel );
+			}
 		}
 		catch( std::exception & e )
 		{
@@ -552,8 +556,12 @@ void Message_Handler::handle_privmsg( Message & message )
 {
 	User & sender = message.get_sender();
 	std::string dest_nick = message.get( "msgtarget" );
-	std::string text = message.get( "text to be sent" );
-	if ( text.empty() )
+	std::string text = "";
+	if ( message.has( "text to be sent" ) )
+	{
+		text = message.get( "text to be sent" );
+	}
+	else
 	{
 		sender.send_reply( rpl::err_notexttosend( sender ) );
 	}
