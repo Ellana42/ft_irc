@@ -36,7 +36,6 @@ class Application
 		Context * context;
 
 		void initialize_server( void );
-		void send_message(int socket, const std::string& message);
 		void wait_for_socket_event( void );
 		void connect_new_client( void );
 		void disconnect_client( int fd );
@@ -54,6 +53,8 @@ class Application
 
 		void client_timeout_check( void ); // Separate class
 		void launch_server( void );
+		void send_message(int socket, const std::string& message);
+
 };
 
 #endif /* APPLICATION_H */

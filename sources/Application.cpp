@@ -14,7 +14,7 @@
 Application::Application(int port, std::string password) : port(port) {
   initialize_server();
   passwords = new Password(password);
-  context = new Context(*passwords);
+  context = new Context(*this, *passwords);
 }
 
 Application::~Application() {
@@ -182,6 +182,7 @@ void Application::send_message(int socket, const std::string& message) {
   Message1 newMessage;
   newMessage.socket = socket;
   newMessage.message = message;
+  log_event::info("Application: saving message to send:", message);
   message_list.push_back(newMessage);
 }
 

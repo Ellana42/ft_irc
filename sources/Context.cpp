@@ -6,7 +6,7 @@
 #include "ft_irc.hpp"
 #include "log_event.hpp"
 
-Context::Context( Password & password ) : password_handler( password ),
+Context::Context( Application & application, Password & password ) : application( application ), password_handler( password ),
 	message_handler( NULL )
 {
 	log_event::info( "Context: Creating context" );
@@ -358,5 +358,10 @@ void Context::check_connection_password( std::string password )
 	{
 		throw ( std::out_of_range( "Context: Invalid connection password!" ) );
 	}
+}
+
+void Context::send_message( int socket, std::string message )
+{
+	application.send_message( socket, message );
 }
 
