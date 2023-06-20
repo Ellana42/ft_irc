@@ -298,6 +298,7 @@ void Message_Handler::handle_join( Message & message )
 			else if ( channel.is_password_protected()
 			          &&  !channel.check_password( *passes ) )
 			{
+				// TODO: bad channel key if key is not provided
 				sender.send_reply( rpl::err_badchannelkey( sender, channel.get_name() ) );
 			}
 			else if ( channel.is_at_limit() )
