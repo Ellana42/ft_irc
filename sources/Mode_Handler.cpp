@@ -17,6 +17,7 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
 {
 	target = message.get( "target" );
 
+
 	handlers['i'][User_]["+"] = &Mode_Handler::handle_i_user_add;
 	handlers['i'][User_]["-"] = &Mode_Handler::handle_i_user_rm;
 
@@ -40,10 +41,36 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
 		return;
 	}
 	set_arguments();
+
+	while ( true )
+	{
+		try
+		{
+			std::cout << get_current_argument() << std::endl;
+		}
+		catch ( std::out_of_range & e )
+		{
+
+			( void ) e;
+			break;
+		}
+	}
 	apply_modes();
 }
 
 Mode_Handler::~Mode_Handler() {}
+
+std::string Mode_Handler::get_current_argument()
+{
+	std::string current_argument;
+	if ( arguments.size() == 0 )
+	{
+		throw std::out_of_range( "No more arguments" );
+	}
+	current_argument = arguments.front();
+	arguments.pop_front();
+	return current_argument;
+}
 
 bool Mode_Handler::set_type()
 {
@@ -123,12 +150,11 @@ bool Mode_Handler::set_modestring()
 
 void Mode_Handler::set_arguments()
 {
-	if ( message.has( "mode arguments" ) )
+	if ( message.has_list( "mode arguments" ) )
 	{
-		arguments = message.get( "mode arguments" );
+		arguments = message.get_list( "mode arguments" );
 		return;
 	}
-	arguments = "";
 }
 
 void Mode_Handler::apply_modes()
@@ -210,14 +236,14 @@ void Mode_Handler::handle_k_channel_add()
 		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
-	if ( arguments == ""
-	        || arguments.find( ' ' ) !=
-	        std::string::npos ) // Dont accept spaces as key char
-	{
-		// TODO: implement rpl::invalidmodeparam
-		return;
-	}
-	target_channel->set_password( arguments );
+	/* if ( arguments == "" */
+	/*         || arguments.find( ' ' ) != */
+	/*         std::string::npos ) // Dont accept spaces as key char */
+	/* { */
+	/* 	// TODO: implement rpl::invalidmodeparam */
+	/* 	return; */
+	/* } */
+	/* target_channel->set_password( arguments ); */
 	return;
 }
 
@@ -239,14 +265,14 @@ void Mode_Handler::handle_o_channel_add()
 		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
-	if ( arguments == "" )
-	{
-		return;
-	}
+	/* if ( arguments == "" ) */
+	/* { */
+	/* 	return; */
+	/* } */
 	try
 	{
-		User & new_operator = context.get_user_by_nick( arguments );
-		target_channel->add_operator( new_operator );
+		/* User & new_operator = context.get_user_by_nick( arguments ); */
+		/* target_channel->add_operator( new_operator ); */
 	}
 	catch ( std::out_of_range & e )
 	{
@@ -261,14 +287,14 @@ void Mode_Handler::handle_o_channel_rm()
 		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
-	if ( arguments == "" )
-	{
-		return;
-	}
+	/* if ( arguments == "" ) */
+	/* { */
+	/* 	return; */
+	/* } */
 	try
 	{
-		User & new_operator = context.get_user_by_nick( arguments );
-		target_channel->remove_operator( new_operator );
+		/* User & new_operator = context.get_user_by_nick( arguments ); */
+		/* target_channel->remove_operator( new_operator ); */
 	}
 	catch ( std::out_of_range & e )
 	{
@@ -284,11 +310,12 @@ void Mode_Handler::handle_l_channel_add()
 		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
-	if ( arguments ==  "" )
-	{
-		return;
-	}
-	target_channel->set_user_limit( std::atoi( arguments.c_str() ) );
+	// TODO: fix this
+	/* if ( arguments ==  "" ) */
+	/* { */
+	/* 	return; */
+	/* } */
+	/* target_channel->set_user_limit( std::atoi( arguments.c_str() ) ); */
 	return;
 }
 

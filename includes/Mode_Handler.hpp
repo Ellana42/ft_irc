@@ -29,7 +29,8 @@ class Mode_Handler
 		handlers;
 
 		std::string target;
-		std::string arguments;
+		std::list<std::string> arguments;
+
 		std::string added_modes;
 		std::string removed_modes;
 
@@ -60,6 +61,9 @@ class Mode_Handler
 		void handle_o_channel_rm();
 		void handle_l_channel_add();
 		void handle_l_channel_rm();
+
+		void move( void );
+		std::string get_current_argument();
 
 	public:
 		Mode_Handler( Context & context, User & sender, Message & message );

@@ -6,7 +6,7 @@
 #include "Tokenizer.hpp"
 
 
-enum mode {Mandatory, Optional, List, ListOptional, Special};
+enum mode {Mandatory, Optional, List, ListOptional, MultiOptional, Special};
 
 class Parsing
 {
@@ -16,8 +16,6 @@ class Parsing
 
 		Tokenizer tokenizer;
 
-		/* std::map<std::string, std::list<std::string> > commands; */
-		/* std::map<std::string, std::list<mode> > modes; */
 		std::vector<std::string> tokens;
 		unsigned int	current;
 
@@ -52,12 +50,15 @@ class Parsing
 		};
 		void parse_no_arg( void );
 		void parse_simple( void );
+		void parse_mode( void );
 		std::string get_command( void );
 		void parse_complex( void );
 		bool set_current_arg( std::string arg_name, mode arg_type );
+		std::list<std::string> get_rest_tokens( std::string current_token );
 		std::list<std::string> arg_to_list( std::string current_token );
 		std::string get( std::string arg_name );
 		std::list<std::string> get_list( std::string arg_name );
+
 		bool has_arg( std::string arg_name );
 		std::vector<std::string> get_tokens( void );
 		bool has_list( std::string arg_name );
