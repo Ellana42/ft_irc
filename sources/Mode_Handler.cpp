@@ -7,6 +7,7 @@
 #include "Parsing.hpp"
 #include "reply.hpp"
 #include <cctype>
+#include <cstdlib>
 #include <exception>
 #include <list>
 #include <stdexcept>
@@ -289,19 +290,34 @@ void Mode_Handler::handle_o_channel_rm()
 	return;
 }
 
+bool isInt( const std::string& str )
+{
+	int n;
+	std::istringstream istreamObject( str );
+	istreamObject >> std::noskipws >> n;
+	return istreamObject.eof() && !istreamObject.fail();
+}
+
 void Mode_Handler::handle_l_channel_add()
 {
+	std::string argument;
 	if ( ! target_channel->is_operator( sender ) )
 	{
 		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
-	// TODO: fix this
-	/* if ( arguments ==  "" ) */
-	/* { */
-	/* 	return; */
-	/* } */
-	/* target_channel->set_user_limit( std::atoi( arguments.c_str() ) ); */
+	try
+	{
+		argument = get_current_argument();
+		if ( isInt( argument ) )
+		{
+			target_channel->set_user_limit( std::atoi( argument.c_str() ) );
+		}
+	}
+	catch ( std::out_of_range & e )
+	{
+		return;
+	}
 	return;
 }
 
