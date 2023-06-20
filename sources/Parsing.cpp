@@ -74,7 +74,7 @@ void Parsing::parse_complex( void )
 		current_param = params[command_index][i] ;
 		current_type = params_states[command_index][i] ;
 	}
-	if ( tokens.size() > i + 1 )
+	if ( tokens.size() > i + 1 && command != "MODE" )
 	{
 		throw TooManyParamsException();
 	}

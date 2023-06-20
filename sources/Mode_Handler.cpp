@@ -41,20 +41,6 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
 		return;
 	}
 	set_arguments();
-
-	while ( true )
-	{
-		try
-		{
-			std::cout << get_current_argument() << std::endl;
-		}
-		catch ( std::out_of_range & e )
-		{
-
-			( void ) e;
-			break;
-		}
-	}
 	apply_modes();
 }
 
