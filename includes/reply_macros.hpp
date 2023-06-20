@@ -303,5 +303,6 @@
 # define RPL_STATSPING "246"
 # define RPL_STATSBLINE "247"
 # define RPL_STATSDLINE "250"
+# define RPL_INVALIDMODEPARAM "696"
 
 #endif

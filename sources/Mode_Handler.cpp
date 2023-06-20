@@ -217,20 +217,29 @@ void Mode_Handler::handle_t_channel_rm()
 
 void Mode_Handler::handle_k_channel_add()
 {
-	// TODO: check multiple arguments and refuse
+	std::string argument;
 	if ( ! target_channel->is_operator( sender ) )
 	{
 		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
-	/* if ( arguments == "" */
-	/*         || arguments.find( ' ' ) != */
-	/*         std::string::npos ) // Dont accept spaces as key char */
-	/* { */
-	/* 	// TODO: implement rpl::invalidmodeparam */
-	/* 	return; */
-	/* } */
-	/* target_channel->set_password( arguments ); */
+
+	try
+	{
+		argument = get_current_argument();
+		if ( argument.find( ' ' ) != std::string::npos )
+		{
+			throw std::out_of_range( "Bad key" );
+		}
+	}
+	catch ( std::out_of_range & e )
+	{
+		sender.send_reply( rpl::invalidmodeparam( sender, target_channel->get_name(),
+		                   'k',
+		                   "Invalid channel key" ) ) ;
+		return;
+	}
+	target_channel->set_password( argument );
 	return;
 }
 
@@ -247,19 +256,17 @@ void Mode_Handler::handle_k_channel_rm()
 
 void Mode_Handler::handle_o_channel_add()
 {
+	std::string argument;
 	if ( ! target_channel->is_operator( sender ) )
 	{
 		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
-	/* if ( arguments == "" ) */
-	/* { */
-	/* 	return; */
-	/* } */
 	try
 	{
-		/* User & new_operator = context.get_user_by_nick( arguments ); */
-		/* target_channel->add_operator( new_operator ); */
+		argument = get_current_argument();
+		User & new_operator = context.get_user_by_nick( argument );
+		target_channel->add_operator( new_operator );
 	}
 	catch ( std::out_of_range & e )
 	{
@@ -269,19 +276,17 @@ void Mode_Handler::handle_o_channel_add()
 
 void Mode_Handler::handle_o_channel_rm()
 {
+	std::string argument;
 	if ( ! target_channel->is_operator( sender ) )
 	{
 		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
-	/* if ( arguments == "" ) */
-	/* { */
-	/* 	return; */
-	/* } */
 	try
 	{
-		/* User & new_operator = context.get_user_by_nick( arguments ); */
-		/* target_channel->remove_operator( new_operator ); */
+		argument = get_current_argument();
+		User & new_operator = context.get_user_by_nick( argument );
+		target_channel->remove_operator( new_operator );
 	}
 	catch ( std::out_of_range & e )
 	{

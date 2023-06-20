@@ -437,3 +437,20 @@ std::string const rpl::ping( std::string token )
 	reply += "\r\n";
 	return ( reply );
 }
+
+std::string const rpl::invalidmodeparam( User & sender,
+        std::string channel_name, char mode_char, std::string description )
+{
+	// "<client> <target chan/user> <mode char> <parameter> :<description>"
+	std::string reply = SERVER_PREFIX " ";
+	reply += RPL_INVALIDMODEPARAM " ";
+	reply += sender.get_nickname();
+	reply += " ";
+	reply += channel_name;
+	reply += " ";
+	reply += mode_char;
+	reply += " :";
+	reply += description;
+	reply += "\r\n";
+	return ( reply );
+}
