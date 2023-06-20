@@ -111,6 +111,8 @@ std::string const umodeis( Message & message, User & user );
 std::string const channelmodeis( Message & message, Channel & channel );
 std::string const newtopic( User & sender, Message & message );
 std::string const ping( std::string token );
+std::string const invalidmodeparam( User & sender, std::string channel_name,
+                                    char mode_char, std::string description );
 }
 
 #endif

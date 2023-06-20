@@ -7,6 +7,7 @@
 #include "Parsing.hpp"
 #include "reply.hpp"
 #include <cctype>
+#include <cstdlib>
 #include <exception>
 #include <list>
 #include <stdexcept>
@@ -16,6 +17,7 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
                             Message & message ) : context( context ), sender( sender ), message( message )
 {
 	target = message.get( "target" );
+
 
 	handlers['i'][User_]["+"] = &Mode_Handler::handle_i_user_add;
 	handlers['i'][User_]["-"] = &Mode_Handler::handle_i_user_rm;
@@ -44,6 +46,18 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
 }
 
 Mode_Handler::~Mode_Handler() {}
+
+std::string Mode_Handler::get_current_argument()
+{
+	std::string current_argument;
+	if ( arguments.size() == 0 )
+	{
+		throw std::out_of_range( "No more arguments" );
+	}
+	current_argument = arguments.front();
+	arguments.pop_front();
+	return current_argument;
+}
 
 bool Mode_Handler::set_type()
 {
@@ -123,12 +137,11 @@ bool Mode_Handler::set_modestring()
 
 void Mode_Handler::set_arguments()
 {
-	if ( message.has( "mode arguments" ) )
+	if ( message.has_list( "mode arguments" ) )
 	{
-		arguments = message.get( "mode arguments" );
+		arguments = message.get_list( "mode arguments" );
 		return;
 	}
-	arguments = "";
 }
 
 void Mode_Handler::apply_modes()
@@ -204,20 +217,29 @@ void Mode_Handler::handle_t_channel_rm()
 
 void Mode_Handler::handle_k_channel_add()
 {
-	// TODO: check multiple arguments and refuse
+	std::string argument;
 	if ( ! target_channel->is_operator( sender ) )
 	{
 		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
-	if ( arguments == ""
-	        || arguments.find( ' ' ) !=
-	        std::string::npos ) // Dont accept spaces as key char
+
+	try
 	{
-		// TODO: implement rpl::invalidmodeparam
+		argument = get_current_argument();
+		if ( argument.find( ' ' ) != std::string::npos )
+		{
+			throw std::out_of_range( "Bad key" );
+		}
+	}
+	catch ( std::out_of_range & e )
+	{
+		sender.send_reply( rpl::invalidmodeparam( sender, target_channel->get_name(),
+		                   'k',
+		                   "Invalid channel key" ) ) ;
 		return;
 	}
-	target_channel->set_password( arguments );
+	target_channel->set_password( argument );
 	return;
 }
 
@@ -234,18 +256,16 @@ void Mode_Handler::handle_k_channel_rm()
 
 void Mode_Handler::handle_o_channel_add()
 {
+	std::string argument;
 	if ( ! target_channel->is_operator( sender ) )
 	{
 		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
-	if ( arguments == "" )
-	{
-		return;
-	}
 	try
 	{
-		User & new_operator = context.get_user_by_nick( arguments );
+		argument = get_current_argument();
+		User & new_operator = context.get_user_by_nick( argument );
 		target_channel->add_operator( new_operator );
 	}
 	catch ( std::out_of_range & e )
@@ -256,18 +276,16 @@ void Mode_Handler::handle_o_channel_add()
 
 void Mode_Handler::handle_o_channel_rm()
 {
+	std::string argument;
 	if ( ! target_channel->is_operator( sender ) )
 	{
 		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
-	if ( arguments == "" )
-	{
-		return;
-	}
 	try
 	{
-		User & new_operator = context.get_user_by_nick( arguments );
+		argument = get_current_argument();
+		User & new_operator = context.get_user_by_nick( argument );
 		target_channel->remove_operator( new_operator );
 	}
 	catch ( std::out_of_range & e )
@@ -277,18 +295,34 @@ void Mode_Handler::handle_o_channel_rm()
 	return;
 }
 
+bool isInt( const std::string& str )
+{
+	int n;
+	std::istringstream istreamObject( str );
+	istreamObject >> std::noskipws >> n;
+	return istreamObject.eof() && !istreamObject.fail();
+}
+
 void Mode_Handler::handle_l_channel_add()
 {
+	std::string argument;
 	if ( ! target_channel->is_operator( sender ) )
 	{
 		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
 		return;
 	}
-	if ( arguments ==  "" )
+	try
+	{
+		argument = get_current_argument();
+		if ( isInt( argument ) )
+		{
+			target_channel->set_user_limit( std::atoi( argument.c_str() ) );
+		}
+	}
+	catch ( std::out_of_range & e )
 	{
 		return;
 	}
-	target_channel->set_user_limit( std::atoi( arguments.c_str() ) );
 	return;
 }
 
