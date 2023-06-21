@@ -307,6 +307,7 @@ void Message_Handler::handle_join( Message & message )
 			else
 			{
 				context.add_user_to_channel( sender, *chans );
+				channel.remove_invited_user( sender.get_nickname() );
 				channel.send_reply( rpl::join_channel( sender, channel ) );
 				sender.send_reply( rpl::topic( message, channel ) );
 				sender.send_reply( rpl::namreply( sender, channel ) );

@@ -221,6 +221,11 @@ void Channel::add_invited_user( std::string nick )
 	invited_users.insert( nick );
 }
 
+void Channel::remove_invited_user( std::string nick )
+{
+	invited_users.erase( nick );
+}
+
 bool Channel::is_operator( std::string nickname )
 {
 	return ( operators.count( nickname ) || is_creator( nickname ) );
