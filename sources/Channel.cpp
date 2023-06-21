@@ -6,8 +6,10 @@
 #include <cctype>
 #include <stdexcept>
 
-Channel::Channel( std::string name, Password & password_handler ) : topic_restricted( false ),
-	invite_only( false ), has_password( false ), has_user_limit( false ), password_handler( password_handler )
+Channel::Channel( std::string name,
+                  Password & password_handler ) : topic_restricted( false ),
+	invite_only( false ), has_password( false ), has_user_limit( false ),
+	password_handler( password_handler )
 {
 	if ( name == DEFAULT_CHAN )
 	{
@@ -19,8 +21,10 @@ Channel::Channel( std::string name, Password & password_handler ) : topic_restri
 }
 
 Channel::Channel( std::string name,
-                  User & creator, Password & password_handler ) : topic_restricted( false ), invite_only( false ),
-	has_password( false ), has_user_limit( false ), password_handler( password_handler )
+                  User & creator, Password & password_handler ) : topic_restricted( false ),
+	invite_only( false ),
+	has_password( false ), has_user_limit( false ),
+	password_handler( password_handler )
 {
 	set_name( name );
 	set_creator( creator.get_nickname() );
@@ -245,7 +249,7 @@ void Channel::send_reply( std::string reply, User & user_to_ignore )
 	std::map<std::string, User *>::iterator it = users.begin();
 	for ( ; it != users.end(); it++ )
 	{
-		if (it->first != user_to_ignore.get_nickname() )
+		if ( it->first != user_to_ignore.get_nickname() )
 		{
 			it->second->send_reply( reply );
 		}
@@ -309,7 +313,11 @@ std::string Channel::get_user_list_string( void )
 		{
 			user_list += " ";
 		}
-		if ( is_operator( it->first ) )
+		if ( is_creator( it->first ) )
+		{
+			user_list += "~";
+		}
+		else if ( is_operator( it->first ) )
 		{
 			user_list += "@";
 		}
