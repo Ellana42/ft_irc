@@ -537,6 +537,11 @@ void Message_Handler::handle_part( Message & message )
 void Message_Handler::handle_pass( Message & message )
 {
 	User & sender = message.get_sender();
+	if ( sender.is_fully_registered() )
+	{
+		sender.send_reply( rpl::err_alreadyregistred( sender ) );
+		return ;
+	}
 	if ( !message.has( "password" ) )
 	{
 		throw ( std::runtime_error( "Message Handler: PASS: no password provided!" ) );
@@ -554,10 +559,6 @@ void Message_Handler::handle_pass( Message & message )
 	catch ( std::exception & e )
 	{
 		log_event::info( "Message_Handler: PASS: ", e.what() );
-		if ( sender.is_fully_registered() )
-		{
-			sender.send_reply( rpl::err_alreadyregistred( sender ) );
-		}
 	}
 }
 
