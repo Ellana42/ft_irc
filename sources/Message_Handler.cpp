@@ -4,6 +4,7 @@
 #include "Context.hpp"
 #include "Channel.hpp"
 #include "Parsing.hpp"
+#include "Password.hpp"
 #include "log_event.hpp"
 #include "reply.hpp"
 #include <cctype>
@@ -100,9 +101,18 @@ void Message_Handler::check_message_validity( User & sender, Message & message )
 bool Message_Handler::should_handle_message( User & sender, Message & message )
 {
 	std::string command = message.get_command();
-	if ( sender.is_fully_registered() == true || command == "USER"
-	        || command == "NICK" || command == "CAP" || command == "PASS"
-	        || command == "QUIT" )
+	if ( sender.is_fully_registered() == true )
+	{
+		return ( true );
+	}
+	else if ( sender.has_password() == true
+			&& ( command == "USER" || command == "NICK" || command == "CAP"
+			|| command == "PASS" || command == "QUIT" ) )
+	{
+		return ( true );
+	}
+	else if ( sender.has_password() == false
+			&& ( command == "CAP" || command == "PASS" || command == "QUIT" ) )
 	{
 		return ( true );
 	}
@@ -526,6 +536,7 @@ void Message_Handler::handle_part( Message & message )
 
 void Message_Handler::handle_pass( Message & message )
 {
+	User & sender = message.get_sender();
 	if ( !message.has( "password" ) )
 	{
 		throw ( std::runtime_error( "Message Handler: PASS: no password provided!" ) );
@@ -533,11 +544,19 @@ void Message_Handler::handle_pass( Message & message )
 	try
 	{
 		context.check_connection_password( message.get( "password" ) );
+		sender.set_correct_password();
+	}
+	catch ( Password::InvalidPasswordException & e )
+	{
+		log_event::warn( "Message_Handler: PASS: ", e.what() );
 	}
 	catch ( std::exception & e )
 	{
-		log_event::warn( "Message_Handler: PASS:", e.what() );
-		context.remove_user( message.get_sender() );
+		log_event::warn( "Message_Handler: PASS: ", e.what() );
+		if ( sender.is_fully_registered() )
+		{
+			sender.send_reply( rpl::err_alreadyregistred( sender ) );
+		}
 	}
 }
 

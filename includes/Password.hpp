@@ -18,8 +18,14 @@ class Password
 		virtual ~Password();
 
 		std::string get_hash( std::string plain_text );
-		bool validate_connection_password( std::string password );
-		bool validate_password( std::string hash, std::string password );
+		void validate_connection_password( std::string password );
+		void validate_password( std::string hash, std::string password );
+
+		class InvalidPasswordException : public std::exception
+		{
+			public:
+				virtual const char* what() const throw();
+		};
 };
 
 #endif /* PASSWORD_H */
