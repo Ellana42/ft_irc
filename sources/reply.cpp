@@ -224,6 +224,19 @@ std::string const rpl::join_channel( User & user, Channel & channel )
 	return ( reply );
 }
 
+std::string const rpl::mode_channel( User & user, Channel & channel,
+                                     std::string mode )
+{
+	std::string reply = ":";
+	reply += user.get_identifier();
+	reply += " MODE ";
+	reply += channel.get_name();
+	reply += " ";
+	reply += mode;
+	reply += "\r\n";
+	return ( reply );
+}
+
 /* To reply to a NAMES message, a reply pair consisting */
 /* of RPL_NAMREPLY and RPL_ENDOFNAMES is sent by the */
 /* server back to the client.  If there is no channel */

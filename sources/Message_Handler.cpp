@@ -173,7 +173,8 @@ void Message_Handler::handle_invite( Message & message )
 	}
 	if ( channel.is_user_in_channel( user_nickname ) )
 	{
-		sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
+		sender.send_reply( rpl::err_useronchannel( sender, user_nickname,
+		                   channel.get_name() ) );
 		return;
 	}
 	if ( context.does_user_with_nick_exist( user_nickname ) )
@@ -298,7 +299,6 @@ void Message_Handler::handle_join( Message & message )
 			else if ( channel.is_password_protected()
 			          &&  !channel.check_password( *passes ) )
 			{
-				// TODO: bad channel key if key is not provided
 				sender.send_reply( rpl::err_badchannelkey( sender, channel.get_name() ) );
 			}
 			else if ( channel.is_at_limit() )
@@ -308,6 +308,7 @@ void Message_Handler::handle_join( Message & message )
 			else
 			{
 				context.add_user_to_channel( sender, *chans );
+				channel.remove_invited_user( sender.get_nickname() );
 				channel.send_reply( rpl::join_channel( sender, channel ) );
 				sender.send_reply( rpl::topic( message, channel ) );
 				sender.send_reply( rpl::namreply( sender, channel ) );
@@ -409,7 +410,6 @@ void Message_Handler::handle_mode( Message & message )
 {
 
 	User & sender = message.get_sender();
-	// TODO: Call mode handler
 
 	Mode_Handler handler( context, sender, message );
 	return;
