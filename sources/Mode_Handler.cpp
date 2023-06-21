@@ -42,6 +42,18 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
 		return;
 	}
 	set_arguments();
+	if ( !target_channel->is_user_in_channel( sender ) )
+	{
+		sender.send_reply( rpl::err_notonchannel( sender,
+		                   target ) );
+		return;
+	}
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender,
+		                   target ) );
+		return;
+	}
 	apply_modes();
 }
 
@@ -172,11 +184,6 @@ void Mode_Handler::handle_i_user_rm()
 
 void Mode_Handler::handle_i_channel_add()
 {
-	if ( ! target_channel->is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
-	}
 	target_channel->set_invite_only( true );
 	// TODO: maybe flush the invites from the channel
 	return;
@@ -184,33 +191,18 @@ void Mode_Handler::handle_i_channel_add()
 
 void Mode_Handler::handle_i_channel_rm()
 {
-	if ( ! target_channel->is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
-	}
 	target_channel->set_invite_only( false );
 	return;
 }
 
 void Mode_Handler::handle_t_channel_add()
 {
-	if ( ! target_channel->is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
-	}
 	target_channel->set_topic_restricted( true );
 	return;
 }
 
 void Mode_Handler::handle_t_channel_rm()
 {
-	if ( ! target_channel->is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
-	}
 	target_channel->set_topic_restricted( false );
 	return;
 }
@@ -218,11 +210,6 @@ void Mode_Handler::handle_t_channel_rm()
 void Mode_Handler::handle_k_channel_add()
 {
 	std::string argument;
-	if ( ! target_channel->is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
-	}
 
 	try
 	{
@@ -245,11 +232,6 @@ void Mode_Handler::handle_k_channel_add()
 
 void Mode_Handler::handle_k_channel_rm()
 {
-	if ( ! target_channel->is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
-	}
 	target_channel->remove_password();
 	return;
 }
@@ -257,11 +239,6 @@ void Mode_Handler::handle_k_channel_rm()
 void Mode_Handler::handle_o_channel_add()
 {
 	std::string argument;
-	if ( ! target_channel->is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
-	}
 	try
 	{
 		argument = get_current_argument();
@@ -277,11 +254,6 @@ void Mode_Handler::handle_o_channel_add()
 void Mode_Handler::handle_o_channel_rm()
 {
 	std::string argument;
-	if ( ! target_channel->is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
-	}
 	try
 	{
 		argument = get_current_argument();
@@ -306,11 +278,6 @@ bool isInt( const std::string& str )
 void Mode_Handler::handle_l_channel_add()
 {
 	std::string argument;
-	if ( ! target_channel->is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
-	}
 	try
 	{
 		argument = get_current_argument();
@@ -328,11 +295,6 @@ void Mode_Handler::handle_l_channel_add()
 
 void Mode_Handler::handle_l_channel_rm()
 {
-	if ( ! target_channel->is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
-	}
 	target_channel->remove_user_limit();
 	return;
 }
