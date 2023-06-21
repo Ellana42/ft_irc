@@ -271,7 +271,10 @@ void Message_Handler::handle_join( Message & message )
 		std::list<Channel *>::iterator it = chan_list.begin();
 		for ( ; it != chan_list.end(); it++ )
 		{
-			context.handle_message( sender, rpl::create_part_message( *( *it ) ) );
+			if ( ( *it )->get_name() != DEFAULT_CHAN )
+			{
+				context.handle_message( sender, rpl::create_part_message( *( *it ) ) );
+			}
 		}
 		return ;
 	}
