@@ -81,7 +81,7 @@ std::string const err_youwillbebanned( User & user );
 std::string const err_keyset( User & user, std::string channel );
 std::string const err_channelisfull( User & user, std::string channel );
 std::string const err_unknownmode( User & user, std::string channel,
-                                   std::string modechar );
+                                   char modechar );
 std::string const err_inviteonlychan( User & user, std::string channel );
 std::string const err_bannedfromchan( User & user, std::string channel );
 std::string const err_badchannelkey( User & user, std::string channel );
