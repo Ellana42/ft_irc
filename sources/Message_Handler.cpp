@@ -549,7 +549,6 @@ void Message_Handler::handle_privmsg( Message & message )
 	User & sender = message.get_sender();
 	std::string dest_nick = message.get( "msgtarget" );
 	std::string text = "";
-	// TODO: double check that 1) an empty string is a valid message 2) the errtext not sent is non blocking
 	if ( message.has( "text to be sent" ) )
 	{
 		text = message.get( "text to be sent" );
@@ -606,7 +605,6 @@ void Message_Handler::handle_summon( Message & message )
 
 void Message_Handler::handle_user( Message & message )
 {
-	/* TODO: add user mode support */
 
 	User & sender = message.get_sender();
 	if ( sender.is_fully_registered() )
@@ -639,7 +637,6 @@ void Message_Handler::handle_user( Message & message )
 
 void Message_Handler::handle_users( Message & message )
 {
-	/* TODO: decide if we are implementing function */
 	User & sender = message.get_sender();
 	sender.send_reply( rpl::err_usersdisabled( sender ) );
 }
