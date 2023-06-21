@@ -6,8 +6,6 @@
 
 /* NOTE: These numeric error replies might not all be implemented in ft_irc. */
 
-/* TODO: remove non-implemented replies. */
-
 /* Error replies are found in the range from 400 to 599. */
 
 # define ERR_NOSUCHNICK "401"

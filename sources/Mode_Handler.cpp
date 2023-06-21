@@ -213,7 +213,7 @@ void Mode_Handler::handle_i_channel_add()
 	if ( !target_channel->is_invite_only() )
 	{
 		target_channel->set_invite_only( true );
-		target_channel->flush_invites(); // TODO: check behavior
+		target_channel->flush_invites();
 		sender.send_reply( rpl::mode_channel( sender, *target_channel, "+i" ) );
 	}
 	return;
