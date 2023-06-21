@@ -184,26 +184,42 @@ void Mode_Handler::handle_i_user_rm()
 
 void Mode_Handler::handle_i_channel_add()
 {
-	target_channel->set_invite_only( true );
+	if ( !target_channel->is_invite_only() )
+	{
+		target_channel->set_invite_only( true );
+		sender.send_reply( rpl::mode_channel( sender, *target_channel, "+i" ) );
+	}
 	// TODO: maybe flush the invites from the channel
 	return;
 }
 
 void Mode_Handler::handle_i_channel_rm()
 {
-	target_channel->set_invite_only( false );
+	if ( target_channel->is_invite_only() )
+	{
+		target_channel->set_invite_only( false );
+		sender.send_reply( rpl::mode_channel( sender, *target_channel, "-i" ) );
+	}
 	return;
 }
 
 void Mode_Handler::handle_t_channel_add()
 {
-	target_channel->set_topic_restricted( true );
+	if ( !target_channel->is_topic_restricted() )
+	{
+		target_channel->set_topic_restricted( true );
+		sender.send_reply( rpl::mode_channel( sender, *target_channel, "+t" ) );
+	}
 	return;
 }
 
 void Mode_Handler::handle_t_channel_rm()
 {
-	target_channel->set_topic_restricted( false );
+	if ( target_channel->is_topic_restricted() )
+	{
+		target_channel->set_topic_restricted( false );
+		sender.send_reply( rpl::mode_channel( sender, *target_channel, "-t" ) );
+	}
 	return;
 }
 
@@ -227,12 +243,18 @@ void Mode_Handler::handle_k_channel_add()
 		return;
 	}
 	target_channel->set_password( argument );
+	sender.send_reply( rpl::mode_channel( sender, *target_channel,
+	                                      "+k " + argument ) );
 	return;
 }
 
 void Mode_Handler::handle_k_channel_rm()
 {
-	target_channel->remove_password();
+	if ( target_channel->is_password_protected() )
+	{
+		target_channel->remove_password();
+		sender.send_reply( rpl::mode_channel( sender, *target_channel, "-k" ) );
+	}
 	return;
 }
 
@@ -243,7 +265,15 @@ void Mode_Handler::handle_o_channel_add()
 	{
 		argument = get_current_argument();
 		User & new_operator = context.get_user_by_nick( argument );
+		if ( target_channel->is_operator( new_operator ) )
+		{
+			return;
+		}
 		target_channel->add_operator( new_operator );
+		sender.send_reply( rpl::mode_channel( sender, *target_channel,
+		                                      "+o " + argument ) );
+		new_operator.send_reply( rpl::mode_channel( sender, *target_channel,
+		                         "+o " + argument ) );
 	}
 	catch ( std::out_of_range & e )
 	{
@@ -258,7 +288,15 @@ void Mode_Handler::handle_o_channel_rm()
 	{
 		argument = get_current_argument();
 		User & new_operator = context.get_user_by_nick( argument );
+		if ( !target_channel->is_operator( new_operator ) )
+		{
+			return;
+		}
 		target_channel->remove_operator( new_operator );
+		sender.send_reply( rpl::mode_channel( sender, *target_channel,
+		                                      "-o " + argument ) );
+		new_operator.send_reply( rpl::mode_channel( sender, *target_channel,
+		                         "-o " + argument ) );
 	}
 	catch ( std::out_of_range & e )
 	{
@@ -284,6 +322,8 @@ void Mode_Handler::handle_l_channel_add()
 		if ( isInt( argument ) )
 		{
 			target_channel->set_user_limit( std::atoi( argument.c_str() ) );
+			sender.send_reply( rpl::mode_channel( sender, *target_channel,
+			                                      "+l " + argument ) );
 		}
 	}
 	catch ( std::out_of_range & e )
@@ -295,6 +335,10 @@ void Mode_Handler::handle_l_channel_add()
 
 void Mode_Handler::handle_l_channel_rm()
 {
-	target_channel->remove_user_limit();
+	if ( target_channel->has_user_limitation() )
+	{
+		target_channel->remove_user_limit();
+		sender.send_reply( rpl::mode_channel( sender, *target_channel, "-l" ) );
+	}
 	return;
 }
