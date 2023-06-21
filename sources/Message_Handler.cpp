@@ -526,22 +526,19 @@ void Message_Handler::handle_part( Message & message )
 
 void Message_Handler::handle_pass( Message & message )
 {
-	/* TODO: DON'T FORGET TO UNCOMMENT THIS !!!! */
-
-	/* if ( !message.has("password") ) */
-	/* { */
-	/* 	throw ( std::runtime_error( "Message Handler: PASS: no password provided!" )); */
-	/* } */
-	/* try */
-	/* { */
-	/* 	context.check_connection_password( message.get( "password" ) ); */
-	/* } */
-	/* catch ( std::exception & e ) */
-	/* { */
-	/* 	log_event::warn( "Message_Handler: PASS:", e.what() ); */
-	/* 	context.remove_user( message.get_sender() ); */
-	/* } */
-	( void )message;
+	if ( !message.has( "password" ) )
+	{
+		throw ( std::runtime_error( "Message Handler: PASS: no password provided!" ) );
+	}
+	try
+	{
+		context.check_connection_password( message.get( "password" ) );
+	}
+	catch ( std::exception & e )
+	{
+		log_event::warn( "Message_Handler: PASS:", e.what() );
+		context.remove_user( message.get_sender() );
+	}
 }
 
 void Message_Handler::handle_privmsg( Message & message )
