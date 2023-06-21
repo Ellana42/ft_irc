@@ -74,6 +74,7 @@ bool Mode_Handler::set_type()
 	}
 	else
 	{
+		return 1;
 		if ( !context.does_user_with_nick_exist( target ) )
 		{
 			sender.send_reply( rpl::err_nosuchnick( sender, target ) );
