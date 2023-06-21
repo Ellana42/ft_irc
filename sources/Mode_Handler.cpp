@@ -114,9 +114,40 @@ bool Mode_Handler::has_unknown_modes( std::string modes )
 	return ( false );
 }
 
+bool Mode_Handler::has_unknown_modes( char mode )
+{
+	if ( !handlers.count( mode ) )
+	{
+		return ( true );
+	}
+	return ( false );
+}
+
+std::string Mode_Handler::filter_modes( std::string modestring )
+{
+	std::string cleaned;
+
+	for ( std::string::iterator it = modestring.begin();
+	        it != modestring.end();
+	        it++ )
+	{
+		if ( has_unknown_modes( *it ) )
+		{
+			sender.send_reply( rpl::err_unknownmode( sender, target, *it ) );
+		}
+		else
+		{
+			cleaned += *it;
+		}
+	}
+	return ( cleaned );
+}
 
 bool Mode_Handler::set_modestring()
 {
+	std::string cleaned_added_modes;
+	std::string cleaned_removed_modes;
+
 	if ( !message.has( "modestring" ) )
 	{
 		if ( type_target == User_ )
@@ -131,13 +162,8 @@ bool Mode_Handler::set_modestring()
 	try
 	{
 		parsing.parse();
-		added_modes = parsing.get_added_modes();
-		removed_modes = parsing.get_removed_modes();
-		if ( has_unknown_modes( added_modes ) || has_unknown_modes( removed_modes ) )
-		{
-			sender.send_reply( rpl::err_umodeunknownflag( sender ) );
-			return 1;
-		}
+		added_modes = filter_modes( parsing.get_added_modes() );
+		removed_modes = filter_modes( parsing.get_removed_modes() );
 	}
 	catch ( ModeParsing::InvalidModestringException & e )
 	{
