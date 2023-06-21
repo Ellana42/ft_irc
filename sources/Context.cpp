@@ -6,7 +6,7 @@
 #include "ft_irc.hpp"
 #include "log_event.hpp"
 
-Context::Context( Password & password ) : password_handler( password ),
+Context::Context( Application & application, Password & password ) : application( application ), password_handler( password ),
 	message_handler( NULL )
 {
 	log_event::info( "Context: Creating context" );
@@ -355,5 +355,10 @@ void Context::debug_print_channels( void ) const
 void Context::check_connection_password( std::string password )
 {
 	password_handler.validate_connection_password( password );
+}
+
+void Context::send_message( int socket, std::string message )
+{
+	application.send_message( socket, message );
 }
 

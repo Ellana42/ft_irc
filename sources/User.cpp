@@ -187,7 +187,8 @@ void User::read_from_socket( void )
 
 void User::send_reply( std::string reply )
 {
-	send( socket, reply.c_str(), reply.length(), 0 );
+	//send( socket, reply.c_str(), reply.length(), 0 );
+	context.send_message( socket, reply );
 	log_event::reply( socket, reply );
 }
 

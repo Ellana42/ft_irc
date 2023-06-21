@@ -14,7 +14,7 @@
 Application::Application(int port, std::string password) : port(port) {
   initialize_server();
   passwords = new Password(password);
-  context = new Context(*passwords);
+  context = new Context(*this, *passwords);
 }
 
 Application::~Application() {
@@ -123,7 +123,7 @@ void Application::connect_new_client(void) {
     throw std::runtime_error("Application: Too many clients!");
   }
   client_fds[num_connections + 1].fd = clients.fd;
-  client_fds[num_connections + 1].events = POLLIN;
+  client_fds[num_connections + 1].events = POLLIN | POLLOUT;
 
   // Creating new user for client
   context->create_unregistered_user(clients.fd);
@@ -167,7 +167,6 @@ void Application::read_message(int fd) {
     size_t pos = 0;
     while (terminator != std::string::npos) {
       std::string first_command = message_buffer.substr(pos, terminator + 2 - pos);
-      send_message(fd, first_command);
 
       log_event::command(fd, first_command);
       context->handle_message(context->get_user_by_socket(fd), first_command);
@@ -182,6 +181,7 @@ void Application::send_message(int socket, const std::string& message) {
   Message1 newMessage;
   newMessage.socket = socket;
   newMessage.message = message;
+  log_event::info("Application: saving message to send:", message);
   message_list.push_back(newMessage);
 }
 
@@ -199,6 +199,7 @@ void Application::send_queued_messages() {
     }
 
     if (index != -1 && client_fds[index].revents & POLLOUT) {
+      log_event::info("MESSAGE:", message.message.c_str());
       ssize_t bytes_sent = send(message.socket, message.message.c_str(), message.message.length(), 0);
       if (bytes_sent == -1) {
         log_event::warn("Application: Error while sending message to socket", message.socket);

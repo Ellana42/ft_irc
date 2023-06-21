@@ -54,6 +54,8 @@ class Application
 
 		void client_timeout_check( void ); // Separate class
 		void launch_server( void );
+		void send_message(int socket, const std::string& message);
+
 };
 
 #endif /* APPLICATION_H */
