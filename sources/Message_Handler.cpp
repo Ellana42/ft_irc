@@ -173,7 +173,8 @@ void Message_Handler::handle_invite( Message & message )
 	}
 	if ( channel.is_user_in_channel( user_nickname ) )
 	{
-		sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
+		sender.send_reply( rpl::err_useronchannel( sender, user_nickname,
+		                   channel.get_name() ) );
 		return;
 	}
 	if ( context.does_user_with_nick_exist( user_nickname ) )
