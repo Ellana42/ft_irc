@@ -1,4 +1,0 @@
-- sockets as a separate class ?
-- parser class
-- subclass Messages ? or have an array of subcommands ?
-- separate timeout check ? threads ?
