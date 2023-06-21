@@ -45,7 +45,7 @@ NICK <nickname>
 - `ADMIN`: Displays information about the administrator of the server.
 - `INFO`: Displays information about the server.
 - `INVITE <nickname> <channel_name>`: Invites a user to a channel.
-- `JOIN <channel_name>`: Joins an existing channel or creates one. If `*` is specified as the channel name, removes the user from all channels.
+- `JOIN <channel_name>`: Joins an existing channel or creates one. If `0` is specified as the channel name, removes the user from all channels.
 - `KICK <nickname> <channel_name>`: Kicks a user from a channel (this is a channel operator command)
 - `LIST`: Lists all channels on the server.
 - `MODE <channel_name> <mode(s)>`: Sets/removes channel modes. Implemented channel modes:
