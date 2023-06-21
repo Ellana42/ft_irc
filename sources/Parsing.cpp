@@ -3,15 +3,15 @@
 #include <cstring>
 #include <exception>
 #include <stdexcept>
+#include <string>
 #include "Tokenizer.hpp"
 
 #define NUMBER_CMD 24
 
-// TODO:Add KILL
-std::string commands[NUMBER_CMD] = {"ADMIN", "INFO", "VERSION", "USERS", "NICK", "OPER", "PRIVMSG", "USER", "QUIT", "JOIN", "LIST", "NAMES", "SUMMON", "WHO", "KICK", "PART", "MODE", "CAP", "PASS", "KICK", "INVITE", "TOPIC", "PING", "PONG"};
-std::string params[NUMBER_CMD][10] = {{"target"}, {"target"}, {}, {}, {"nickname"}, {"name", "password"}, {"msgtarget", "text to be sent"}, {"user", "mode", "unused", "realname"}, {"Quit Message"}, {"channel", "key"}, {"channel"}, {"channel", "target"}, {"user", "target", "channel"}, {"mask", "o"}, {"channel", "user", "comment"}, {"channel", "Part Message"}, {"target", "modestring", "mode arguments"}, {"a"}, {"password"}, {"channel", "user", "comment"}, {"nickname", "channel"}, {"channel", "topic"}, {"token"}, {"token"}};
+std::string commands[NUMBER_CMD] = {"ADMIN", "INFO", "VERSION", "USERS", "NICK", "PRIVMSG", "USER", "QUIT", "JOIN", "LIST", "NAMES", "SUMMON", "KICK", "PART", "MODE", "CAP", "PASS", "KICK", "INVITE", "TOPIC", "PING", "PONG"};
+std::string params[NUMBER_CMD][10] = {{"target"}, {"target"}, {}, {}, {"nickname"}, {"msgtarget", "text to be sent"}, {"user", "mode", "unused", "realname"}, {"Quit Message"}, {"channel", "key"}, {"channel"}, {"channel", "target"}, {"user", "target", "channel"}, {"channel", "user", "comment"}, {"channel", "Part Message"}, {"target", "modestring", "mode arguments"}, {"a"}, {"password"}, {"channel", "user", "comment"}, {"nickname", "channel"}, {"channel", "topic"}, {"token"}, {"token"}};
 
-mode params_states[NUMBER_CMD][10] = {{Optional}, {Optional}, {}, {}, {Mandatory}, {Mandatory, Mandatory}, {Mandatory, Optional}, {Mandatory, Mandatory, Mandatory, Mandatory}, {Optional}, {List, ListOptional}, {ListOptional}, {ListOptional, Optional}, {Mandatory, Optional, Optional}, {Optional, Optional}, {Mandatory, List, Optional}, {List, Optional}, {Mandatory, Optional, Optional}, {Optional}, {Mandatory}, {Mandatory, List, Optional}, {Mandatory, Mandatory}, {Mandatory, Optional}, {Mandatory}, {Mandatory}};
+mode params_states[NUMBER_CMD][10] = {{Optional}, {Optional}, {}, {}, {Mandatory}, {Mandatory, Optional}, {Mandatory, Mandatory, Mandatory, Mandatory}, {Optional}, {List, ListOptional}, {ListOptional}, {ListOptional, Optional}, {Mandatory, Optional, Optional}, {Mandatory, List, Optional}, {List, Optional}, {Mandatory, Optional, MultiOptional}, {Optional}, {Mandatory}, {Mandatory, List, Optional}, {Mandatory, Mandatory}, {Mandatory, Optional}, {Mandatory}, {Mandatory}};
 
 
 Parsing::Parsing( std::string raw_content ) : tokenizer( Tokenizer(
@@ -74,7 +74,7 @@ void Parsing::parse_complex( void )
 		current_param = params[command_index][i] ;
 		current_type = params_states[command_index][i] ;
 	}
-	if ( tokens.size() > i + 1 )
+	if ( tokens.size() > i + 1 && command != "MODE" )
 	{
 		throw TooManyParamsException();
 	}
@@ -131,6 +131,10 @@ bool Parsing::set_current_arg( std::string arg_name, mode arg_type )
 		{
 			args_lists[arg_name] = arg_to_list( current_token );
 		}
+		else if ( arg_type == MultiOptional )
+		{
+			args_lists[arg_name] = get_rest_tokens( current_token );
+		}
 		else
 		{
 			args[arg_name] = current_token;
@@ -145,6 +149,30 @@ bool Parsing::set_current_arg( std::string arg_name, mode arg_type )
 		return ( true );
 	}
 	return ( true );
+}
+
+std::list<std::string> Parsing::get_rest_tokens( std::string current_token )
+{
+	std::list<std::string> arguments;
+	std::string token;
+	bool unfinished = true;
+
+	arguments.push_back( current_token );
+	while ( unfinished )
+	{
+		try
+		{
+			move();
+			token = get_current_token();
+			arguments.push_back( token );
+		}
+		catch( std::out_of_range & e )
+		{
+			( void )e;
+			unfinished = false;
+		}
+	}
+	return arguments;
 }
 
 bool Parsing::set_current_arg_list( std::string arg_name )

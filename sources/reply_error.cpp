@@ -547,14 +547,14 @@ std::string const rpl::err_channelisfull( User & user, std::string channel )
 }
 
 std::string const rpl::err_unknownmode( User & user, std::string channel,
-                                        std::string modechar )
+                                        char modechar )
 {
 	std::string reply = SERVER_PREFIX " ";
 	reply += ERR_UNKNOWNMODE " ";
 	reply += user.get_nickname();
 	reply += " ";
 	reply += modechar;
-	reply += " :is unknown mode char to me for ";
+	reply += " :is unknown mode char for ";
 	reply += channel;
 	reply += " \r\n";
 	return ( reply );

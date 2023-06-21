@@ -6,9 +6,6 @@
 
 /* NOTE: These numeric replies might not all be implemented in ft_irc. */
 
-/* TODO: remove non-implemented replies. */
-
-
 /* Command responses */
 
 /* Numerics in the range from 001 to 099 are used for client-server */
@@ -303,5 +300,6 @@
 # define RPL_STATSPING "246"
 # define RPL_STATSBLINE "247"
 # define RPL_STATSDLINE "250"
+# define RPL_INVALIDMODEPARAM "696"
 
 #endif

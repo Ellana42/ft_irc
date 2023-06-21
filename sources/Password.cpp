@@ -34,23 +34,24 @@ std::string Password::get_hash( std::string plain_text )
 	return ( create_sha256_hash( plain_text ) );
 }
 
-bool Password::validate_connection_password( std::string password )
+void Password::validate_connection_password( std::string password )
 {
-	return ( validate_password( connection_password_hash, password ) );
+	validate_password( connection_password_hash, password );
 }
 
-bool Password::validate_password( std::string hash, std::string plain_text )
+void Password::validate_password( std::string hash, std::string plain_text )
 {
 	std::string password_hash = create_sha256_hash( plain_text );
 
-	if ( password_hash == hash )
-	{
-		log_event::info( "Password: Passwords match!" );
-		return ( true );
-	}
-	else
+	if ( password_hash != hash )
 	{
 		log_event::info( "Password: Incorrect password..." );
-		return ( false );
+		throw InvalidPasswordException();
 	}
+	log_event::info( "Password: Passwords match!" );
+}
+
+const char* Password::InvalidPasswordException::what() const throw()
+{
+	return ( "invalid password" );
 }

@@ -38,3 +38,4 @@ sircc
 .cache
 compile_flags.txt
 main.cpp
+compile_commands.json

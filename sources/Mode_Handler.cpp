@@ -7,6 +7,7 @@
 #include "Parsing.hpp"
 #include "reply.hpp"
 #include <cctype>
+#include <cstdlib>
 #include <exception>
 #include <list>
 #include <stdexcept>
@@ -16,6 +17,7 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
                             Message & message ) : context( context ), sender( sender ), message( message )
 {
 	target = message.get( "target" );
+
 
 	handlers['i'][User_]["+"] = &Mode_Handler::handle_i_user_add;
 	handlers['i'][User_]["-"] = &Mode_Handler::handle_i_user_rm;
@@ -40,10 +42,34 @@ Mode_Handler::Mode_Handler( Context & context, User & sender,
 		return;
 	}
 	set_arguments();
+	if ( !target_channel->is_user_in_channel( sender ) )
+	{
+		sender.send_reply( rpl::err_notonchannel( sender,
+		                   target ) );
+		return;
+	}
+	if ( ! target_channel->is_operator( sender ) )
+	{
+		sender.send_reply( rpl::err_chanoprivsneeded( sender,
+		                   target ) );
+		return;
+	}
 	apply_modes();
 }
 
 Mode_Handler::~Mode_Handler() {}
+
+std::string Mode_Handler::get_current_argument()
+{
+	std::string current_argument;
+	if ( arguments.size() == 0 )
+	{
+		throw std::out_of_range( "No more arguments" );
+	}
+	current_argument = arguments.front();
+	arguments.pop_front();
+	return current_argument;
+}
 
 bool Mode_Handler::set_type()
 {
@@ -88,9 +114,40 @@ bool Mode_Handler::has_unknown_modes( std::string modes )
 	return ( false );
 }
 
+bool Mode_Handler::has_unknown_modes( char mode )
+{
+	if ( !handlers.count( mode ) )
+	{
+		return ( true );
+	}
+	return ( false );
+}
+
+std::string Mode_Handler::filter_modes( std::string modestring )
+{
+	std::string cleaned;
+
+	for ( std::string::iterator it = modestring.begin();
+	        it != modestring.end();
+	        it++ )
+	{
+		if ( has_unknown_modes( *it ) )
+		{
+			sender.send_reply( rpl::err_unknownmode( sender, target, *it ) );
+		}
+		else
+		{
+			cleaned += *it;
+		}
+	}
+	return ( cleaned );
+}
 
 bool Mode_Handler::set_modestring()
 {
+	std::string cleaned_added_modes;
+	std::string cleaned_removed_modes;
+
 	if ( !message.has( "modestring" ) )
 	{
 		if ( type_target == User_ )
@@ -105,13 +162,8 @@ bool Mode_Handler::set_modestring()
 	try
 	{
 		parsing.parse();
-		added_modes = parsing.get_added_modes();
-		removed_modes = parsing.get_removed_modes();
-		if ( has_unknown_modes( added_modes ) || has_unknown_modes( removed_modes ) )
-		{
-			sender.send_reply( rpl::err_umodeunknownflag( sender ) );
-			return 1;
-		}
+		added_modes = filter_modes( parsing.get_added_modes() );
+		removed_modes = filter_modes( parsing.get_removed_modes() );
 	}
 	catch ( ModeParsing::InvalidModestringException & e )
 	{
@@ -123,12 +175,11 @@ bool Mode_Handler::set_modestring()
 
 void Mode_Handler::set_arguments()
 {
-	if ( message.has( "mode arguments" ) )
+	if ( message.has_list( "mode arguments" ) )
 	{
-		arguments = message.get( "mode arguments" );
+		arguments = message.get_list( "mode arguments" );
 		return;
 	}
-	arguments = "";
 }
 
 void Mode_Handler::apply_modes()
@@ -159,94 +210,96 @@ void Mode_Handler::handle_i_user_rm()
 
 void Mode_Handler::handle_i_channel_add()
 {
-	if ( ! target_channel->is_operator( sender ) )
+	if ( !target_channel->is_invite_only() )
 	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
+		target_channel->set_invite_only( true );
+		target_channel->flush_invites();
+		sender.send_reply( rpl::mode_channel( sender, *target_channel, "+i" ) );
 	}
-	target_channel->set_invite_only( true );
-	// TODO: maybe flush the invites from the channel
 	return;
 }
 
 void Mode_Handler::handle_i_channel_rm()
 {
-	if ( ! target_channel->is_operator( sender ) )
+	if ( target_channel->is_invite_only() )
 	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
+		target_channel->set_invite_only( false );
+		sender.send_reply( rpl::mode_channel( sender, *target_channel, "-i" ) );
 	}
-	target_channel->set_invite_only( false );
 	return;
 }
 
 void Mode_Handler::handle_t_channel_add()
 {
-	if ( ! target_channel->is_operator( sender ) )
+	if ( !target_channel->is_topic_restricted() )
 	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
+		target_channel->set_topic_restricted( true );
+		sender.send_reply( rpl::mode_channel( sender, *target_channel, "+t" ) );
 	}
-	target_channel->set_topic_restricted( true );
 	return;
 }
 
 void Mode_Handler::handle_t_channel_rm()
 {
-	if ( ! target_channel->is_operator( sender ) )
+	if ( target_channel->is_topic_restricted() )
 	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
+		target_channel->set_topic_restricted( false );
+		sender.send_reply( rpl::mode_channel( sender, *target_channel, "-t" ) );
 	}
-	target_channel->set_topic_restricted( false );
 	return;
 }
 
 void Mode_Handler::handle_k_channel_add()
 {
-	// TODO: check multiple arguments and refuse
-	if ( ! target_channel->is_operator( sender ) )
+	std::string argument;
+
+	try
 	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		argument = get_current_argument();
+		if ( argument.find( ' ' ) != std::string::npos )
+		{
+			throw std::out_of_range( "Bad key" );
+		}
+	}
+	catch ( std::out_of_range & e )
+	{
+		sender.send_reply( rpl::invalidmodeparam( sender, target_channel->get_name(),
+		                   'k',
+		                   "Invalid channel key" ) ) ;
 		return;
 	}
-	if ( arguments == ""
-	        || arguments.find( ' ' ) !=
-	        std::string::npos ) // Dont accept spaces as key char
-	{
-		// TODO: implement rpl::invalidmodeparam
-		return;
-	}
-	target_channel->set_password( arguments );
+	target_channel->set_password( argument );
+	sender.send_reply( rpl::mode_channel( sender, *target_channel,
+	                                      "+k " + argument ) );
 	return;
 }
 
 void Mode_Handler::handle_k_channel_rm()
 {
-	if ( ! target_channel->is_operator( sender ) )
+	if ( target_channel->is_password_protected() )
 	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
+		target_channel->remove_password();
+		sender.send_reply( rpl::mode_channel( sender, *target_channel, "-k" ) );
 	}
-	target_channel->remove_password();
 	return;
 }
 
 void Mode_Handler::handle_o_channel_add()
 {
-	if ( ! target_channel->is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
-	}
-	if ( arguments == "" )
-	{
-		return;
-	}
+	std::string argument;
 	try
 	{
-		User & new_operator = context.get_user_by_nick( arguments );
+		argument = get_current_argument();
+		User & new_operator = context.get_user_by_nick( argument );
+		if ( target_channel->is_operator( new_operator ) )
+		{
+			return;
+		}
 		target_channel->add_operator( new_operator );
+		sender.send_reply( rpl::mode_channel( sender, *target_channel,
+		                                      "+o " + argument ) );
+		new_operator.send_reply( rpl::mode_channel( sender, *target_channel,
+		                         "+o " + argument ) );
 	}
 	catch ( std::out_of_range & e )
 	{
@@ -256,19 +309,20 @@ void Mode_Handler::handle_o_channel_add()
 
 void Mode_Handler::handle_o_channel_rm()
 {
-	if ( ! target_channel->is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
-	}
-	if ( arguments == "" )
-	{
-		return;
-	}
+	std::string argument;
 	try
 	{
-		User & new_operator = context.get_user_by_nick( arguments );
+		argument = get_current_argument();
+		User & new_operator = context.get_user_by_nick( argument );
+		if ( !target_channel->is_operator( new_operator ) )
+		{
+			return;
+		}
 		target_channel->remove_operator( new_operator );
+		sender.send_reply( rpl::mode_channel( sender, *target_channel,
+		                                      "-o " + argument ) );
+		new_operator.send_reply( rpl::mode_channel( sender, *target_channel,
+		                         "-o " + argument ) );
 	}
 	catch ( std::out_of_range & e )
 	{
@@ -277,28 +331,40 @@ void Mode_Handler::handle_o_channel_rm()
 	return;
 }
 
+bool isInt( const std::string& str )
+{
+	int n;
+	std::istringstream istreamObject( str );
+	istreamObject >> std::noskipws >> n;
+	return istreamObject.eof() && !istreamObject.fail();
+}
+
 void Mode_Handler::handle_l_channel_add()
 {
-	if ( ! target_channel->is_operator( sender ) )
+	std::string argument;
+	try
 	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
+		argument = get_current_argument();
+		if ( isInt( argument ) )
+		{
+			target_channel->set_user_limit( std::atoi( argument.c_str() ) );
+			sender.send_reply( rpl::mode_channel( sender, *target_channel,
+			                                      "+l " + argument ) );
+		}
+	}
+	catch ( std::out_of_range & e )
+	{
 		return;
 	}
-	if ( arguments ==  "" )
-	{
-		return;
-	}
-	target_channel->set_user_limit( std::atoi( arguments.c_str() ) );
 	return;
 }
 
 void Mode_Handler::handle_l_channel_rm()
 {
-	if ( ! target_channel->is_operator( sender ) )
+	if ( target_channel->has_user_limitation() )
 	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, target ) );
-		return;
+		target_channel->remove_user_limit();
+		sender.send_reply( rpl::mode_channel( sender, *target_channel, "-l" ) );
 	}
-	target_channel->remove_user_limit();
 	return;
 }
