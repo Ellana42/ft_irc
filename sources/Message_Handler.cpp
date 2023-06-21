@@ -4,6 +4,7 @@
 #include "Context.hpp"
 #include "Channel.hpp"
 #include "Parsing.hpp"
+#include "Password.hpp"
 #include "log_event.hpp"
 #include "reply.hpp"
 #include <cctype>
@@ -100,9 +101,18 @@ void Message_Handler::check_message_validity( User & sender, Message & message )
 bool Message_Handler::should_handle_message( User & sender, Message & message )
 {
 	std::string command = message.get_command();
-	if ( sender.is_fully_registered() == true || command == "USER"
-	        || command == "NICK" || command == "CAP" || command == "PASS"
-	        || command == "QUIT" )
+	if ( sender.is_fully_registered() == true )
+	{
+		return ( true );
+	}
+	else if ( sender.has_password() == true
+			&& ( command == "USER" || command == "NICK" || command == "CAP"
+			|| command == "PASS" || command == "QUIT" ) )
+	{
+		return ( true );
+	}
+	else if ( sender.has_password() == false
+			&& ( command == "CAP" || command == "PASS" || command == "QUIT" ) )
 	{
 		return ( true );
 	}
@@ -119,7 +129,6 @@ void Message_Handler::initialize_message_handlers( void )
 	handle.insert( pair_handler( "MODE", &Message_Handler::handle_mode ) );
 	handle.insert( pair_handler( "NAMES", &Message_Handler::handle_names ) );
 	handle.insert( pair_handler( "NICK", &Message_Handler::handle_nick ) );
-	handle.insert( pair_handler( "OPER", &Message_Handler::handle_oper ) );
 	handle.insert( pair_handler( "PART", &Message_Handler::handle_part ) );
 	handle.insert( pair_handler( "PASS", &Message_Handler::handle_pass ) );
 	handle.insert( pair_handler( "PRIVMSG", &Message_Handler::handle_privmsg ) );
@@ -128,7 +137,6 @@ void Message_Handler::initialize_message_handlers( void )
 	handle.insert( pair_handler( "USER", &Message_Handler::handle_user ) );
 	handle.insert( pair_handler( "USERS", &Message_Handler::handle_users ) );
 	handle.insert( pair_handler( "VERSION", &Message_Handler::handle_version ) );
-	handle.insert( pair_handler( "WHO", &Message_Handler::handle_who ) );
 	handle.insert( pair_handler( "INVITE", &Message_Handler::handle_invite ) );
 	handle.insert( pair_handler( "TOPIC", &Message_Handler::handle_topic ) );
 	handle.insert( pair_handler( "PING", &Message_Handler::handle_ping ) );
@@ -173,7 +181,8 @@ void Message_Handler::handle_invite( Message & message )
 	}
 	if ( channel.is_user_in_channel( user_nickname ) )
 	{
-		sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
+		sender.send_reply( rpl::err_useronchannel( sender, user_nickname,
+		                   channel.get_name() ) );
 		return;
 	}
 	if ( context.does_user_with_nick_exist( user_nickname ) )
@@ -298,7 +307,6 @@ void Message_Handler::handle_join( Message & message )
 			else if ( channel.is_password_protected()
 			          &&  !channel.check_password( *passes ) )
 			{
-				// TODO: bad channel key if key is not provided
 				sender.send_reply( rpl::err_badchannelkey( sender, channel.get_name() ) );
 			}
 			else if ( channel.is_at_limit() )
@@ -308,6 +316,7 @@ void Message_Handler::handle_join( Message & message )
 			else
 			{
 				context.add_user_to_channel( sender, *chans );
+				channel.remove_invited_user( sender.get_nickname() );
 				channel.send_reply( rpl::join_channel( sender, channel ) );
 				sender.send_reply( rpl::topic( message, channel ) );
 				sender.send_reply( rpl::namreply( sender, channel ) );
@@ -409,7 +418,6 @@ void Message_Handler::handle_mode( Message & message )
 {
 
 	User & sender = message.get_sender();
-	// TODO: Call mode handler
 
 	Mode_Handler handler( context, sender, message );
 	return;
@@ -417,7 +425,6 @@ void Message_Handler::handle_mode( Message & message )
 
 void Message_Handler::handle_names( Message & message )
 {
-	// TODO: special print for channel operators
 	User & sender = message.get_sender();
 	std::list<std::string> chan_names;
 	bool show_default_chan = false;
@@ -492,12 +499,6 @@ void Message_Handler::handle_nick( Message & message )
 	}
 }
 
-void Message_Handler::handle_oper( Message & message )
-{
-	/* TODO: implement function */
-	( void )message;
-}
-
 void Message_Handler::handle_part( Message & message )
 {
 	User & sender = message.get_sender();
@@ -535,22 +536,28 @@ void Message_Handler::handle_part( Message & message )
 
 void Message_Handler::handle_pass( Message & message )
 {
-	/* TODO: DON'T FORGET TO UNCOMMENT THIS !!!! */
-
-	/* if ( !message.has("password") ) */
-	/* { */
-	/* 	throw ( std::runtime_error( "Message Handler: PASS: no password provided!" )); */
-	/* } */
-	/* try */
-	/* { */
-	/* 	context.check_connection_password( message.get( "password" ) ); */
-	/* } */
-	/* catch ( std::exception & e ) */
-	/* { */
-	/* 	log_event::warn( "Message_Handler: PASS:", e.what() ); */
-	/* 	context.remove_user( message.get_sender() ); */
-	/* } */
-	( void )message;
+	User & sender = message.get_sender();
+	if ( !message.has( "password" ) )
+	{
+		throw ( std::runtime_error( "Message Handler: PASS: no password provided!" ) );
+	}
+	try
+	{
+		context.check_connection_password( message.get( "password" ) );
+		sender.set_correct_password();
+	}
+	catch ( Password::InvalidPasswordException & e )
+	{
+		log_event::warn( "Message_Handler: PASS: ", e.what() );
+	}
+	catch ( std::exception & e )
+	{
+		log_event::warn( "Message_Handler: PASS: ", e.what() );
+		if ( sender.is_fully_registered() )
+		{
+			sender.send_reply( rpl::err_alreadyregistred( sender ) );
+		}
+	}
 }
 
 void Message_Handler::handle_privmsg( Message & message )
@@ -558,7 +565,6 @@ void Message_Handler::handle_privmsg( Message & message )
 	User & sender = message.get_sender();
 	std::string dest_nick = message.get( "msgtarget" );
 	std::string text = "";
-	// TODO: double check that 1) an empty string is a valid message 2) the errtext not sent is non blocking
 	if ( message.has( "text to be sent" ) )
 	{
 		text = message.get( "text to be sent" );
@@ -566,6 +572,7 @@ void Message_Handler::handle_privmsg( Message & message )
 	else
 	{
 		sender.send_reply( rpl::err_notexttosend( sender ) );
+		return;
 	}
 	if ( context.does_user_with_nick_exist( dest_nick ) == true )
 	{
@@ -615,7 +622,6 @@ void Message_Handler::handle_summon( Message & message )
 
 void Message_Handler::handle_user( Message & message )
 {
-	/* TODO: add user mode support */
 
 	User & sender = message.get_sender();
 	if ( sender.is_fully_registered() )
@@ -648,7 +654,6 @@ void Message_Handler::handle_user( Message & message )
 
 void Message_Handler::handle_users( Message & message )
 {
-	/* TODO: decide if we are implementing function */
 	User & sender = message.get_sender();
 	sender.send_reply( rpl::err_usersdisabled( sender ) );
 }
@@ -657,13 +662,6 @@ void Message_Handler::handle_version( Message & message )
 {
 	User & sender = message.get_sender();
 	sender.send_reply( rpl::server_version( sender ) );
-}
-
-void Message_Handler::handle_who( Message & message )
-{
-	/* TODO: implement function */
-	// TODO: special print for channel operators
-	( void )message;
 }
 
 void Message_Handler::welcome_user( User & user )

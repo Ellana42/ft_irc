@@ -18,6 +18,7 @@ class User
 		std::string mode;
 
 		bool fully_registered;
+		bool entered_correct_password;
 		Context & context;
 		int	socket;
 
@@ -37,6 +38,7 @@ class User
 		std::string const & get_hostname( void ) const;
 		std::string const & get_identifier( void ) const;
 		std::string const & get_mode( void ) const;
+		bool has_password( void ) const;
 		int const & get_socket( void ) const;
 		bool is_fully_registered( void ) const;
 
@@ -44,6 +46,7 @@ class User
 		void set_username( std::string username );
 		void set_realname( std::string realname );
 		void set_hostname( std::string hostname );
+		void set_correct_password( void );
 		void set_modes( std::string modes_to_add, std::string modes_to_remove );
 		void add_modes( std::string mode_string );
 		void remove_modes( std::string mode_string );

@@ -6,7 +6,7 @@
 #include "ft_irc.hpp"
 #include "log_event.hpp"
 
-Context::Context( Password & password ) : password_handler( password ),
+Context::Context( Application & application, Password & password ) : application( application ), password_handler( password ),
 	message_handler( NULL )
 {
 	log_event::info( "Context: Creating context" );
@@ -31,7 +31,7 @@ void Context::create_unregistered_user( int socket )
 
 void Context::register_user( User & user )
 {
-	if ( user.has_nickname() == false || user.has_user_info() == false )
+	if ( user.has_password() == false || user.has_nickname() == false || user.has_user_info() == false )
 	{
 		return ;
 	}
@@ -354,9 +354,11 @@ void Context::debug_print_channels( void ) const
 
 void Context::check_connection_password( std::string password )
 {
-	if ( !password_handler.validate_connection_password( password ) )
-	{
-		throw ( std::out_of_range( "Context: Invalid connection password!" ) );
-	}
+	password_handler.validate_connection_password( password );
+}
+
+void Context::send_message( int socket, std::string message )
+{
+	application.send_message( socket, message );
 }
 

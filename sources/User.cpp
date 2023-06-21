@@ -2,11 +2,13 @@
 #include "Context.hpp"
 #include "log_event.hpp"
 #include <cstddef>
+#include <stdexcept>
 
 /* User::User() {} */
 
 User::User( Context & context, int socket ) : nickname( "*" ), username( "*" ),
-	hostname( "*" ), realname( "*" ), fully_registered( false ), context( context ),
+	hostname( "*" ), realname( "*" ), fully_registered( false ),
+	entered_correct_password( false ), context( context ),
 	socket( socket )
 {
 	update_identifier();
@@ -56,6 +58,11 @@ int const & User::get_socket( void ) const
 std::string const & User::get_mode( void ) const
 {
 	return ( this->mode );
+}
+
+bool User::has_password( void ) const
+{
+	return ( this->entered_correct_password );
 }
 
 void User::set_nickname( std::string nickname )
@@ -108,12 +115,21 @@ void User::set_registered( void )
 	this->fully_registered = true;
 }
 
+void User::set_correct_password( void )
+{
+	if ( this->entered_correct_password == true )
+	{
+		throw std::runtime_error( "User: Correct password already supplied." );
+	}
+	this->entered_correct_password = true;
+}
 
 void User::set_modes( std::string modes_to_add, std::string modes_to_remove )
 {
 	add_modes( modes_to_add );
 	remove_modes( modes_to_remove );
 }
+
 
 void User::add_modes( std::string mode_string )
 {
@@ -171,7 +187,8 @@ void User::read_from_socket( void )
 
 void User::send_reply( std::string reply )
 {
-	send( socket, reply.c_str(), reply.length(), 0 );
+	//send( socket, reply.c_str(), reply.length(), 0 );
+	context.send_message( socket, reply );
 	log_event::reply( socket, reply );
 }
 

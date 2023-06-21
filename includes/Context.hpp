@@ -6,9 +6,11 @@
 #include "Message.hpp"
 #include "Message_Handler.hpp"
 #include "reply.hpp"
+#include "Application.hpp"
 
 # define DEFAULT_CHAN "*"
 
+class Application;
 class User;
 class Channel;
 
@@ -23,6 +25,7 @@ class Context
 		std::map<std::string, User *> registered_users;
 		std::map<std::string, Channel *> channels;
 
+		Application & application;
 		Password & password_handler;
 		Message_Handler * message_handler;
 
@@ -34,7 +37,7 @@ class Context
 		void create_channel( std::string name );
 
 	public:
-		Context( Password & password_handler );
+		Context( Application & application, Password & password_handler );
 		virtual ~Context();
 
 		void create_unregistered_user( int socket );
@@ -65,7 +68,8 @@ class Context
 		std::list<User *> get_users_in_same_channels( User & user );
 
 		void check_connection_password( std::string password );
-		
+		void send_message( int socket, std::string message );
+
 		void debug_print_unregistered_users( void ) const;
 		void debug_print_registered_users( void ) const;
 		void debug_print_channels( void ) const;
