@@ -119,7 +119,6 @@ void Message_Handler::initialize_message_handlers( void )
 	handle.insert( pair_handler( "MODE", &Message_Handler::handle_mode ) );
 	handle.insert( pair_handler( "NAMES", &Message_Handler::handle_names ) );
 	handle.insert( pair_handler( "NICK", &Message_Handler::handle_nick ) );
-	handle.insert( pair_handler( "OPER", &Message_Handler::handle_oper ) );
 	handle.insert( pair_handler( "PART", &Message_Handler::handle_part ) );
 	handle.insert( pair_handler( "PASS", &Message_Handler::handle_pass ) );
 	handle.insert( pair_handler( "PRIVMSG", &Message_Handler::handle_privmsg ) );
@@ -128,7 +127,6 @@ void Message_Handler::initialize_message_handlers( void )
 	handle.insert( pair_handler( "USER", &Message_Handler::handle_user ) );
 	handle.insert( pair_handler( "USERS", &Message_Handler::handle_users ) );
 	handle.insert( pair_handler( "VERSION", &Message_Handler::handle_version ) );
-	handle.insert( pair_handler( "WHO", &Message_Handler::handle_who ) );
 	handle.insert( pair_handler( "INVITE", &Message_Handler::handle_invite ) );
 	handle.insert( pair_handler( "TOPIC", &Message_Handler::handle_topic ) );
 	handle.insert( pair_handler( "PING", &Message_Handler::handle_ping ) );
@@ -417,7 +415,6 @@ void Message_Handler::handle_mode( Message & message )
 
 void Message_Handler::handle_names( Message & message )
 {
-	// TODO: special print for channel operators
 	User & sender = message.get_sender();
 	std::list<std::string> chan_names;
 	bool show_default_chan = false;
@@ -490,12 +487,6 @@ void Message_Handler::handle_nick( Message & message )
 	{
 		sender.send_reply( rpl::err_nicknametoolong( sender, nickname ) );
 	}
-}
-
-void Message_Handler::handle_oper( Message & message )
-{
-	/* TODO: implement function */
-	( void )message;
 }
 
 void Message_Handler::handle_part( Message & message )
@@ -657,13 +648,6 @@ void Message_Handler::handle_version( Message & message )
 {
 	User & sender = message.get_sender();
 	sender.send_reply( rpl::server_version( sender ) );
-}
-
-void Message_Handler::handle_who( Message & message )
-{
-	/* TODO: implement function */
-	// TODO: special print for channel operators
-	( void )message;
 }
 
 void Message_Handler::welcome_user( User & user )
