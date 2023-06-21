@@ -87,6 +87,7 @@ bool Mode_Handler::set_type()
 	else
 	{
 		sender.send_reply( rpl::err_nosuchchannel( sender, target ) );
+		return 1;
 	}
 	return 0;
 }
