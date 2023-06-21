@@ -195,7 +195,10 @@ std::string const rpl::forward( User & sender, Message & message )
 	reply += " ";
 	reply += message.get( "msgtarget" );
 	reply += " :";
-	reply += message.get( "text to be sent" );
+	if ( message.has("text to be sent" ) )
+	{
+		reply += message.get( "text to be sent" );
+	}
 	reply += "\r\n";
 	return ( reply );
 }
@@ -220,6 +223,19 @@ std::string const rpl::join_channel( User & user, Channel & channel )
 	reply += user.get_identifier();
 	reply += " JOIN :";
 	reply += channel.get_name();
+	reply += "\r\n";
+	return ( reply );
+}
+
+std::string const rpl::mode_channel( User & user, Channel & channel,
+                                     std::string mode )
+{
+	std::string reply = ":";
+	reply += user.get_identifier();
+	reply += " MODE ";
+	reply += channel.get_name();
+	reply += " ";
+	reply += mode;
 	reply += "\r\n";
 	return ( reply );
 }
