@@ -379,7 +379,15 @@ bool Channel::check_password( std::string password ) const
 	{
 		return true;
 	}
-	return ( password_handler.validate_password( channel_password, password ) );
+	try
+	{
+		password_handler.validate_password( channel_password, password );
+		return ( true );
+	}
+	catch ( Password::InvalidPasswordException & e )
+	{
+		return ( false );
+	}
 }
 
 void Channel::set_user_limit( int limit )
