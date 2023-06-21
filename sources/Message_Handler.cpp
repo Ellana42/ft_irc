@@ -549,10 +549,11 @@ void Message_Handler::handle_pass( Message & message )
 	catch ( Password::InvalidPasswordException & e )
 	{
 		log_event::warn( "Message_Handler: PASS: ", e.what() );
+		sender.send_reply( rpl::err_generic( "Access denied: Bad password?" ) );
 	}
 	catch ( std::exception & e )
 	{
-		log_event::warn( "Message_Handler: PASS: ", e.what() );
+		log_event::info( "Message_Handler: PASS: ", e.what() );
 		if ( sender.is_fully_registered() )
 		{
 			sender.send_reply( rpl::err_alreadyregistred( sender ) );

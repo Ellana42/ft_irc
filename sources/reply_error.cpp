@@ -733,3 +733,11 @@ std::string const rpl::err_usersdontmatch( User & user )
 	reply += " :Cannot change mode for other users\r\n";
 	return ( reply );
 }
+
+std::string const rpl::err_generic( std::string msg )
+{
+	std::string reply = "ERROR :";
+	reply += msg;
+	reply += "\r\n";
+	return ( reply );
+}
