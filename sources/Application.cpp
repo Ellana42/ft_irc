@@ -181,7 +181,7 @@ void Application::send_message(int socket, const std::string& message) {
   Message1 newMessage;
   newMessage.socket = socket;
   newMessage.message = message;
-  log_event::info("Application: saving message to send:", message);
+  log_event::info("Application: saving message to send:", log_event::get_formatted_command( message ));
   message_list.push_back(newMessage);
 }
 
@@ -199,7 +199,7 @@ void Application::send_queued_messages() {
     }
 
     if (index != -1 && client_fds[index].revents & POLLOUT) {
-      log_event::info("MESSAGE:", message.message.c_str());
+      log_event::info("Application: sending message:", log_event::get_formatted_command( message.message ) );
       ssize_t bytes_sent = send(message.socket, message.message.c_str(), message.message.length(), 0);
       if (bytes_sent == -1) {
         log_event::warn("Application: Error while sending message to socket", message.socket);
