@@ -566,6 +566,7 @@ void Message_Handler::handle_privmsg( Message & message )
 	else
 	{
 		sender.send_reply( rpl::err_notexttosend( sender ) );
+		return;
 	}
 	if ( context.does_user_with_nick_exist( dest_nick ) == true )
 	{
