@@ -86,19 +86,7 @@ bool Mode_Handler::set_type()
 	}
 	else
 	{
-		return 1;
-		if ( !context.does_user_with_nick_exist( target ) )
-		{
-			sender.send_reply( rpl::err_nosuchnick( sender, target ) );
-			return 1;
-		}
-		type_target = User_;
-		target_user = &context.get_user_by_nick( target );
-		if ( target != sender.get_nickname() )
-		{
-			sender.send_reply( rpl::err_usersdontmatch( sender ) );
-			return 1;
-		}
+		sender.send_reply( rpl::err_nosuchchannel( sender, target ) );
 	}
 	return 0;
 }
