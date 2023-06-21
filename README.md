@@ -26,7 +26,7 @@ This project was developed for the IRSSI client. After launching `irssi`, run th
 
 ### Connecting to the Server Using NetCat
 
-Alternatively, connect to the server using `nc`, `netcat` or `ncat`, whichever one has the `-C` or `--crlf` options to enable CRLF for EOL sequence.
+Alternatively, connect to the server using `nc`, `netcat` or `ncat`, whichever one has the `-C` or `--crlf` options to enable CRLF for EOL sequence: the IRC protocol specifies that messages are only valid if they end with `\r\n`.
 
 ```
 nc -C localhost <server_port>
