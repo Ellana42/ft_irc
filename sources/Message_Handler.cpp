@@ -561,7 +561,7 @@ void Message_Handler::handle_pass( Message & message )
 	{
 		log_event::warn( "Message_Handler: PASS: ", e.what() );
 		sender.send_reply( rpl::err_passwdmismatch( sender ) );
-		context.force_disconnect_user( sender );
+		/* context.force_disconnect_user( sender ); */
 	}
 	catch ( std::exception & e )
 	{
