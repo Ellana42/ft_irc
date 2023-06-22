@@ -45,6 +45,7 @@ class Application
 		void read_from_socket( int fd, std::string & message_buffer );
 		void execute_commands( int fd, std::string & message_buffer );
 		void send_queued_messages();
+		void remove_unsent_messages_for_disconnected_client( int fd );
 
 		class StopServerException : public std::exception {};
 		class NothingMoreToReadException : public std::exception {};

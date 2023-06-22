@@ -80,8 +80,8 @@ void Application::launch_server( void )
 		{
 			wait_for_socket_event();
 			connect_new_client();
-			read_client_sockets();
 			send_queued_messages();
+			read_client_sockets();
 		}
 		catch ( Application::StopServerException &e )
 		{
@@ -160,18 +160,10 @@ void Application::connect_new_client( void )
 void Application::disconnect_client( int fd )
 {
 	log_event::info( "Application: Client disconnected from socket", fd );
-	context->remove_user( fd ); // Closes the client socket
 
-	// Remove queued messages for the disconnected client
-    std::vector<Message1>::iterator it = message_list.begin();
-	while ( it != message_list.end() )
-	{
-    	if ( it->socket == fd )
-		{
-        	it = message_list.erase( it );
-		}
-       	++it;
-	}
+	remove_unsent_messages_for_disconnected_client( fd );
+
+	context->remove_user( fd ); // Closes the client socket
 
 	std::vector<pollfd>& client_fds = *poll_fds;
 	for ( int i = 1; i <= num_connections; i++ )
@@ -183,6 +175,27 @@ void Application::disconnect_client( int fd )
       		break;
     	}
   	}
+}
+
+void Application::remove_unsent_messages_for_disconnected_client( int fd )
+{
+	if ( message_list.empty() ) 
+	{
+		return ;
+	}
+	// Remove queued messages for the disconnected client
+    std::vector<Message1>::iterator it = message_list.begin();
+	while ( it != message_list.end() )
+	{
+		if ( it->socket == fd )
+		{
+        	it = message_list.erase( it );
+		}
+		else
+		{
+			it++;
+		}
+	}
 }
 
 void Application::read_message( int fd )
