@@ -541,6 +541,7 @@ void Message_Handler::handle_part( Message & message )
 void Message_Handler::handle_pass( Message & message )
 {
 	User & sender = message.get_sender();
+
 	if ( sender.is_fully_registered() )
 	{
 		sender.send_reply( rpl::err_alreadyregistred( sender ) );
@@ -548,7 +549,8 @@ void Message_Handler::handle_pass( Message & message )
 	}
 	if ( !message.has( "password" ) )
 	{
-		throw ( std::runtime_error( "Message Handler: PASS: no password provided!" ) );
+		sender.send_reply( rpl::err_passwdmismatch( sender ) );
+		return;
 	}
 	try
 	{
@@ -558,7 +560,7 @@ void Message_Handler::handle_pass( Message & message )
 	catch ( Password::InvalidPasswordException & e )
 	{
 		log_event::warn( "Message_Handler: PASS: ", e.what() );
-		sender.send_reply( rpl::err_generic( "Access denied: Bad password?" ) );
+		sender.send_reply( rpl::err_passwdmismatch( sender ) );
 	}
 	catch ( std::exception & e )
 	{
