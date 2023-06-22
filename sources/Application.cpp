@@ -159,8 +159,17 @@ void Application::disconnect_client( int fd )
 {
 	log_event::info( "Application: Client disconnected from socket", fd );
 	context->remove_user( fd );
-	fd = -1;
-	num_connections--;
+	std::vector<pollfd>& client_fds = *poll_fds;
+	for ( int i = 1; i <= num_connections; i++ )
+	{
+		if ( client_fds[i].fd == fd )
+		{
+      		close( fd );  // Close the client socket
+      		client_fds.erase( client_fds.begin() + i );  // Remove the client from the vector
+      		num_connections--;
+      		break;
+    	}
+  	}
 }
 
 void Application::read_message( int fd )
