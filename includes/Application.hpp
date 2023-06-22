@@ -41,9 +41,15 @@ class Application
 		void disconnect_client( int fd );
 		void read_client_sockets( void );
 		void read_message( int fd );
+		void get_commands_from_socket( int fd, std::string & message_buffer );
+		bool buffer_contains_end_of_message( std::string & message_buffer );
+		void read_from_socket( int fd, std::string & message_buffer );
+		void execute_commands( int fd, std::string & message_buffer );
 		void send_queued_messages();
 
 		class StopServerException : public std::exception {};
+		class NothingMoreToReadException : public std::exception {};
+		class DisconnectClientException : public std::exception {};
 
 	public:
 		Application( int port, std::string password );
