@@ -1,4 +1,5 @@
 #include "Application.hpp"
+#include "Context.hpp"
 #include "ft_irc.hpp"
 #include "Password.hpp"
 #include "log_event.hpp"
@@ -22,9 +23,9 @@ Application::~Application()
 {
 	log_event::info( "Application: Terminating application" );
 	close( server.fd );
+	delete poll_fds;
 	delete passwords;
 	delete context;
-	delete poll_fds;
 }
 
 void Application::initialize_server( void )
@@ -159,7 +160,6 @@ void Application::connect_new_client( void )
 void Application::disconnect_client( int fd )
 {
 	log_event::info( "Application: Client disconnected from socket", fd );
-	context->remove_user( fd );
 
 	// Remove queued messages for the disconnected client
     std::vector<Message1>::iterator it = message_list.begin();
@@ -176,7 +176,7 @@ void Application::disconnect_client( int fd )
 	{
 		if ( client_fds[i].fd == fd )
 		{
-      		close( fd );  // Close the client socket
+			context->remove_user( fd ); // Closes the client socket
       		client_fds.erase( client_fds.begin() + i );  // Remove the client from the vector
       		num_connections--;
       		break;
@@ -212,6 +212,10 @@ void Application::get_commands_from_socket( int fd, std::string & message_buffer
 		{
 			log_event::info( "Application: Nothing more to read from socket", fd );
 			break ;
+		}
+		catch ( Context::CouldNotFindUserException & e )
+		{
+			log_event::warn( "Application: Context:", e.what() );
 		}
 	}
 }	

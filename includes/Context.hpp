@@ -69,10 +69,17 @@ class Context
 
 		void check_connection_password( std::string password );
 		void send_message( int socket, std::string message );
+		void force_disconnect_user( User & user );
 
 		void debug_print_unregistered_users( void ) const;
 		void debug_print_registered_users( void ) const;
 		void debug_print_channels( void ) const;
+
+		class CouldNotFindUserException : public std::exception
+		{
+			public:
+				virtual const char* what() const throw();
+		};
 };
 
 #endif /* CONTEXT_H */
