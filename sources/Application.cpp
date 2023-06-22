@@ -160,15 +160,17 @@ void Application::connect_new_client( void )
 void Application::disconnect_client( int fd )
 {
 	log_event::info( "Application: Client disconnected from socket", fd );
+	context->remove_user( fd ); // Closes the client socket
 
 	// Remove queued messages for the disconnected client
     std::vector<Message1>::iterator it = message_list.begin();
 	while ( it != message_list.end() )
 	{
     	if ( it->socket == fd )
+		{
         	it = message_list.erase( it );
-    	else
-        ++it;
+		}
+       	++it;
 	}
 
 	std::vector<pollfd>& client_fds = *poll_fds;
@@ -176,7 +178,6 @@ void Application::disconnect_client( int fd )
 	{
 		if ( client_fds[i].fd == fd )
 		{
-			context->remove_user( fd ); // Closes the client socket
       		client_fds.erase( client_fds.begin() + i );  // Remove the client from the vector
       		num_connections--;
       		break;
