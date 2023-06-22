@@ -280,7 +280,14 @@ void Mode_Handler::handle_o_channel_add()
 	try
 	{
 		argument = get_current_argument();
-		User & new_operator = context.get_user_by_nick( argument );
+		User & new_operator = context.get_user_by_nick(
+		                          argument ); // TODO: maybe specific response if exists
+		if ( !target_channel->is_user_in_channel( new_operator ) )
+		{
+			sender.send_reply( rpl::err_usernotinchannel( sender,
+			                   new_operator.get_nickname(), target_channel->get_name() ) );
+			return;
+		}
 		if ( target_channel->is_operator( new_operator ) )
 		{
 			return;
