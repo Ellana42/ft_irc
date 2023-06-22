@@ -11,7 +11,7 @@ CYAN='\033[00;36m'
 if [ -z $1 ]
 then
 	echo "Please specify a port between 6660 and 7000"
-	echo "Usage: ./test-flood-script.sh <port>"
+	echo "Usage: ./test-flood-script.sh <port> <password>"
 	exit 1
 fi
 if [ -z $2 ]
@@ -28,7 +28,7 @@ PORT_STATUS=$(nc -w5 -z -v localhost $PORT 2>&1)
 if [[ ${PORT} -lt 6660 ]] || [[ ${PORT} -gt 7000 ]]
 then
 	echo "Invalid port: port must be between 6660 and 7000"
-	echo "Usage: ./test-flood-script.sh <port>"
+	echo "Usage: ./test-flood-script.sh <port> <password>"
 	exit 1
 elif [[ ${PORT_STATUS} != *"open"* ]]
 then
