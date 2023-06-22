@@ -135,7 +135,8 @@ void Application::connect_new_client( void )
 	log_event::info( "Application: Received client call..." );
 	if ( clients.fd == -1 )
 	{
-		throw std::runtime_error( "Application: Client cannot connect!" );
+		log_event::warn( "Application: Client cannot connect!" );
+		return;
 	}
 
 	// Set the client socket to non-blocking
@@ -159,6 +160,17 @@ void Application::disconnect_client( int fd )
 {
 	log_event::info( "Application: Client disconnected from socket", fd );
 	context->remove_user( fd );
+
+	// Remove queued messages for the disconnected client
+    std::vector<Message1>::iterator it = message_list.begin();
+	while ( it != message_list.end() )
+	{
+    	if ( it->socket == fd )
+        	it = message_list.erase( it );
+    	else
+        ++it;
+	}
+
 	std::vector<pollfd>& client_fds = *poll_fds;
 	for ( int i = 1; i <= num_connections; i++ )
 	{
