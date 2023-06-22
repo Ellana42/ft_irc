@@ -160,21 +160,27 @@ void Application::connect_new_client( void )
 void Application::disconnect_client( int fd )
 {
 	log_event::info( "Application: Client disconnected from socket", fd );
-
-	remove_unsent_messages_for_disconnected_client( fd );
-
-	context->remove_user( fd ); // Closes the client socket
-
-	std::vector<pollfd>& client_fds = *poll_fds;
-	for ( int i = 1; i <= num_connections; i++ )
+	try
 	{
-		if ( client_fds[i].fd == fd )
+		remove_unsent_messages_for_disconnected_client( fd );
+
+		context->remove_user( fd ); // Closes the client socket
+
+		std::vector<pollfd>& client_fds = *poll_fds;
+		for ( int i = 1; i <= num_connections; i++ )
 		{
-      		client_fds.erase( client_fds.begin() + i );  // Remove the client from the vector
-      		num_connections--;
-      		break;
-    	}
-  	}
+			if ( client_fds[i].fd == fd )
+			{
+				client_fds.erase( client_fds.begin() + i );  // Remove the client from the vector
+				num_connections--;
+				break;
+ 		   	}
+  		}
+	}
+	catch ( Context::CouldNotFindUserException & e )
+	{
+		log_event::warn( "Application: Context:", e.what() );
+	}
 }
 
 void Application::remove_unsent_messages_for_disconnected_client( int fd )
