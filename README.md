@@ -4,11 +4,7 @@ A small IRC server made in C++.
 
 ## Usage
 
-Clone this repository and `cd` into it. To build, use
-
-```
-make
-```
+Clone this repository and `cd` into it. To build, use `make`.
 
 To launch the server:
 
