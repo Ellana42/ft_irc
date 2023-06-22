@@ -14,8 +14,15 @@ then
 	echo "Usage: ./test-flood-script.sh <port>"
 	exit 1
 fi
+if [ -z $2 ]
+then
+	echo "Please specify the password of the IRC server on the port"
+	echo "Usage: ./test-flood-script.sh <port> <password>"
+	exit 1
+fi
 
 PORT=$1
+PASS=$2
 PORT_STATUS=$(nc -w5 -z -v localhost $PORT 2>&1)
 
 if [[ ${PORT} -lt 6660 ]] || [[ ${PORT} -gt 7000 ]]
@@ -38,7 +45,8 @@ do
 	echo -e "${CYAN}------------------ Connection ${COUNT}${RESET}"
 	echo "-- Connecting to port ${PORT}"
 	echo -n "-- Registering IRC client: " 
-	RESULT=$(perl -e 'print "PASS pass\r\n" . "USER a a a a\r\n" . "NICK nick\r\n"' | timeout -k 0.5 0.5s nc localhost $PORT)
+	SEND_IRC_COMMANDS="print \"PASS ${PASS}\r\n\" . \"USER a a a a\r\n\" . \"NICK nick\r\n\""
+	RESULT=$(perl -e "$SEND_IRC_COMMANDS" | timeout -k 0.3 0.1s nc localhost $PORT)
 	if [[ ${RESULT} == *"Welcome"* ]]
 		then
 			echo -e "${GREEN}OK: Got expected \"Welcome\" reply${RESET}"
