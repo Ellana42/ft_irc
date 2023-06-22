@@ -230,7 +230,6 @@ void Application::get_commands_from_socket( int fd, std::string & message_buffer
 		}
 		catch ( Application::NothingMoreToReadException & e )
 		{
-			log_event::info( "Application: Nothing more to read from socket", fd );
 			break ;
 		}
 		catch ( Context::CouldNotFindUserException & e )
