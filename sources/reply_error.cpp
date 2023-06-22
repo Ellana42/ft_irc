@@ -494,7 +494,6 @@ std::string const rpl::err_passwdmismatch( User & user )
 	std::string reply = SERVER_PREFIX " ";
 	reply += ERR_PASSWDMISMATCH " ";
 	reply += user.get_nickname();
-	reply += " ";
 	reply += " :Password incorrect\r\n";
 	return ( reply );
 }
