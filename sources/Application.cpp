@@ -132,13 +132,12 @@ void Application::connect_new_client( void )
 
 	log_event::info( "Application: Accepting client call..." );
 	clients.fd = accept( server.fd, ( struct sockaddr * )&clients.info, &clientSize );
-
-	log_event::info( "Application: Received client call..." );
 	if ( clients.fd == -1 )
 	{
 		log_event::warn( "Application: Client cannot connect!" );
 		return;
 	}
+	log_event::info( "Application: Client is assigned socket", clients.fd );
 
 	// Set the client socket to non-blocking
 	int flags = fcntl( clients.fd, F_GETFL, 0 );
