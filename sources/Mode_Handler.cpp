@@ -84,6 +84,10 @@ bool Mode_Handler::set_type()
 		}
 		target_channel = &context.get_channel_by_name( target );
 	}
+	else if ( context.does_user_with_nick_exist( target ) )
+	{
+		return 1;
+	}
 	else
 	{
 		sender.send_reply( rpl::err_nosuchchannel( sender, target ) );
