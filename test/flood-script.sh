@@ -31,11 +31,14 @@ fi
 
 echo "Flooding port $PORT"
 RESULT=""
+declare -i COUNT=0
 while [[ ${PORT_STATUS} == *"open"* ]]
 do
+	(( COUNT++))
+	echo -e "${CYAN}------------------ Connection ${COUNT}${RESET}"
 	echo "-- Connecting to port ${PORT}"
 	echo -n "-- Registering IRC client: " 
-	RESULT=$(perl -e 'print "USER a a a a\r\n" . "NICK nick\r\n" . "QUIT\r\n"' | nc localhost $PORT)
+	RESULT=$(perl -e 'print "PASS pass\r\n" . "USER a a a a\r\n" . "NICK nick\r\n"' | timeout -k 0.5 0.5s nc localhost $PORT)
 	if [[ ${RESULT} == *"Welcome"* ]]
 		then
 			echo -e "${GREEN}OK: Got expected \"Welcome\" reply${RESET}"
