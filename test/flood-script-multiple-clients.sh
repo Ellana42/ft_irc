@@ -34,9 +34,9 @@ then
 	echo "Please specify the number of clients to simultaneously connect to the port"
 	echo "Usage: ./test-flood-script.sh <port> <password> <number_of_clients>"
 	exit 1
-elif [[ ${NB_CLIENTS} -lt 1 ]] || [[ ${NB_CLIENTS} -gt 1000 ]]
+elif [[ ${NB_CLIENTS} -lt 1 ]] || [[ ${NB_CLIENTS} -gt 10000 ]]
 then
-	echo "Invalid number of clients: min 1, max 1000."
+	echo "Invalid number of clients: min 1, max 10000."
 	echo "Usage: ./test-flood-script.sh <port> <password> <number_of_clients>"
 	exit 1
 fi
