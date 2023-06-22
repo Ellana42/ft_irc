@@ -6,7 +6,7 @@
 #define LOG_WARNING 2
 #define LOG_INFO 3
 
-#define LOG_LEVEL 1
+#define LOG_LEVEL 3
 
 
 #include <cstddef>

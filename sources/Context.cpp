@@ -362,3 +362,7 @@ void Context::send_message( int socket, std::string message )
 	application.send_message( socket, message );
 }
 
+void Context::force_disconnect_user( User & user )
+{
+	application.disconnect_client( user.get_socket() );
+}

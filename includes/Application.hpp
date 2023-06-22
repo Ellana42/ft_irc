@@ -38,7 +38,6 @@ class Application
 		void initialize_server( void );
 		void wait_for_socket_event( void );
 		void connect_new_client( void );
-		void disconnect_client( int fd );
 		void read_client_sockets( void );
 		void read_message( int fd );
 		void get_commands_from_socket( int fd, std::string & message_buffer );
@@ -60,6 +59,7 @@ class Application
 		void client_timeout_check( void ); // Separate class
 		void launch_server( void );
 		void send_message(int socket, const std::string& message);
+		void disconnect_client( int fd );
 
 };
 
