@@ -106,13 +106,13 @@ bool Message_Handler::should_handle_message( User & sender, Message & message )
 		return ( true );
 	}
 	else if ( sender.has_password() == true
-			&& ( command == "USER" || command == "NICK" || command == "CAP"
-			|| command == "PASS" || command == "QUIT" ) )
+	          && ( command == "USER" || command == "NICK" || command == "CAP"
+	               || command == "PASS" || command == "QUIT" ) )
 	{
 		return ( true );
 	}
 	else if ( sender.has_password() == false
-			&& ( command == "CAP" || command == "PASS" || command == "QUIT" ) )
+	          && ( command == "CAP" || command == "PASS" || command == "QUIT" ) )
 	{
 		return ( true );
 	}

@@ -332,12 +332,18 @@ bool isInt( const std::string& str )
 void Mode_Handler::handle_l_channel_add()
 {
 	std::string argument;
+	int limit;
 	try
 	{
 		argument = get_current_argument();
 		if ( isInt( argument ) )
 		{
-			target_channel->set_user_limit( std::atoi( argument.c_str() ) );
+			limit =  std::atoi( argument.c_str() );
+			if ( limit < 0 )
+			{
+				return;
+			}
+			target_channel->set_user_limit( limit );
 			sender.send_reply( rpl::mode_channel( sender, *target_channel,
 			                                      "+l " + argument ) );
 		}
