@@ -620,7 +620,7 @@ void Message_Handler::handle_quit( Message & message )
 			( *it )->send_reply( rpl::quit( sender, message ) );
 		}
 	}
-	context.remove_user( sender );
+	context.force_disconnect_user( sender );
 }
 
 void Message_Handler::handle_summon( Message & message )
