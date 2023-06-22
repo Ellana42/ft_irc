@@ -22,9 +22,9 @@ Application::~Application()
 {
 	log_event::info( "Application: Terminating application" );
 	close( server.fd );
+	delete poll_fds;
 	delete passwords;
 	delete context;
-	delete poll_fds;
 }
 
 void Application::initialize_server( void )
@@ -175,8 +175,7 @@ void Application::disconnect_client( int fd )
 	{
 		if ( client_fds[i].fd == fd )
 		{
-      		/* close( fd );  // Close the client socket */
-			context->remove_user( fd );
+			context->remove_user( fd ); // Closes the client socket
       		client_fds.erase( client_fds.begin() + i );  // Remove the client from the vector
       		num_connections--;
       		break;
