@@ -1,6 +1,7 @@
 #include "Context.hpp"
 #include "Channel.hpp"
 #include <iterator>
+#include <sstream>
 #include <stdexcept>
 #include "Password.hpp"
 #include "ft_irc.hpp"
@@ -191,7 +192,9 @@ User & Context::get_user_by_socket( int socket )
 			return ( *r_it->second );
 		}
 	}
-	throw std::out_of_range( "Context: Could not find user by socket" );
+	std::stringstream ss;
+	ss << socket;
+	throw std::out_of_range( "Context: Could not find user by socket " + ss.str() );
 }
 
 User & Context::get_user_by_nick( std::string nickname )
