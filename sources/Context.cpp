@@ -195,7 +195,6 @@ User & Context::get_user_by_socket( int socket )
 	std::stringstream ss;
 	ss << socket;
 	throw CouldNotFindUserException();
-	/* throw std::out_of_range( "Context: Could not find user by socket " + ss.str() ); */
 }
 
 User & Context::get_user_by_nick( std::string nickname )
@@ -205,8 +204,7 @@ User & Context::get_user_by_nick( std::string nickname )
 	{
 		return ( *registered_users[nickname] );
 	}
-	throw std::out_of_range( "Context: Could not find user " + nickname +
-	                         " by nickname" );
+	throw CouldNotFindUserException();
 }
 
 void Context::update_user_nick( User & user, std::string new_nick )
