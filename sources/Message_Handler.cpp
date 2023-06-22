@@ -118,6 +118,7 @@ bool Message_Handler::should_handle_message( User & sender, Message & message )
 	}
 	return ( false );
 }
+
 void Message_Handler::initialize_message_handlers( void )
 {
 	handle.insert( pair_handler( "ADMIN", &Message_Handler::handle_admin ) );

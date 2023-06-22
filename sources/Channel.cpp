@@ -323,11 +323,7 @@ std::string Channel::get_user_list_string( void )
 		{
 			user_list += " ";
 		}
-		if ( is_creator( it->first ) )
-		{
-			user_list += "~";
-		}
-		else if ( is_operator( it->first ) )
+		if ( is_operator( it->first ) )
 		{
 			user_list += "@";
 		}
