@@ -176,6 +176,7 @@ void Application::disconnect_client( int fd )
 		if ( client_fds[i].fd == fd )
 		{
 			context->remove_user( fd ); // Closes the client socket
+			client_fds[i].fd = -1;
       		client_fds.erase( client_fds.begin() + i );  // Remove the client from the vector
       		num_connections--;
       		break;
