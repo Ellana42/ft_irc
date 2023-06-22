@@ -2,6 +2,10 @@
 
 void log_event::info( std::string msg )
 {
+	if ( LOG_LEVEL < LOG_INFO )
+	{
+		return;
+	}
 	std::stringstream ss;
 
 	ss << RESET "[INFO] " << msg << RESET;
@@ -10,6 +14,10 @@ void log_event::info( std::string msg )
 
 void log_event::warn( std::string msg )
 {
+	if ( LOG_LEVEL < LOG_WARNING )
+	{
+		return ;
+	}
 	std::stringstream ss;
 
 	ss << YELLOW "[WARN] " << msg << RESET;
@@ -18,6 +26,10 @@ void log_event::warn( std::string msg )
 
 void log_event::warn( std::string msg, std::string command )
 {
+	if ( LOG_LEVEL < LOG_WARNING )
+	{
+		return ;
+	}
 	std::string formatted_command = get_formatted_command( command );
 
 	std::stringstream ss;
@@ -27,6 +39,10 @@ void log_event::warn( std::string msg, std::string command )
 
 void log_event::error( std::string msg )
 {
+	if ( LOG_LEVEL < LOG_ERROR )
+	{
+		return ;
+	}
 	std::stringstream ss;
 
 	ss << RED "[ERROR] " << msg << RESET;
@@ -47,7 +63,6 @@ void log_event::command( int socket, std::string command )
 {
 	std::string formatted_command = get_formatted_command( command );
 	std::stringstream ss;
-
 	ss << PURPLE "[COMMAND][Socket " << socket << "]: [" << formatted_command << "]" << RESET;
 	std::cerr << ss.str() << std::endl;
 }

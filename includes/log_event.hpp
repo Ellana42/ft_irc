@@ -1,6 +1,14 @@
 #ifndef LOG_EVENT_H
 #define LOG_EVENT_H
 
+#define LOG_OFF 0
+#define LOG_ERROR 1
+#define LOG_WARNING 2
+#define LOG_INFO 3
+
+#define LOG_LEVEL 1
+
+
 #include <cstddef>
 #include <iostream>
 #include <sstream>
@@ -20,6 +28,10 @@ namespace log_event
 	template <typename T>
 	void info( std::string msg, T detail )
 	{
+		if ( LOG_LEVEL < LOG_INFO )
+		{
+			return;
+		}
 		std::stringstream ss;
 
 		ss << RESET "[INFO] " << msg << " " << detail << RESET;
@@ -29,6 +41,10 @@ namespace log_event
 	template <typename T>
 	void warn( std::string msg, T detail )
 	{
+		if ( LOG_LEVEL < LOG_WARNING )
+		{
+			return;
+		}
 		std::stringstream ss;
 
 		ss << YELLOW "[WARN] " << msg << " " << detail << RESET;
