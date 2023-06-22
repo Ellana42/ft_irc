@@ -56,6 +56,7 @@ void Context::remove_user( User & user )
 	
 void Context::remove_user( int socket )
 {
+	log_event::warn( "Context: IMPROPER REMOVE USER!!!" );
 	User user = get_user_by_socket( socket );
 	remove_user( user );
 }
