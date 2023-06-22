@@ -306,6 +306,10 @@ void Mode_Handler::handle_o_channel_add()
 	{
 		return;
 	}
+	catch ( Context::CouldNotFindUserException & e )
+	{
+		return;
+	}
 }
 
 void Mode_Handler::handle_o_channel_rm()
@@ -326,6 +330,10 @@ void Mode_Handler::handle_o_channel_rm()
 		                         "-o " + argument ) );
 	}
 	catch ( std::out_of_range & e )
+	{
+		return;
+	}
+	catch ( Context::CouldNotFindUserException & e )
 	{
 		return;
 	}
