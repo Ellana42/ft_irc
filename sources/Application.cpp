@@ -1,4 +1,5 @@
 #include "Application.hpp"
+#include "Context.hpp"
 #include "ft_irc.hpp"
 #include "Password.hpp"
 #include "log_event.hpp"
@@ -176,7 +177,6 @@ void Application::disconnect_client( int fd )
 		if ( client_fds[i].fd == fd )
 		{
 			context->remove_user( fd ); // Closes the client socket
-			client_fds[i].fd = -1;
       		client_fds.erase( client_fds.begin() + i );  // Remove the client from the vector
       		num_connections--;
       		break;
@@ -212,6 +212,10 @@ void Application::get_commands_from_socket( int fd, std::string & message_buffer
 		{
 			log_event::info( "Application: Nothing more to read from socket", fd );
 			break ;
+		}
+		catch ( Context::CouldNotFindUserException & e )
+		{
+			log_event::warn( "Application: Context:", e.what() );
 		}
 	}
 }	

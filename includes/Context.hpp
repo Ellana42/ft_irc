@@ -74,6 +74,12 @@ class Context
 		void debug_print_unregistered_users( void ) const;
 		void debug_print_registered_users( void ) const;
 		void debug_print_channels( void ) const;
+
+		class CouldNotFindUserException : public std::exception
+		{
+			public:
+				virtual const char* what() const throw();
+		};
 };
 
 #endif /* CONTEXT_H */

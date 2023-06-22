@@ -18,7 +18,6 @@ User::~User()
 {
 	log_event::info( "User: closing socket for user \"" + this->nickname + "\": socket", this->socket );
 	close( this->socket );
-	this->socket = -1;
 }
 
 std::string const & User::get_nickname( void ) const

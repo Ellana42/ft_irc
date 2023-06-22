@@ -194,7 +194,8 @@ User & Context::get_user_by_socket( int socket )
 	}
 	std::stringstream ss;
 	ss << socket;
-	throw std::out_of_range( "Context: Could not find user by socket " + ss.str() );
+	throw CouldNotFindUserException();
+	/* throw std::out_of_range( "Context: Could not find user by socket " + ss.str() ); */
 }
 
 User & Context::get_user_by_nick( std::string nickname )
@@ -368,4 +369,9 @@ void Context::send_message( int socket, std::string message )
 void Context::force_disconnect_user( User & user )
 {
 	application.disconnect_client( user.get_socket() );
+}
+
+const char* Context::CouldNotFindUserException::what() const throw()
+{
+	return ( "Could not find user by name or socket" );
 }
