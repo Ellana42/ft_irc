@@ -208,7 +208,8 @@ void Mode_Handler::handle_i_channel_add()
 	{
 		target_channel->set_invite_only( true );
 		target_channel->flush_invites();
-		sender.send_reply( rpl::mode_channel( sender, *target_channel, "+i" ) );
+		target_channel->send_reply( rpl::mode_channel( sender, *target_channel,
+		                            "+i" ) );
 	}
 	return;
 }
@@ -218,7 +219,8 @@ void Mode_Handler::handle_i_channel_rm()
 	if ( target_channel->is_invite_only() )
 	{
 		target_channel->set_invite_only( false );
-		sender.send_reply( rpl::mode_channel( sender, *target_channel, "-i" ) );
+		target_channel->send_reply( rpl::mode_channel( sender, *target_channel,
+		                            "-i" ) );
 	}
 	return;
 }
@@ -228,7 +230,8 @@ void Mode_Handler::handle_t_channel_add()
 	if ( !target_channel->is_topic_restricted() )
 	{
 		target_channel->set_topic_restricted( true );
-		sender.send_reply( rpl::mode_channel( sender, *target_channel, "+t" ) );
+		target_channel->send_reply( rpl::mode_channel( sender, *target_channel,
+		                            "+t" ) );
 	}
 	return;
 }
@@ -238,7 +241,8 @@ void Mode_Handler::handle_t_channel_rm()
 	if ( target_channel->is_topic_restricted() )
 	{
 		target_channel->set_topic_restricted( false );
-		sender.send_reply( rpl::mode_channel( sender, *target_channel, "-t" ) );
+		target_channel->send_reply( rpl::mode_channel( sender, *target_channel,
+		                            "-t" ) );
 	}
 	return;
 }
@@ -263,8 +267,8 @@ void Mode_Handler::handle_k_channel_add()
 		return;
 	}
 	target_channel->set_password( argument );
-	sender.send_reply( rpl::mode_channel( sender, *target_channel,
-	                                      "+k " + argument ) );
+	target_channel->send_reply( rpl::mode_channel( sender, *target_channel,
+	                            "+k " + argument ) );
 	return;
 }
 
@@ -273,7 +277,8 @@ void Mode_Handler::handle_k_channel_rm()
 	if ( target_channel->is_password_protected() )
 	{
 		target_channel->remove_password();
-		sender.send_reply( rpl::mode_channel( sender, *target_channel, "-k" ) );
+		target_channel->send_reply( rpl::mode_channel( sender, *target_channel,
+		                            "-k" ) );
 	}
 	return;
 }
@@ -297,10 +302,10 @@ void Mode_Handler::handle_o_channel_add()
 			return;
 		}
 		target_channel->add_operator( new_operator );
-		sender.send_reply( rpl::mode_channel( sender, *target_channel,
-		                                      "+o " + argument ) );
-		new_operator.send_reply( rpl::mode_channel( sender, *target_channel,
-		                         "+o " + argument ) );
+		target_channel->send_reply( rpl::mode_channel( sender, *target_channel,
+		                            "+o " + argument ) );
+		/* new_operator.send_reply( rpl::mode_channel( sender, *target_channel, */
+		/* "+o " + argument ) ); */
 	}
 	catch ( std::out_of_range & e )
 	{
@@ -324,10 +329,10 @@ void Mode_Handler::handle_o_channel_rm()
 			return;
 		}
 		target_channel->remove_operator( new_operator );
-		sender.send_reply( rpl::mode_channel( sender, *target_channel,
-		                                      "-o " + argument ) );
-		new_operator.send_reply( rpl::mode_channel( sender, *target_channel,
-		                         "-o " + argument ) );
+		target_channel->send_reply( rpl::mode_channel( sender, *target_channel,
+		                            "-o " + argument ) );
+		/* new_operator.send_reply( rpl::mode_channel( sender, *target_channel, */
+		/*                          "-o " + argument ) ); */
 	}
 	catch ( std::out_of_range & e )
 	{
@@ -363,8 +368,8 @@ void Mode_Handler::handle_l_channel_add()
 				return;
 			}
 			target_channel->set_user_limit( limit );
-			sender.send_reply( rpl::mode_channel( sender, *target_channel,
-			                                      "+l " + argument ) );
+			target_channel->send_reply( rpl::mode_channel( sender, *target_channel,
+			                            "+l " + argument ) );
 		}
 	}
 	catch ( std::out_of_range & e )
@@ -379,7 +384,8 @@ void Mode_Handler::handle_l_channel_rm()
 	if ( target_channel->has_user_limitation() )
 	{
 		target_channel->remove_user_limit();
-		sender.send_reply( rpl::mode_channel( sender, *target_channel, "-l" ) );
+		target_channel->send_reply( rpl::mode_channel( sender, *target_channel,
+		                            "-l" ) );
 	}
 	return;
 }
