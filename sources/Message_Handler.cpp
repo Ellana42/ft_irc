@@ -344,7 +344,6 @@ void Message_Handler::handle_join( Message & message )
 
 void Message_Handler::handle_kick( Message & message )
 {
-	// TODO: check that there are as many users as channels or 1 channel
 	User & sender = message.get_sender();
 	std::list<std::string> channels = message.get_list( "channel" );
 	std::list<std::string> users = message.get_list( "user" );
@@ -379,7 +378,8 @@ void Message_Handler::handle_kick( Message & message )
 		{
 			if ( !context.does_user_with_nick_exist( *it ) )
 			{
-				sender.send_reply( rpl::err_nosuchnick( sender, *it ) );
+				sender.send_reply( rpl::err_usernotinchannel( sender, *it,
+				                   channel.get_name() ) );
 				return;
 			}
 			User & user = context.get_user_by_nick( *it );
@@ -428,7 +428,8 @@ void Message_Handler::handle_kick( Message & message )
 			}
 			if ( !context.does_user_with_nick_exist( user_name ) )
 			{
-				sender.send_reply( rpl::err_nosuchnick( sender, user_name ) );
+				sender.send_reply( rpl::err_usernotinchannel( sender, user_name,
+				                   channel.get_name() ) );
 				return;
 			}
 			User & user = context.get_user_by_nick( user_name );
