@@ -206,7 +206,7 @@ void Message_Handler::handle_topic( Message & message )
 
 	if ( !context.does_channel_exist( channel_name ) )
 	{
-		sender.send_reply( rpl::err_nosuchchannel( sender, channel_name ) );
+		sender.send_reply( rpl::err_notonchannel( sender, channel_name ) );
 		return;
 	}
 	Channel & channel = context.get_channel_by_name( channel_name );
@@ -247,7 +247,7 @@ void Message_Handler::handle_cap( Message & message )
 void Message_Handler::handle_info( Message & message )
 {
 	User & sender = message.get_sender();
-	if ( message.has( "target" ) )
+	if ( message.has( "target" ) && message.get( "target" ) != SERVER_NAME )
 	{
 		sender.send_reply( rpl::err_nosuchserver( sender, message.get( "target" ) ) );
 		return ;
