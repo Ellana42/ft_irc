@@ -571,7 +571,7 @@ void Message_Handler::handle_part( Message & message )
 {
 	User & sender = message.get_sender();
 	std::list<std::string> chan_names = message.get_list( "channel" );
-	std::string part_msg = "";
+	std::string part_msg = sender.get_nickname();
 	if ( message.has( "Part Message" ) )
 	{
 		part_msg = message.get( "Part Message" );

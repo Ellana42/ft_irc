@@ -195,7 +195,7 @@ std::string const rpl::forward( User & sender, Message & message )
 	reply += " ";
 	reply += message.get( "msgtarget" );
 	reply += " :";
-	if ( message.has("text to be sent" ) )
+	if ( message.has( "text to be sent" ) )
 	{
 		reply += message.get( "text to be sent" );
 	}
@@ -288,6 +288,10 @@ std::string const rpl::part( User & user, Channel & channel, Message & message )
 	if ( message.has( "Part Message" ) )
 	{
 		reply += message.get( "Part Message" );
+	}
+	else
+	{
+		reply += user.get_nickname();
 	}
 	reply += "\r\n";
 	return ( reply );
