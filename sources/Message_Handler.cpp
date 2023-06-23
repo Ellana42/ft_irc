@@ -399,7 +399,7 @@ void Message_Handler::handle_kick( Message & message )
 				channel.send_reply( rpl::kick( sender, user, channel,
 				                               message.get( "comment" ) ) );
 			}
-			channel.remove_user( user );
+			context.remove_user_from_channel( user, channel.get_name() );
 		}
 	}
 	else
@@ -449,7 +449,7 @@ void Message_Handler::handle_kick( Message & message )
 				channel.send_reply( rpl::kick( sender, user, channel,
 				                               message.get( "comment" ) ) );
 			}
-			channel.remove_user( user );
+			context.remove_user_from_channel( user, channel.get_name() );
 		}
 
 	}

@@ -7,7 +7,9 @@
 #include "ft_irc.hpp"
 #include "log_event.hpp"
 
-Context::Context( Application & application, Password & password ) : application( application ), password_handler( password ),
+Context::Context( Application & application,
+                  Password & password ) : application( application ),
+	password_handler( password ),
 	message_handler( NULL )
 {
 	log_event::info( "Context: Creating context" );
@@ -32,7 +34,8 @@ void Context::create_unregistered_user( int socket )
 
 void Context::register_user( User & user )
 {
-	if ( user.has_password() == false || user.has_nickname() == false || user.has_user_info() == false )
+	if ( user.has_password() == false || user.has_nickname() == false
+	        || user.has_user_info() == false )
 	{
 		return ;
 	}
@@ -53,7 +56,7 @@ void Context::remove_user( User & user )
 		this->remove_unregistered_user( user );
 	}
 }
-	
+
 void Context::remove_user( int socket )
 {
 	User user = get_user_by_socket( socket );
@@ -109,7 +112,8 @@ void Context::add_user_to_channel( User & user, std::string channel_name )
 	else
 	{
 		std::string chan_name = string_to_lowercase( channel_name );
-		log_event::info( "Context: Adding user \"" + user.get_nickname() + "\" to channel " + chan_name );
+		log_event::info( "Context: Adding user \"" + user.get_nickname() +
+		                 "\" to channel " + chan_name );
 		channels[chan_name]->add_user( user );
 		if ( channel_name != DEFAULT_CHAN
 		        && channels[DEFAULT_CHAN]->is_user_in_channel( user ) )
@@ -123,16 +127,19 @@ void Context::remove_user_from_channel( User & user, std::string channel_name )
 {
 	if ( does_channel_exist( channel_name ) == false )
 	{
-		throw std::out_of_range( "Conext: Remove from channel: no such channel" );
+		throw std::out_of_range( "Context: Remove from channel: no such channel" );
 	}
 	else
 	{
 		std::string chan_name = string_to_lowercase( channel_name );
-		log_event::info( "Context: Removing user \"" + user.get_nickname() + "\" from channel " + chan_name );
+		log_event::info( "Context: Removing user \"" + user.get_nickname() +
+		                 "\" from channel " + chan_name );
 		channels[chan_name]->remove_user( user );
+		channels[chan_name]->remove_operator( user );
 		if ( is_user_in_any_channel( user ) == false && chan_name != DEFAULT_CHAN )
 		{
-			log_event::info( "Context: Adding user \"" + user.get_nickname() + "\" to channel *, because user is no longer in any channel" );
+			log_event::info( "Context: Adding user \"" + user.get_nickname() +
+			                 "\" to channel *, because user is no longer in any channel" );
 			channels[DEFAULT_CHAN]->add_user( user );
 		}
 	}
