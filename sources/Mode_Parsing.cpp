@@ -3,7 +3,7 @@
 #include <exception>
 
 ModeParsing::ModeParsing( std::string modestring ) : modestring( modestring ),
-	current_state( ModeChar ), position( 0 ) {}
+	current_state( ModeChar ), current_type( Plus ), position( 0 ) {}
 
 ModeParsing::~ModeParsing() {}
 

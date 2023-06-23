@@ -1,5 +1,6 @@
 #include "../includes/Parsing.hpp"
 #include <algorithm>
+#include <cctype>
 #include <cstring>
 #include <exception>
 #include <stdexcept>
@@ -23,7 +24,7 @@ Parsing::Parsing( std::string raw_content ) : tokenizer( Tokenizer(
 	{
 		throw Parsing::UnknownCommandException();
 	}
-	command = tokens[0];
+	command = tokens[0]; // TODO: add to upper here
 	move();
 }
 
