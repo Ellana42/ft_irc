@@ -355,50 +355,102 @@ void Message_Handler::handle_kick( Message & message )
 		return;
 	}
 
-	if
-
-	if ( ! context.does_channel_exist( channel_name ) )
+	if ( channels.size() == 1 )
+	{
+		std::string channel_name = channels.front();
+		if ( ! context.does_channel_exist( channel_name ) )
 		{
 			sender.send_reply( rpl::err_nosuchchannel( sender, channel_name ) );
 			return;
 		}
-	Channel & channel = context.get_channel_by_name( channel_name );
-	if ( !channel.is_user_in_channel( sender ) )
-	{
-		sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
-		return;
-	}
-	if ( !channel.is_operator( sender ) )
-	{
-		sender.send_reply( rpl::err_chanoprivsneeded( sender, channel_name ) );
-		return;
-	}
-	std::list<std::string>::iterator it = users.begin();
-	for ( ; it != users.end(); it++ )
-	{
-		if ( !context.does_user_with_nick_exist( *it ) )
+		Channel & channel = context.get_channel_by_name( channel_name );
+		if ( !channel.is_user_in_channel( sender ) )
 		{
-			sender.send_reply( rpl::err_nosuchnick( sender, *it ) );
+			sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
 			return;
 		}
-		User & user = context.get_user_by_nick( *it );
-		if ( !channel.is_user_in_channel( user ) )
+		if ( !channel.is_operator( sender ) )
 		{
+			sender.send_reply( rpl::err_chanoprivsneeded( sender, channel_name ) );
+			return;
+		}
+		std::list<std::string>::iterator it = users.begin();
+		for ( ; it != users.end(); it++ )
+		{
+			if ( !context.does_user_with_nick_exist( *it ) )
+			{
+				sender.send_reply( rpl::err_nosuchnick( sender, *it ) );
+				return;
+			}
+			User & user = context.get_user_by_nick( *it );
+			if ( !channel.is_user_in_channel( user ) )
+			{
 
-			sender.send_reply( rpl::err_usernotinchannel( sender, *it,
-			                   channel.get_name() ) );
-			return;
+				sender.send_reply( rpl::err_usernotinchannel( sender, *it,
+				                   channel.get_name() ) );
+				return;
+			}
+			if ( message.get( "comment" ) == "" )
+			{
+				channel.send_reply( rpl::kick( sender, user, channel, sender.get_nickname() ) );
+			}
+			else
+			{
+				channel.send_reply( rpl::kick( sender, user, channel,
+				                               message.get( "comment" ) ) );
+			}
+			channel.remove_user( user );
 		}
-		if ( message.get( "comment" ) == "" )
+	}
+	else
+	{
+		std::list<std::string>::iterator uit = users.begin();
+		std::list<std::string>::iterator cit = channels.begin();
+		for ( ; uit != users.end(); uit++, cit++ )
 		{
-			channel.send_reply( rpl::kick( sender, user, channel, sender.get_nickname() ) );
+			std::string channel_name = *cit;
+			std::string user_name = *uit;
+			if ( ! context.does_channel_exist( channel_name ) )
+			{
+				sender.send_reply( rpl::err_nosuchchannel( sender, channel_name ) );
+				return;
+			}
+			Channel & channel = context.get_channel_by_name( channel_name );
+			if ( !channel.is_user_in_channel( sender ) )
+			{
+				sender.send_reply( rpl::err_notonchannel( sender, channel.get_name() ) );
+				return;
+			}
+			if ( !channel.is_operator( sender ) )
+			{
+				sender.send_reply( rpl::err_chanoprivsneeded( sender, channel_name ) );
+				return;
+			}
+			if ( !context.does_user_with_nick_exist( user_name ) )
+			{
+				sender.send_reply( rpl::err_nosuchnick( sender, user_name ) );
+				return;
+			}
+			User & user = context.get_user_by_nick( user_name );
+			if ( !channel.is_user_in_channel( user ) )
+			{
+
+				sender.send_reply( rpl::err_usernotinchannel( sender, user_name,
+				                   channel.get_name() ) );
+				return;
+			}
+			if ( message.get( "comment" ) == "" )
+			{
+				channel.send_reply( rpl::kick( sender, user, channel, sender.get_nickname() ) );
+			}
+			else
+			{
+				channel.send_reply( rpl::kick( sender, user, channel,
+				                               message.get( "comment" ) ) );
+			}
+			channel.remove_user( user );
 		}
-		else
-		{
-			channel.send_reply( rpl::kick( sender, user, channel,
-			                               message.get( "comment" ) ) );
-		}
-		channel.remove_user( user );
+
 	}
 }
 
