@@ -344,15 +344,24 @@ void Message_Handler::handle_join( Message & message )
 
 void Message_Handler::handle_kick( Message & message )
 {
+	// TODO: check that there are as many users as channels or 1 channel
 	User & sender = message.get_sender();
-	std::string channel_name = message.get( "channel" );
+	std::list<std::string> channels = message.get_list( "channel" );
 	std::list<std::string> users = message.get_list( "user" );
-
-	if ( ! context.does_channel_exist( channel_name ) )
+	if ( channels.size() > 1 && channels.size() != users.size() )
 	{
-		sender.send_reply( rpl::err_nosuchchannel( sender, channel_name ) );
+		// TODO: maybe message.get_command() not correct here
+		sender.send_reply( rpl::err_needmoreparams( sender, message.get_command() ) );
 		return;
 	}
+
+	if
+
+	if ( ! context.does_channel_exist( channel_name ) )
+		{
+			sender.send_reply( rpl::err_nosuchchannel( sender, channel_name ) );
+			return;
+		}
 	Channel & channel = context.get_channel_by_name( channel_name );
 	if ( !channel.is_user_in_channel( sender ) )
 	{
