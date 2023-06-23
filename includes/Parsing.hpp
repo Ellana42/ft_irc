@@ -21,6 +21,7 @@ class Parsing
 
 		std::map<std::string, std::string> args;
 		std::map<std::string, std::list<std::string> > args_lists;
+		void command_to_upper( std::string & command );
 	public:
 
 		Parsing( std::string raw_content );

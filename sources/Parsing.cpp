@@ -25,7 +25,17 @@ Parsing::Parsing( std::string raw_content ) : tokenizer( Tokenizer(
 		throw Parsing::UnknownCommandException();
 	}
 	command = tokens[0]; // TODO: add to upper here
+	command_to_upper( command );
 	move();
+}
+
+void Parsing::command_to_upper( std::string & command )
+{
+	std::string::iterator it = command.begin();
+	for ( ; it != command.end(); it++ )
+	{
+		*it = toupper( *it );
+	}
 }
 
 void Parsing::parse( void )
