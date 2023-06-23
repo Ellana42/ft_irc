@@ -147,7 +147,7 @@ void Message_Handler::initialize_message_handlers( void )
 void Message_Handler::handle_admin( Message & message )
 {
 	User & sender = message.get_sender();
-	if ( message.has( "target" ) && target != SERVER_NAME )
+	if ( message.has( "target" ) && message.get( "target" ) != SERVER_NAME )
 	{
 		sender.send_reply( rpl::err_nosuchserver( sender, message.get( "target" ) ) );
 		return ;
