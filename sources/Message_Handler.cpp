@@ -382,7 +382,7 @@ void Message_Handler::handle_kick( Message & message )
 		}
 		if ( message.get( "comment" ) == "" )
 		{
-			channel.send_reply( rpl::kick( sender, user, channel, "You are kicked" ) );
+			channel.send_reply( rpl::kick( sender, user, channel, sender.get_nickname() ) );
 		}
 		else
 		{
