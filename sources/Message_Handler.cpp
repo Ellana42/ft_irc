@@ -301,30 +301,32 @@ void Message_Handler::handle_join( Message & message )
 				channel.send_reply( rpl::join_channel( sender, channel ) );
 				sender.send_reply( rpl::namreply( sender, channel ) );
 				sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
-				return;
-			}
-			Channel & channel = context.get_channel_by_name( *chans );
-			if ( channel.is_invite_only() && !channel.is_invited( sender ) )
-			{
-				sender.send_reply( rpl::err_inviteonlychan( sender, channel.get_name() ) );
-			}
-			else if ( channel.is_password_protected()
-			          &&  !channel.check_password( *passes ) )
-			{
-				sender.send_reply( rpl::err_badchannelkey( sender, channel.get_name() ) );
-			}
-			else if ( channel.is_at_limit() )
-			{
-				sender.send_reply( rpl::err_channelisfull( sender, channel.get_name() ) );
 			}
 			else
 			{
-				context.add_user_to_channel( sender, *chans );
-				channel.remove_invited_user( sender.get_nickname() );
-				channel.send_reply( rpl::join_channel( sender, channel ) );
-				sender.send_reply( rpl::topic( message, channel ) );
-				sender.send_reply( rpl::namreply( sender, channel ) );
-				sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
+				Channel & channel = context.get_channel_by_name( *chans );
+				if ( channel.is_invite_only() && !channel.is_invited( sender ) )
+				{
+					sender.send_reply( rpl::err_inviteonlychan( sender, channel.get_name() ) );
+				}
+				else if ( channel.is_password_protected()
+				          &&  !channel.check_password( *passes ) )
+				{
+					sender.send_reply( rpl::err_badchannelkey( sender, channel.get_name() ) );
+				}
+				else if ( channel.is_at_limit() )
+				{
+					sender.send_reply( rpl::err_channelisfull( sender, channel.get_name() ) );
+				}
+				else
+				{
+					context.add_user_to_channel( sender, *chans );
+					channel.remove_invited_user( sender.get_nickname() );
+					channel.send_reply( rpl::join_channel( sender, channel ) );
+					sender.send_reply( rpl::topic( message, channel ) );
+					sender.send_reply( rpl::namreply( sender, channel ) );
+					sender.send_reply( rpl::endofnames( sender, channel.get_name() ) );
+				}
 			}
 		}
 		catch ( Channel::AlreadyInChannelException & e )
