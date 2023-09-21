@@ -4,7 +4,7 @@
   <img src="https://github.com/mcombeau/mcombeau/blob/main/42_badges/ft_irce.png" alt="ft_irc 42 project badge"/>
 </p>
 
-A small Internet Rrelay Chat (IRC) server made in C++.
+A small Internet Relay Chat (IRC) server made in C++.
 
 ## Usage
 
